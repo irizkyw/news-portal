@@ -1,59 +1,83 @@
-import "./index.css";
-import { APITester } from "./APITester";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { HomePage } from "@/components/pages/HomePage";
+import { ArticlePage } from "@/components/pages/ArticlePage";
+import { AdminDashboard } from "@/components/pages/AdminDashboard";
+import "../styles/globals.css";
 
-import logo from "./logo.svg";
-import reactLogo from "./react.svg";
+type Page = "home" | "article" | "admin";
 
-export function App() {
-  return (
-    <div
-      className="container mx-auto p-8 text-center relative z-10"
-      data-oid="26e9urd"
-    >
-      <div
-        className="flex justify-center items-center gap-8 mb-8"
-        data-oid=":tt1vtr"
-      >
-        <img
-          src={logo}
-          alt="Bun Logo"
-          className="h-36 p-6 transition-all duration-300 hover:drop-shadow-[0_0_2em_#646cffaa] scale-120"
-          data-oid="xj.jwos"
-        />
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [currentPage, setCurrentPage] = useState<Page>("home");
+  const [currentSlug, setCurrentSlug] = useState("");
 
-        <img
-          src={reactLogo}
-          alt="React Logo"
-          className="h-36 p-6 transition-all duration-300 hover:drop-shadow-[0_0_2em_#61dafbaa] [animation:spin_20s_linear_infinite]"
-          data-oid="_8tp84d"
-        />
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle("dark");
+  };
+
+  // Simple routing system
+  const navigateTo = (page: Page, slug?: string) => {
+    setCurrentPage(page);
+    if (slug) {
+      setCurrentSlug(slug);
+      window.history.pushState({}, "", `/news/${slug}`);
+    } else if (page === "admin") {
+      window.history.pushState({}, "", "/admin");
+    } else {
+      window.history.pushState({}, "", "/");
+    }
+  };
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path.startsWith("/admin")) {
+        setCurrentPage("admin");
+      } else if (path.startsWith("/news/")) {
+        setCurrentPage("article");
+        setCurrentSlug(path.split("/")[2] || "");
+      } else {
+        setCurrentPage("home");
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    // Set initial route
+    handlePopState();
+
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Admin dashboard doesn't need navbar/footer
+  if (currentPage === "admin") {
+    return (
+      <div className={darkMode ? "dark" : ""}>
+        <AdminDashboard />
       </div>
+    );
+  }
 
-      <Card
-        className="bg-card/50 backdrop-blur-sm border-muted"
-        data-oid="xthjp.6"
-      >
-        <CardContent className="pt-6" data-oid="si:j77j">
-          <h1
-            className="text-5xl font-bold my-4 leading-tight"
-            data-oid="-va6nsx"
-          >
-            Bun + React
-          </h1>
-          <p data-oid="lkt1kii">
-            Edit{" "}
-            <code
-              className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm"
-              data-oid=".zszr:q"
-            >
-              src/App.tsx
-            </code>{" "}
-            and save to test HMR
-          </p>
-          <APITester data-oid="heb87i6" />
-        </CardContent>
-      </Card>
+  return (
+    <div className={darkMode ? "dark" : ""}>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar
+          darkMode={darkMode}
+          toggleDarkMode={toggleDarkMode}
+          onNavigate={navigateTo}
+        />
+
+        {currentPage === "home" && <HomePage onNavigate={navigateTo} />}
+        {currentPage === "article" && (
+          <ArticlePage slug={currentSlug} onNavigate={navigateTo} />
+        )}
+
+        <Footer />
+      </div>
     </div>
   );
 }
