@@ -9,9 +9,10 @@ import { articles } from "@/data/mockData";
 
 interface ArticlePageProps {
   slug: string;
+  onNavigate: (page: "home" | "article" | "admin", slug?: string) => void;
 }
 
-export function ArticlePage({ slug }: ArticlePageProps) {
+export function ArticlePage({ slug, onNavigate }: ArticlePageProps) {
   // In a real app, this would fetch the article by slug
   const article = articles.find((a) => a.slug === slug) || articles[0];
   const relatedArticles = articles

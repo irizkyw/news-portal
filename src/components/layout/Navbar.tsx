@@ -16,9 +16,10 @@ import { categories } from "@/data/mockData";
 interface NavbarProps {
   darkMode: boolean;
   toggleDarkMode: () => void;
+  onNavigate: (page: "home" | "article" | "admin", slug?: string) => void;
 }
 
-export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
+export function Navbar({ darkMode, toggleDarkMode, onNavigate }: NavbarProps) {
   const [isLoggedIn] = useState(false); // Mock login state
 
   const NavLinks = () => (

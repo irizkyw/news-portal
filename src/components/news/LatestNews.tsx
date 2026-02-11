@@ -3,7 +3,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NewsCard } from "./NewsCard";
 import { articles } from "@/data/mockData";
 
-export function LatestNews() {
+interface LatestNewsProps {
+  onNavigate: (page: "home" | "article" | "admin", slug?: string) => void;
+}
+
+export function LatestNews({ onNavigate }: LatestNewsProps) {
   const [activeTab, setActiveTab] = useState("latest");
 
   const getFilteredArticles = (filter: string) => {

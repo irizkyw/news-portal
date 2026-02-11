@@ -2,7 +2,11 @@ import React from "react";
 import { NewsCard } from "./NewsCard";
 import { articles } from "@/data/mockData";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onNavigate: (page: "home" | "article" | "admin", slug?: string) => void;
+}
+
+export function HeroSection({ onNavigate }: HeroSectionProps) {
   const featuredArticle =
     articles.find((article) => article.isFeatured) || articles[0];
   const supportingArticles = articles

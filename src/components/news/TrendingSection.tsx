@@ -3,7 +3,11 @@ import { TrendingUp } from "lucide-react";
 import { NewsCard } from "./NewsCard";
 import { articles } from "@/data/mockData";
 
-export function TrendingSection() {
+interface TrendingSectionProps {
+  onNavigate: (page: "home" | "article" | "admin", slug?: string) => void;
+}
+
+export function TrendingSection({ onNavigate }: TrendingSectionProps) {
   const trendingArticles = articles
     .filter((article) => article.isPopular)
     .slice(0, 4);
