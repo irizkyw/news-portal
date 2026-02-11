@@ -11,8 +11,8 @@ import { App } from "./App";
 
 const elem = document.getElementById("root")!;
 const app = (
-  <StrictMode data-oid="yn:2db_">
-    <App data-oid="838o8xo" />
+  <StrictMode>
+    <App />
   </StrictMode>
 );
 
