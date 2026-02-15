@@ -28,18 +28,8 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
   };
 
   return (
-    <div
-      className="container mx-auto px-4 py-12 flex justify-center items-center min-h-[calc(100vh-10rem)] bg-cover bg-center"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1506126613408-4e63a4b095e5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-      }}
-      data-oid="s10o7iz"
-    >
-      <Card
-        className="w-full max-w-sm bg-white/80 backdrop-blur-sm"
-        data-oid="44k_reo"
-      >
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <Card className="w-full max-w-sm">
         <CardHeader data-oid="7cxrsns">
           <CardTitle data-oid="wmj52nx">Register</CardTitle>
         </CardHeader>
