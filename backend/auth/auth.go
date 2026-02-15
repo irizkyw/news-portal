@@ -10,12 +10,14 @@ import (
 
 	"news-portal/backend/database"
 	"news-portal/backend/handlers"
+	"news-portal/backend/models" // Added models import
 )
 
 var jwtKey = []byte("my_secret_key")
 
 type Claims struct {
 	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -26,8 +28,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	var user handlers.User
-	if err := database.DB.Get(&user, "SELECT * FROM users WHERE email = ?", req.Email); err != nil {
+	var user models.User
+	if err := database.DB.Get(&user, "SELECT id, email, password, role FROM users WHERE email = ?", req.Email); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
@@ -39,7 +41,8 @@ func Login(c *gin.Context) {
 
 	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := &Claims{
-		Email: req.Email,
+		Email: user.Email, // Changed from req.Email to user.Email
+		Role:  user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -81,6 +84,27 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("email", claims.Email)
+		c.Set("role", claims.Role) // Set role in context
 		c.Next()
+	}
+}
+
+// AuthzMiddleware checks if the user has one of the allowed roles
+func AuthzMiddleware(allowedRoles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userRole, exists := c.Get("role")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Role not found in context"})
+			return
+		}
+
+		for _, role := range allowedRoles {
+			if userRole == role {
+				c.Next()
+				return
+			}
+		}
+
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
 	}
 }

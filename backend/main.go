@@ -24,11 +24,11 @@ func main() {
 	userRoutes := router.Group("/users")
 	userRoutes.Use(auth.AuthMiddleware())
 	{
-		userRoutes.GET("/", handlers.GetUsers)
-		userRoutes.GET("/:id", handlers.GetUser)
-		userRoutes.POST("/", handlers.CreateUser)
-		userRoutes.PUT("/:id", handlers.UpdateUser)
-		userRoutes.DELETE("/:id", handlers.DeleteUser)
+		userRoutes.GET("/", auth.AuthzMiddleware("admin"), handlers.GetUsers)
+		userRoutes.POST("/", auth.AuthzMiddleware("admin"), handlers.CreateUser) // Admin can create users
+		userRoutes.GET("/:id", handlers.GetUser)                                 // A user can get their own profile, admin can get any
+		userRoutes.PUT("/:id", auth.AuthzMiddleware("admin"), handlers.UpdateUser)
+		userRoutes.DELETE("/:id", auth.AuthzMiddleware("admin"), handlers.DeleteUser)
 	}
 
 	// Post routes
@@ -36,9 +36,9 @@ func main() {
 	{
 		postRoutes.GET("/", handlers.GetPosts)
 		postRoutes.GET("/:slug", handlers.GetPost)
-		postRoutes.POST("/", auth.AuthMiddleware(), handlers.CreatePost)
-		postRoutes.PUT("/:id", auth.AuthMiddleware(), handlers.UpdatePost)
-		postRoutes.DELETE("/:id", auth.AuthMiddleware(), handlers.DeletePost)
+		postRoutes.POST("/", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.CreatePost)
+		postRoutes.PUT("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.UpdatePost)
+		postRoutes.DELETE("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.DeletePost)
 	}
 
 	// Category routes
@@ -46,9 +46,9 @@ func main() {
 	{
 		categoryRoutes.GET("/", handlers.GetCategories)
 		categoryRoutes.GET("/:slug", handlers.GetCategory)
-		categoryRoutes.POST("/", auth.AuthMiddleware(), handlers.CreateCategory)
-		categoryRoutes.PUT("/:id", auth.AuthMiddleware(), handlers.UpdateCategory)
-		categoryRoutes.DELETE("/:id", auth.AuthMiddleware(), handlers.DeleteCategory)
+		categoryRoutes.POST("/", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.CreateCategory)
+		categoryRoutes.PUT("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.UpdateCategory)
+		categoryRoutes.DELETE("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.DeleteCategory)
 	}
 
 	router.Run(":8080")
