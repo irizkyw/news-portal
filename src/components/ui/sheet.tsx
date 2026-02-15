@@ -24,6 +24,7 @@ const SheetOverlay = React.forwardRef<
     )}
     {...props}
     ref={ref}
+    data-oid="8mg0arl"
   />
 ));
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
@@ -55,17 +56,23 @@ const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
 >(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
+  <SheetPortal data-oid="kz9r0t_">
+    <SheetOverlay data-oid="vg-xwnc" />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
       {...props}
+      data-oid="twg.la8"
     >
       {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
+      <SheetPrimitive.Close
+        className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary"
+        data-oid="ghv6hug"
+      >
+        <X className="h-4 w-4" data-oid="1ct57d0" />
+        <span className="sr-only" data-oid="6onc5pe">
+          Close
+        </span>
       </SheetPrimitive.Close>
     </SheetPrimitive.Content>
   </SheetPortal>
@@ -82,6 +89,7 @@ const SheetHeader = ({
       className,
     )}
     {...props}
+    data-oid="rheu_g6"
   />
 );
 
@@ -97,6 +105,7 @@ const SheetFooter = ({
       className,
     )}
     {...props}
+    data-oid="xja4zzv"
   />
 );
 
@@ -110,6 +119,7 @@ const SheetTitle = React.forwardRef<
     ref={ref}
     className={cn("text-lg font-semibold text-foreground", className)}
     {...props}
+    data-oid="n9qud7g"
   />
 ));
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
@@ -122,6 +132,7 @@ const SheetDescription = React.forwardRef<
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
+    data-oid="je4ch.n"
   />
 ));
 SheetDescription.displayName = SheetPrimitive.Description.displayName;

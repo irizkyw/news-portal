@@ -47,7 +47,7 @@ export function Navbar({
           key={category.id}
           to={`/category/${category.slug}`}
           className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          data-oid="4n6n2.r"
+          data-oid="3_1ibvx"
         >
           {category.name}
         </Link>
@@ -58,32 +58,32 @@ export function Navbar({
   return (
     <header
       className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-      data-oid="::dh20t"
+      data-oid="i3t8ksj"
     >
-      <div className="container mx-auto px-4" data-oid="u-vjcgp">
+      <div className="container mx-auto px-4" data-oid="1t9:l:l">
         <div
           className="flex h-16 items-center justify-between"
-          data-oid="2j4el5g"
+          data-oid="6oai8q2"
         >
           {/* Logo */}
-          <div className="flex items-center space-x-4" data-oid="_zql_.8">
+          <div className="flex items-center space-x-4" data-oid="5f4l-in">
             <Link
               to="/"
               className="flex items-center space-x-2"
-              data-oid="97hq9hf"
+              data-oid="y30b-w9"
             >
               <div
                 className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center"
-                data-oid="8we.mdu"
+                data-oid="ugjy.j_"
               >
                 <span
                   className="text-primary-foreground font-bold text-lg"
-                  data-oid="el2igyw"
+                  data-oid="bge16vj"
                 >
                   N
                 </span>
               </div>
-              <span className="font-bold text-xl" data-oid=".848:aj">
+              <span className="font-bold text-xl" data-oid="1o9shtx">
                 NewsFlow
               </span>
             </Link>
@@ -92,18 +92,18 @@ export function Navbar({
           {/* Desktop Navigation */}
           <nav
             className="hidden md:flex items-center space-x-6"
-            data-oid="ujufpel"
+            data-oid="2e6gff6"
           >
-            <NavLinks data-oid="jxky8.z" />
+            <NavLinks data-oid="u.gdsci" />
           </nav>
 
           {/* Search and Actions */}
-          <div className="flex items-center space-x-4" data-oid="4hbicmn">
+          <div className="flex items-center space-x-4" data-oid="-ab0zv5">
             {/* Search */}
-            <div className="relative hidden sm:block" data-oid="d5ebq9-">
+            <div className="relative hidden sm:block" data-oid=".4uj66-">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                data-oid="suckm00"
+                data-oid="lhe_g0w"
               />
 
               <Input
@@ -112,7 +112,7 @@ export function Navbar({
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchSubmit}
-                data-oid="r_mvmmr"
+                data-oid="2jqz80z"
               />
             </div>
 
@@ -122,82 +122,82 @@ export function Navbar({
               size="sm"
               onClick={toggleDarkMode}
               className="h-9 w-9 p-0"
-              data-oid="t8vfdkf"
+              data-oid="s7ajh:b"
             >
               {darkMode ? (
-                <Sun className="h-4 w-4" data-oid="ddgc9ot" />
+                <Sun className="h-4 w-4" data-oid="6z1xtez" />
               ) : (
-                <Moon className="h-4 w-4" data-oid=":ci3gjg" />
+                <Moon className="h-4 w-4" data-oid="mfu.xqe" />
               )}
             </Button>
 
             {/* User Menu */}
             {isLoggedIn ? (
-              <DropdownMenu data-oid="0foos6n">
-                <DropdownMenuTrigger asChild data-oid="df.o.vw">
+              <DropdownMenu data-oid="6h-0hn:">
+                <DropdownMenuTrigger asChild data-oid="zfqzspg">
                   <Button
                     variant="ghost"
                     className="relative h-9 w-9 rounded-full"
-                    data-oid="jw0rsp3"
+                    data-oid="kntzn75"
                   >
-                    <Avatar className="h-9 w-9" data-oid="0_u5e32">
+                    <Avatar className="h-9 w-9" data-oid="c6fj2e9">
                       <AvatarImage
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-                        data-oid=":_8:cf8"
+                        data-oid="c49ro-o"
                       />
 
-                      <AvatarFallback data-oid="zfjs-js">JD</AvatarFallback>
+                      <AvatarFallback data-oid="f6j:q87">JD</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   className="w-56"
                   align="end"
-                  data-oid="38agt12"
+                  data-oid="iir5dvp"
                 >
-                  <DropdownMenuItem data-oid="hppji8:">
-                    <User className="mr-2 h-4 w-4" data-oid="nx3gy8d" />
+                  <DropdownMenuItem data-oid="ur-fhyg">
+                    <User className="mr-2 h-4 w-4" data-oid="1:8cnu7" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator data-oid=":4.kv1s" />
-                  <DropdownMenuItem data-oid="3oh1g26">
+                  <DropdownMenuSeparator data-oid="aidnhwe" />
+                  <DropdownMenuItem data-oid="nfd.g2j">
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onLogout} data-oid="6fhksl6">
+                  <DropdownMenuItem onClick={onLogout} data-oid="x6kmz51">
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/login" data-oid="l:g5--6">
-                <Button variant="default" size="sm" data-oid="gc13vwj">
+              <Link to="/login" data-oid="op4__y:">
+                <Button variant="default" size="sm" data-oid="oy6osy5">
                   Login
                 </Button>
               </Link>
             )}
 
             {/* Mobile Menu */}
-            <Sheet data-oid="g_o5a7z">
-              <SheetTrigger asChild data-oid="r-qe69a">
+            <Sheet data-oid="t.e2frl">
+              <SheetTrigger asChild data-oid=".x.vf0_">
                 <Button
                   variant="ghost"
                   size="sm"
                   className="md:hidden h-9 w-9 p-0"
-                  data-oid="1rvlhi3"
+                  data-oid="0xb6daf"
                 >
-                  <Menu className="h-4 w-4" data-oid="3heq1mz" />
+                  <Menu className="h-4 w-4" data-oid="-qc-xrt" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80" data-oid="v5rbdu6">
+              <SheetContent side="right" className="w-80" data-oid="7xdr7da">
                 <div
                   className="flex flex-col space-y-4 mt-6"
-                  data-oid="ddkkx28"
+                  data-oid="fubwrzj"
                 >
                   {/* Mobile Search */}
-                  <div className="relative" data-oid="q-jyvb_">
+                  <div className="relative" data-oid="mwqzeqd">
                     <Search
                       className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                      data-oid="e:teeif"
+                      data-oid="as:epgr"
                     />
 
                     <Input
@@ -206,13 +206,13 @@ export function Navbar({
                       value={searchQuery}
                       onChange={handleSearchChange}
                       onKeyDown={handleSearchSubmit}
-                      data-oid="jr38t:7"
+                      data-oid="e9axhjp"
                     />
                   </div>
 
                   {/* Mobile Navigation */}
-                  <nav className="flex flex-col space-y-3" data-oid="pgl8s4h">
-                    <NavLinks data-oid="_.e692u" />
+                  <nav className="flex flex-col space-y-3" data-oid="j93i57z">
+                    <NavLinks data-oid="w6md6sf" />
                   </nav>
                 </div>
               </SheetContent>

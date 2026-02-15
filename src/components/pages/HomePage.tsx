@@ -6,11 +6,11 @@ import { Newsletter } from "@/components/news/Newsletter";
 
 export function HomePage() {
   return (
-    <main>
-      <HeroSection />
-      <TrendingSection />
-      <LatestNews />
-      <Newsletter />
+    <main data-oid="yh77cbc">
+      <HeroSection data-oid="rcqp5ls" />
+      <TrendingSection data-oid="9p.ecbl" />
+      <LatestNews data-oid="c.ayi.5" />
+      <Newsletter data-oid="yam09nf" />
     </main>
   );
 }

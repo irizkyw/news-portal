@@ -12,9 +12,9 @@ import App from "./App";
 
 const elem = document.getElementById("root")!;
 const app = (
-  <StrictMode>
-    <BrowserRouter>
-      <App />
+  <StrictMode data-oid="_p6r5sp">
+    <BrowserRouter data-oid="fa-e0hf">
+      <App data-oid="aj8i48f" />
     </BrowserRouter>
   </StrictMode>
 );
