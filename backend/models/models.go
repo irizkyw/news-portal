@@ -16,6 +16,7 @@ type User struct {
 	Email     string    `db:"email" json:"email"`
 	Name      string    `db:"name" json:"name"`
 	Password  string    `db:"password" json:"-"` // Exclude from JSON output
+	Role      string    `db:"role" json:"role"`
 	Avatar    string    `db:"avatar" json:"avatar"`
 	Bio       string    `db:"bio" json:"bio"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt"`

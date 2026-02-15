@@ -62,6 +62,7 @@ func createTables() error {
 			email VARCHAR(255) NOT NULL UNIQUE,
 			name VARCHAR(255),
 			password VARCHAR(255) NOT NULL,
+			role VARCHAR(255) DEFAULT 'user' NOT NULL,
 			avatar VARCHAR(255),
 			bio TEXT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

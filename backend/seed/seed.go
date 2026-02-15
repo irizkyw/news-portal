@@ -21,11 +21,13 @@ func seedUsers() {
 		Email    string
 		Name     string
 		Password string
+		Role     string
 	}{
-		{"sarah.j@example.com", "Sarah Johnson", "password123"},
-		{"michael.c@example.com", "Michael Chen", "password123"},
-		{"emily.r@example.com", "Emily Rodriguez", "password123"},
-		{"david.k@example.com", "David Kim", "password123"},
+		{"admin@example.com", "Admin User", "adminpass", "admin"}, // Admin user
+		{"sarah.j@example.com", "Sarah Johnson", "password123", "user"},
+		{"michael.c@example.com", "Michael Chen", "password123", "user"},
+		{"emily.r@example.com", "Emily Rodriguez", "password123", "user"},
+		{"david.k@example.com", "David Kim", "password123", "user"},
 	}
 
 	for _, user := range users {
@@ -33,7 +35,7 @@ func seedUsers() {
 		if err != nil {
 			log.Fatalf("failed to hash password: %v", err)
 		}
-		if _, err := database.DB.Exec("INSERT INTO users (email, name, password) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name=name", user.Email, user.Name, string(hashedPassword)); err != nil {
+		if _, err := database.DB.Exec("INSERT INTO users (email, name, password, role) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=name", user.Email, user.Name, string(hashedPassword), user.Role); err != nil {
 			log.Printf("failed to seed user %s: %v", user.Email, err)
 		}
 	}
