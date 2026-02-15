@@ -56,22 +56,22 @@ export function TrendingSection() {
     .slice(0, 4);
 
   return (
-    <section className="container mx-auto px-4 py-8" data-oid="f7:p35l">
-      <div className="flex items-center space-x-2 mb-6" data-oid="4irg578">
-        <TrendingUp className="h-6 w-6 text-primary" data-oid="tooa2fz" />
-        <h2 className="text-2xl font-bold" data-oid="m.yutys">
+    <section className="container mx-auto px-4 py-8" data-oid="abysuy1">
+      <div className="flex items-center space-x-2 mb-6" data-oid="7fb4fhj">
+        <TrendingUp className="h-6 w-6 text-primary" data-oid="k_todg:" />
+        <h2 className="text-2xl font-bold" data-oid="qgoefzk">
           Trending Now
         </h2>
       </div>
 
-      <div className="flex overflow-x-auto space-x-6 pb-4" data-oid="kxp5739">
+      <div className="flex overflow-x-auto space-x-6 pb-4" data-oid="mrj3krq">
         {trendingArticles.map((article) => (
           <div
             key={article.id}
             className="flex-shrink-0 w-80"
-            data-oid="hqrlf-a"
+            data-oid="hjpc_aa"
           >
-            <NewsCard article={article} data-oid="qt4k4ow" />
+            <NewsCard article={article} data-oid="o0w23ez" />
           </div>
         ))}
       </div>

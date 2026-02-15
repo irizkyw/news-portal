@@ -12,38 +12,38 @@ export function CategoryPage() {
   );
 
   return (
-    <main data-oid="tj3z0:l">
-      <div className="container mx-auto px-4 py-8" data-oid="z.vo28.">
-        <h1 className="text-3xl font-bold mb-8" data-oid="ppwilt2">
+    <main data-oid="fse28l:">
+      <div className="container mx-auto px-4 py-8" data-oid="gtuk5d4">
+        <h1 className="text-3xl font-bold mb-8" data-oid="gshbri.">
           Category: {category?.name || "Unknown"}
         </h1>
 
         {filteredArticles.length > 0 ? (
           <div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="htjmdu_"
+            data-oid="9e4otsf"
           >
             {filteredArticles.map((article, index) => (
               <div
                 key={article.id}
                 className={index === 0 ? "lg:col-span-2" : ""}
-                data-oid="rw8:-si"
+                data-oid="dyp5a35"
               >
                 <NewsCard
                   article={article}
                   variant={index === 0 ? "featured" : "default"}
-                  data-oid="wui5.xv"
+                  data-oid="ud:3xl8"
                 />
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-center text-muted-foreground" data-oid="cm9ypo7">
+          <p className="text-center text-muted-foreground" data-oid="30yakg2">
             No articles found for this category.
           </p>
         )}
       </div>
-      <Newsletter data-oid="zi8dlwr" />
+      <Newsletter data-oid="ocd74yr" />
     </main>
   );
 }

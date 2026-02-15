@@ -34,19 +34,19 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
         backgroundImage:
           "url('https://images.unsplash.com/photo-1506126613408-4e63a4b095e5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
       }}
-      data-oid="1a-cyk-"
+      data-oid="dg0bi8m"
     >
       <Card
         className="w-full max-w-sm bg-white/80 backdrop-blur-sm"
-        data-oid="3cl418k"
+        data-oid="nqocvie"
       >
-        <CardHeader data-oid="5u4e7m8">
-          <CardTitle data-oid="_rn4599">Register</CardTitle>
+        <CardHeader data-oid="ktsv003">
+          <CardTitle data-oid="8cl_4qe">Register</CardTitle>
         </CardHeader>
-        <CardContent data-oid="9g39.tp">
-          <div className="space-y-4" data-oid="7_ev_hx">
-            <div className="space-y-2" data-oid="m-_8lop">
-              <Label htmlFor="email" data-oid="-_xtgy-">
+        <CardContent data-oid="y5j_ar7">
+          <div className="space-y-4" data-oid="1fphhj8">
+            <div className="space-y-2" data-oid="vhm28p:">
+              <Label htmlFor="email" data-oid="-yojsz-">
                 Email
               </Label>
               <Input
@@ -56,11 +56,11 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                data-oid="i0ucp5b"
+                data-oid="gygdq1d"
               />
             </div>
-            <div className="space-y-2" data-oid=".xodhul">
-              <Label htmlFor="password" data-oid="-p2n_2q">
+            <div className="space-y-2" data-oid="--9yrvo">
+              <Label htmlFor="password" data-oid="vrp.ajc">
                 Password
               </Label>
               <Input
@@ -69,11 +69,11 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                data-oid="18j:aub"
+                data-oid="peud5_3"
               />
             </div>
-            <div className="space-y-2" data-oid="lftn6m.">
-              <Label htmlFor="confirm-password" data-oid="f6.c8gi">
+            <div className="space-y-2" data-oid="77i049w">
+              <Label htmlFor="confirm-password" data-oid="8kpm3b9">
                 Confirm Password
               </Label>
               <Input
@@ -82,19 +82,19 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                data-oid="j8_iru3"
+                data-oid="ib7pryk"
               />
             </div>
             <Button
               onClick={handleRegister}
               className="w-full"
-              data-oid="3p.0m06"
+              data-oid="hhbd78a"
             >
               Register
             </Button>
-            <div className="text-center text-sm" data-oid="vm2r45i">
+            <div className="text-center text-sm" data-oid="44gam8j">
               Already have an account?{" "}
-              <Link to="/login" className="underline" data-oid="5bjxqy:">
+              <Link to="/login" className="underline" data-oid="0rhe9ot">
                 Login
               </Link>
             </div>

@@ -14,56 +14,56 @@ export function AdminDashboard() {
     switch (activeItem) {
       case "overview":
         return (
-          <div className="space-y-6" data-oid="usa3qv5">
+          <div className="space-y-6" data-oid="m-wy6aw">
             <div
               className="flex items-center justify-between"
-              data-oid="97s6ptg"
+              data-oid="qx6w0ip"
             >
-              <h1 className="text-3xl font-bold" data-oid="i1g27nw">
+              <h1 className="text-3xl font-bold" data-oid="4v-zegv">
                 Dashboard Overview
               </h1>
             </div>
-            <DashboardStats data-oid="qz-1q.j" />
+            <DashboardStats data-oid="14wp14l" />
 
             {/* Traffic Chart Placeholder */}
-            <Card data-oid="cq6ugum">
-              <CardHeader data-oid="03-pidb">
-                <CardTitle data-oid="j1-cwt3">Weekly Traffic</CardTitle>
+            <Card data-oid="u1d.zgr">
+              <CardHeader data-oid="mpe07:l">
+                <CardTitle data-oid=":bpfhl3">Weekly Traffic</CardTitle>
               </CardHeader>
-              <CardContent data-oid="8926fcd">
+              <CardContent data-oid="u:qv19w">
                 <div
                   className="h-64 flex items-center justify-center bg-muted/20 rounded-lg"
-                  data-oid="k:7.-sa"
+                  data-oid="4m3phwb"
                 >
-                  <div className="text-center" data-oid="r6ms1ke">
+                  <div className="text-center" data-oid="12a208d">
                     <p
                       className="text-muted-foreground mb-2"
-                      data-oid="ulpolk3"
+                      data-oid="7s1m4yh"
                     >
                       Traffic Chart
                     </p>
                     <p
                       className="text-sm text-muted-foreground"
-                      data-oid="tosm:6."
+                      data-oid="8utkht8"
                     >
                       Chart library would be integrated here
                     </p>
                     <div
                       className="mt-4 flex justify-center space-x-4 text-xs"
-                      data-oid="7zv3v44"
+                      data-oid="k-ze-zl"
                     >
                       {weeklyTrafficData.map((data, index) => (
                         <div
                           key={index}
                           className="text-center"
-                          data-oid="-bpe_nj"
+                          data-oid="ftd65ax"
                         >
-                          <div className="font-semibold" data-oid="2leejqs">
+                          <div className="font-semibold" data-oid="xw00rtu">
                             {data.day}
                           </div>
                           <div
                             className="text-muted-foreground"
-                            data-oid="l4lyi0p"
+                            data-oid="tmk6_6h"
                           >
                             {data.views.toLocaleString()}
                           </div>
@@ -81,48 +81,48 @@ export function AdminDashboard() {
         return (
           <ArticlesTable
             onCreateNew={() => setActiveItem("create")}
-            data-oid="-8blii3"
+            data-oid="8e_izpd"
           />
         );
 
       case "create":
-        return <CreatePostForm data-oid="u..8039" />;
+        return <CreatePostForm data-oid="b7jlr3e" />;
 
       case "analytics":
         return (
-          <div className="space-y-6" data-oid="h2xqe5l">
-            <h1 className="text-3xl font-bold" data-oid="6-a7:.u">
+          <div className="space-y-6" data-oid="zci_yvh">
+            <h1 className="text-3xl font-bold" data-oid="_:.-nyu">
               Analytics
             </h1>
             <div
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
-              data-oid="rv4v9mx"
+              data-oid="cfa7bau"
             >
-              <Card data-oid="kqf06_4">
-                <CardHeader data-oid="jwdun:i">
-                  <CardTitle data-oid="02foxdp">Page Views</CardTitle>
+              <Card data-oid="ls_7rpr">
+                <CardHeader data-oid="flfcqxv">
+                  <CardTitle data-oid="d6mbx92">Page Views</CardTitle>
                 </CardHeader>
-                <CardContent data-oid="agdwqpu">
+                <CardContent data-oid="ule5qtl">
                   <div
                     className="h-48 flex items-center justify-center bg-muted/20 rounded-lg"
-                    data-oid="j81gneu"
+                    data-oid="hp6a7s4"
                   >
-                    <p className="text-muted-foreground" data-oid="k-c::0z">
+                    <p className="text-muted-foreground" data-oid="g043c5-">
                       Page Views Chart
                     </p>
                   </div>
                 </CardContent>
               </Card>
-              <Card data-oid="ml0e40s">
-                <CardHeader data-oid="qr9-91v">
-                  <CardTitle data-oid="_2lrova">User Engagement</CardTitle>
+              <Card data-oid="rsqb5ft">
+                <CardHeader data-oid="cw68k.q">
+                  <CardTitle data-oid="q6xayjq">User Engagement</CardTitle>
                 </CardHeader>
-                <CardContent data-oid="4b:5sd6">
+                <CardContent data-oid=":ffsecn">
                   <div
                     className="h-48 flex items-center justify-center bg-muted/20 rounded-lg"
-                    data-oid="2ihu1:x"
+                    data-oid="kcfcu2j"
                   >
-                    <p className="text-muted-foreground" data-oid="a2zlvyu">
+                    <p className="text-muted-foreground" data-oid="-d4vrxf">
                       Engagement Chart
                     </p>
                   </div>
@@ -134,14 +134,14 @@ export function AdminDashboard() {
 
       case "users":
         return (
-          <div className="space-y-6" data-oid="fey8vy_">
-            <h1 className="text-3xl font-bold" data-oid="r_o.r05">
+          <div className="space-y-6" data-oid="87uo.zs">
+            <h1 className="text-3xl font-bold" data-oid="5a-4h0.">
               Users
             </h1>
-            <Card data-oid="kp53-wm">
-              <CardContent className="p-6" data-oid="4gldvra">
-                <div className="text-center py-12" data-oid="qc9jp2u">
-                  <p className="text-muted-foreground" data-oid="ftb1vhy">
+            <Card data-oid="ikjb7.o">
+              <CardContent className="p-6" data-oid="ga6tr.7">
+                <div className="text-center py-12" data-oid="68oapue">
+                  <p className="text-muted-foreground" data-oid=".7u5wk.">
                     User management interface would be here
                   </p>
                 </div>
@@ -152,14 +152,14 @@ export function AdminDashboard() {
 
       case "settings":
         return (
-          <div className="space-y-6" data-oid="b82vhdb">
-            <h1 className="text-3xl font-bold" data-oid="yhxfiik">
+          <div className="space-y-6" data-oid="ftqoh2d">
+            <h1 className="text-3xl font-bold" data-oid="xk-_mri">
               Settings
             </h1>
-            <Card data-oid=":ypv8fr">
-              <CardContent className="p-6" data-oid="i31.q59">
-                <div className="text-center py-12" data-oid="-0de4se">
-                  <p className="text-muted-foreground" data-oid="fgorlv4">
+            <Card data-oid="ok9unhj">
+              <CardContent className="p-6" data-oid="-c0i7o-">
+                <div className="text-center py-12" data-oid="55rh9mp">
+                  <p className="text-muted-foreground" data-oid="9-bhias">
                     Settings interface would be here
                   </p>
                 </div>
@@ -174,17 +174,17 @@ export function AdminDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-background" data-oid="r8un582">
+    <div className="flex h-screen bg-background" data-oid="_6m6z:.">
       <DashboardSidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
         activeItem={activeItem}
         onItemClick={setActiveItem}
-        data-oid="x2amvw-"
+        data-oid="cuo28ik"
       />
 
-      <main className="flex-1 overflow-auto" data-oid="txlgjbz">
-        <div className="p-6" data-oid="p9w:b92">
+      <main className="flex-1 overflow-auto" data-oid="fik5vu-">
+        <div className="p-6" data-oid="cq1dhhz">
           {renderContent()}
         </div>
       </main>

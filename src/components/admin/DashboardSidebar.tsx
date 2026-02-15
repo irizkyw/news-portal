@@ -41,27 +41,27 @@ export function DashboardSidebar({
         "relative bg-card border-r transition-all duration-300",
         collapsed ? "w-16" : "w-64",
       )}
-      data-oid="4313q4k"
+      data-oid="736ckuw"
     >
       {/* Header */}
       <div
         className="flex items-center justify-between p-4 border-b"
-        data-oid="9udrhnf"
+        data-oid="wnzuxp1"
       >
         {!collapsed && (
-          <div className="flex items-center space-x-2" data-oid="mmi4b6l">
+          <div className="flex items-center space-x-2" data-oid="i9t8-qn">
             <div
               className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center"
-              data-oid="kd23uul"
+              data-oid="zygo1qo"
             >
               <span
                 className="text-primary-foreground font-bold text-lg"
-                data-oid="325r3i7"
+                data-oid="c3sbeyl"
               >
                 N
               </span>
             </div>
-            <span className="font-bold text-xl" data-oid=".8p_i69">
+            <span className="font-bold text-xl" data-oid="aitntmt">
               NewsFlow
             </span>
           </div>
@@ -71,18 +71,18 @@ export function DashboardSidebar({
           size="sm"
           onClick={onToggle}
           className="h-8 w-8 p-0"
-          data-oid="e-y18if"
+          data-oid="8:_2fpj"
         >
           {collapsed ? (
-            <ChevronRight className="h-4 w-4" data-oid="0g2850." />
+            <ChevronRight className="h-4 w-4" data-oid="3mppyv1" />
           ) : (
-            <ChevronLeft className="h-4 w-4" data-oid="1r5nc8s" />
+            <ChevronLeft className="h-4 w-4" data-oid="1.40qlq" />
           )}
         </Button>
       </div>
 
       {/* Navigation */}
-      <nav className="p-4 space-y-2" data-oid="fvj77vf">
+      <nav className="p-4 space-y-2" data-oid="3y.ar39">
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -91,11 +91,11 @@ export function DashboardSidebar({
               variant={activeItem === item.id ? "secondary" : "ghost"}
               className={cn("w-full justify-start", collapsed && "px-2")}
               onClick={() => onItemClick(item.id)}
-              data-oid="chml.ux"
+              data-oid=":n07n5y"
             >
-              <Icon className="h-4 w-4" data-oid="rbtvhsq" />
+              <Icon className="h-4 w-4" data-oid="_56q32x" />
               {!collapsed && (
-                <span className="ml-2" data-oid="mberuui">
+                <span className="ml-2" data-oid="v-r4m.b">
                   {item.label}
                 </span>
               )}
@@ -105,16 +105,16 @@ export function DashboardSidebar({
       </nav>
 
       {/* View Site Link */}
-      <div className="absolute bottom-4 left-4 right-4" data-oid="c6do2p8">
+      <div className="absolute bottom-4 left-4 right-4" data-oid="ng3.ku0">
         <Button
           variant="outline"
           className={cn("w-full justify-start", collapsed && "px-2")}
           onClick={() => window.open("/", "_blank")}
-          data-oid="w-wa-ze"
+          data-oid="7zd2wgb"
         >
-          <Eye className="h-4 w-4" data-oid="d18f6zy" />
+          <Eye className="h-4 w-4" data-oid="ooe.x0m" />
           {!collapsed && (
-            <span className="ml-2" data-oid="40j_e0q">
+            <span className="ml-2" data-oid="ccif6ej">
               View Site
             </span>
           )}

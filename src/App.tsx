@@ -57,10 +57,10 @@ function App() {
     location.pathname.startsWith("/preview");
 
   return (
-    <div className={darkMode ? "dark" : ""} data-oid="l24ww34">
+    <div className={darkMode ? "dark" : ""} data-oid="pbdhp2t">
       <div
         className="min-h-screen bg-background text-foreground"
-        data-oid="nvi_zh3"
+        data-oid="y37jzqz"
       >
         {!isAdminRoute && (
           <Navbar
@@ -68,69 +68,69 @@ function App() {
             toggleDarkMode={toggleDarkMode}
             isLoggedIn={isLoggedIn}
             onLogout={handleLogout}
-            data-oid="a3c7wdn"
+            data-oid="y:qryq0"
           />
         )}
 
-        <Routes data-oid="3yj98au">
+        <Routes data-oid="32a4vxx">
           <Route
             path="/"
-            element={<HomePage data-oid="p:66g0n" />}
-            data-oid="cil-31k"
+            element={<HomePage data-oid=".5.4umz" />}
+            data-oid="83plrr6"
           />
 
           <Route
             path="/news/:slug"
-            element={<ArticlePage data-oid="6iox5e3" />}
-            data-oid="r656oz:"
+            element={<ArticlePage data-oid="ykkm5-." />}
+            data-oid="yarktxd"
           />
 
           <Route
             path="/admin"
-            element={<AdminDashboard data-oid="2yr880z" />}
-            data-oid="f.x642d"
+            element={<AdminDashboard data-oid="o30n3gv" />}
+            data-oid="5wnc.0p"
           />
 
           <Route
             path="/search"
-            element={<SearchResultsPage data-oid="b590dz0" />}
-            data-oid="k3qjc7v"
+            element={<SearchResultsPage data-oid="gn3_hvm" />}
+            data-oid="wozhsak"
           />
 
           <Route
             path="/category/:slug"
-            element={<CategoryPage data-oid="_smr4bs" />}
-            data-oid="5z5smvi"
+            element={<CategoryPage data-oid="choc1uz" />}
+            data-oid="ko9zcqg"
           />
 
           <Route
             path="/tag/:tag"
-            element={<TagPage data-oid="07458xh" />}
-            data-oid="r:gzs__"
+            element={<TagPage data-oid="1nayuat" />}
+            data-oid="xbech7-"
           />
 
           <Route
             path="/login"
-            element={<LoginPage onLogin={handleLogin} data-oid="kocsh7l" />}
-            data-oid="70jwcxz"
+            element={<LoginPage onLogin={handleLogin} data-oid="4mcq:3_" />}
+            data-oid="np7w0-o"
           />
 
           <Route
             path="/register"
             element={
-              <RegisterPage onRegister={handleRegister} data-oid="4kz0nyu" />
+              <RegisterPage onRegister={handleRegister} data-oid="xlg2mkb" />
             }
-            data-oid="9ogb86g"
+            data-oid="vgnkv:7"
           />
 
           <Route
             path="/preview"
-            element={<PreviewPage data-oid="sm1_d5h" />}
-            data-oid="fs2gd:b"
+            element={<PreviewPage data-oid="yss9kli" />}
+            data-oid="kapywx3"
           />
         </Routes>
 
-        {!isAdminRoute && <Footer data-oid="dz8iun2" />}
+        {!isAdminRoute && <Footer data-oid="v3l21yz" />}
       </div>
     </div>
   );

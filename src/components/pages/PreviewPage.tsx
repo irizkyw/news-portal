@@ -23,9 +23,9 @@ export function PreviewPage() {
     return (
       <div
         className="container mx-auto px-4 py-8 text-center"
-        data-oid="ad8s_6k"
+        data-oid=":4j6j3u"
       >
-        <h1 className="text-3xl font-bold" data-oid=":xryxvt">
+        <h1 className="text-3xl font-bold" data-oid="6_jf.1d">
           Article not found
         </h1>
       </div>
@@ -57,26 +57,26 @@ export function PreviewPage() {
   };
 
   return (
-    <main data-oid="08musvc">
-      <div className="container mx-auto px-4 py-8" data-oid="055j0xy">
+    <main data-oid="x01olgt">
+      <div className="container mx-auto px-4 py-8" data-oid="cf.:978">
         <div
           className="grid grid-cols-1 lg:grid-cols-4 gap-8"
-          data-oid="7d9eqn9"
+          data-oid="nxbfc69"
         >
           {/* Main Article */}
-          <article className="lg:col-span-3" data-oid="hdpq4u_">
+          <article className="lg:col-span-3" data-oid="3cwef-a">
             {/* Article Header */}
-            <div className="mb-8" data-oid="ju5.o_c">
+            <div className="mb-8" data-oid="7l0.5f1">
               <Badge
                 className={article.category?.color}
                 variant="secondary"
-                data-oid="m0ggl4n"
+                data-oid="z9u_pmp"
               >
                 {article.category?.name}
               </Badge>
               <h1
                 className="text-4xl font-bold mt-4 mb-6 font-serif leading-tight"
-                data-oid="fc.nb37"
+                data-oid="mpq57_o"
               >
                 {article.title}
               </h1>
@@ -84,26 +84,26 @@ export function PreviewPage() {
               {/* Article Meta */}
               <div
                 className="flex items-center justify-between flex-wrap gap-4 pb-6 border-b"
-                data-oid="0z.hzo."
+                data-oid="ynpvf5m"
               >
-                <div className="flex items-center space-x-4" data-oid="1o:2ok1">
-                  <Avatar className="h-12 w-12" data-oid="-vzjgu1">
+                <div className="flex items-center space-x-4" data-oid="gsa7r9:">
+                  <Avatar className="h-12 w-12" data-oid="mv08o:0">
                     <AvatarImage
                       src={article.author?.avatar}
-                      data-oid="m_zvhv."
+                      data-oid="cd9197e"
                     />
 
-                    <AvatarFallback data-oid="d3kfy2q">
+                    <AvatarFallback data-oid="-rz:5qa">
                       {article.author?.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div data-oid="57qklat">
-                    <p className="font-semibold" data-oid="d6sal3s">
+                  <div data-oid=":_mpffu">
+                    <p className="font-semibold" data-oid="9q8a9i.">
                       {article.author?.name}
                     </p>
                     <p
                       className="text-sm text-muted-foreground"
-                      data-oid="t9bw45h"
+                      data-oid="2mm1h1x"
                     >
                       {formatDate(new Date().toISOString())}
                     </p>
@@ -112,23 +112,23 @@ export function PreviewPage() {
 
                 <div
                   className="flex items-center space-x-6 text-sm text-muted-foreground"
-                  data-oid="ed22obz"
+                  data-oid="038lnvu"
                 >
                   <div
                     className="flex items-center space-x-1"
-                    data-oid="cy16js-"
+                    data-oid="w54t_05"
                   >
-                    <Clock className="h-4 w-4" data-oid="ehiy3._" />
-                    <span data-oid="6_ew2d-">
+                    <Clock className="h-4 w-4" data-oid="g4552vh" />
+                    <span data-oid="u665ypj">
                       {article.readTime || 5} min read
                     </span>
                   </div>
                   <div
                     className="flex items-center space-x-1"
-                    data-oid="5hj1z0-"
+                    data-oid="wc:e69:"
                   >
-                    <Eye className="h-4 w-4" data-oid="bwhb34n" />
-                    <span data-oid="q4bkfyq">
+                    <Eye className="h-4 w-4" data-oid="2f43d63" />
+                    <span data-oid="-slqeq4">
                       {formatViews(article.views || 0)} views
                     </span>
                   </div>
@@ -138,12 +138,12 @@ export function PreviewPage() {
 
             {/* Featured Image */}
             {article.featuredImage && (
-              <div className="mb-8" data-oid="z67fzu3">
+              <div className="mb-8" data-oid="59dmo:7">
                 <img
                   src={article.featuredImage}
                   alt={article.title}
                   className="w-full h-64 md:h-96 object-cover rounded-lg"
-                  data-oid="vs4e.as"
+                  data-oid="al7vk6e"
                 />
               </div>
             )}
@@ -152,27 +152,27 @@ export function PreviewPage() {
             <div
               className="prose prose-lg max-w-none font-serif"
               dangerouslySetInnerHTML={{ __html: article.content }}
-              data-oid="6ysnjor"
+              data-oid="dew5:_a"
             />
 
             {/* Article Actions */}
             <div
               className="flex items-center justify-between pt-8 mt-8 border-t"
-              data-oid="e3.eng6"
+              data-oid="_zljdme"
             >
-              <div className="flex items-center space-x-2" data-oid="6md2osz">
-                <Button variant="outline" size="sm" data-oid="psa8:.z">
-                  <Share2 className="h-4 w-4 mr-2" data-oid="34g2alv" />
+              <div className="flex items-center space-x-2" data-oid="n02_2t-">
+                <Button variant="outline" size="sm" data-oid="-uxw7xp">
+                  <Share2 className="h-4 w-4 mr-2" data-oid="xmrzdaw" />
                   Share
                 </Button>
-                <Button variant="outline" size="sm" data-oid="ce:4sy.">
-                  <Bookmark className="h-4 w-4 mr-2" data-oid="hyt6b9x" />
+                <Button variant="outline" size="sm" data-oid="142ki:c">
+                  <Bookmark className="h-4 w-4 mr-2" data-oid="iibzztz" />
                   Save
                 </Button>
               </div>
-              <div className="flex items-center space-x-2" data-oid="fc9le_9">
+              <div className="flex items-center space-x-2" data-oid="qxfwnys">
                 {article.tags?.split(",").map((tag) => (
-                  <Badge key={tag} variant="secondary" data-oid="_e7axhw">
+                  <Badge key={tag} variant="secondary" data-oid="edccakj">
                     {tag}
                   </Badge>
                 ))}
@@ -180,26 +180,26 @@ export function PreviewPage() {
             </div>
 
             {/* Author Bio */}
-            <Card className="mt-8" data-oid="1u1olak">
-              <CardContent className="p-6" data-oid="sl-h:y3">
-                <div className="flex items-start space-x-4" data-oid="nhjvek6">
-                  <Avatar className="h-16 w-16" data-oid="tcx6:kf">
+            <Card className="mt-8" data-oid="0nwf78y">
+              <CardContent className="p-6" data-oid="nmsydbc">
+                <div className="flex items-start space-x-4" data-oid="d098-on">
+                  <Avatar className="h-16 w-16" data-oid="i15tmk-">
                     <AvatarImage
                       src={article.author?.avatar}
-                      data-oid="z12zq0t"
+                      data-oid="0bwftdg"
                     />
 
-                    <AvatarFallback data-oid="kphf2zj">
+                    <AvatarFallback data-oid="wi8k0kc">
                       {article.author?.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div data-oid="hfy_xck">
-                    <h3 className="font-semibold text-lg" data-oid="dkm6.wc">
+                  <div data-oid="79g--00">
+                    <h3 className="font-semibold text-lg" data-oid="bae0g6p">
                       {article.author?.name}
                     </h3>
                     <p
                       className="text-muted-foreground mt-1"
-                      data-oid="0w_voht"
+                      data-oid="3kukitl"
                     >
                       {article.author?.bio}
                     </p>
@@ -210,33 +210,33 @@ export function PreviewPage() {
           </article>
 
           {/* Sidebar */}
-          <aside className="space-y-6" data-oid="gwp2ev_">
-            <Card data-oid="_i9h:xf">
-              <CardHeader data-oid="7hzbwv8">
-                <CardTitle data-oid="37k9cvj">Related Articles</CardTitle>
+          <aside className="space-y-6" data-oid="5bx:h8v">
+            <Card data-oid="3-nc-ym">
+              <CardHeader data-oid="wesxlr0">
+                <CardTitle data-oid="ifcgb6-">Related Articles</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4" data-oid="k-do_ft">
+              <CardContent className="space-y-4" data-oid="q3u7ye1">
                 {relatedArticles.map((relatedArticle) => (
                   <div
                     key={relatedArticle.id}
                     className="border-b last:border-b-0 pb-4 last:pb-0"
-                    data-oid="ls7w4-m"
+                    data-oid="t70no.h"
                   >
                     <NewsCard
                       article={relatedArticle}
                       variant="compact"
-                      data-oid="9z6ip1-"
+                      data-oid="e78eymt"
                     />
                   </div>
                 ))}
               </CardContent>
             </Card>
 
-            <Card data-oid=":ft343k">
-              <CardHeader data-oid="42ifvru">
-                <CardTitle data-oid="metqksk">Popular This Week</CardTitle>
+            <Card data-oid="yuynj2w">
+              <CardHeader data-oid="0zdwhkd">
+                <CardTitle data-oid="mi1a1bl">Popular This Week</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4" data-oid="8z_3m88">
+              <CardContent className="space-y-4" data-oid="xigap.h">
                 {articles
                   .filter((a) => a.isPopular)
                   .slice(0, 3)
@@ -244,29 +244,29 @@ export function PreviewPage() {
                     <div
                       key={popularArticle.id}
                       className="flex items-start space-x-3"
-                      data-oid="rktelb8"
+                      data-oid="kq7:6on"
                     >
                       <span
                         className="text-2xl font-bold text-muted-foreground"
-                        data-oid="zxxbyh7"
+                        data-oid="sj:4zmj"
                       >
                         {index + 1}
                       </span>
-                      <div data-oid="6:m6d-a">
+                      <div data-oid="lqdx5w4">
                         <h4
                           className="font-semibold text-sm line-clamp-2 hover:text-primary cursor-pointer"
-                          data-oid="r5gwh7c"
+                          data-oid="mt-_vf:"
                         >
                           <a
                             href={`/news/${popularArticle.slug}`}
-                            data-oid="x1blhlt"
+                            data-oid="4th54:6"
                           >
                             {popularArticle.title}
                           </a>
                         </h4>
                         <p
                           className="text-xs text-muted-foreground mt-1"
-                          data-oid="v0suwqh"
+                          data-oid="uy6q:_8"
                         >
                           {formatViews(popularArticle.views)} views
                         </p>
@@ -278,7 +278,7 @@ export function PreviewPage() {
           </aside>
         </div>
       </div>
-      <Newsletter data-oid=":jne4jo" />
+      <Newsletter data-oid="cow7ael" />
     </main>
   );
 }

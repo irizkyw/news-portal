@@ -34,22 +34,22 @@ export function APITester() {
   return (
     <div
       className="mt-8 mx-auto w-full max-w-2xl text-left flex flex-col gap-4"
-      data-oid=".tbexxd"
+      data-oid="mzyhaee"
     >
       <form
         onSubmit={testEndpoint}
         className="flex items-center gap-2 bg-card p-3 rounded-xl font-mono border border-input w-full"
-        data-oid="fcb:4hz"
+        data-oid="fids66."
       >
-        <Select name="method" defaultValue="GET" data-oid="_3-e:w4">
-          <SelectTrigger className="w-[100px]" data-oid="eaza:f.">
-            <SelectValue placeholder="Method" data-oid="xtjmbjf" />
+        <Select name="method" defaultValue="GET" data-oid="h7pxlkz">
+          <SelectTrigger className="w-[100px]" data-oid="zr0hw_w">
+            <SelectValue placeholder="Method" data-oid="9czjp.0" />
           </SelectTrigger>
-          <SelectContent data-oid="f1h9es:">
-            <SelectItem value="GET" data-oid="h851w-d">
+          <SelectContent data-oid="4x1m70d">
+            <SelectItem value="GET" data-oid="42_zlaz">
               GET
             </SelectItem>
-            <SelectItem value="PUT" data-oid="pfssoqt">
+            <SelectItem value="PUT" data-oid="t9rq8.n">
               PUT
             </SelectItem>
           </SelectContent>
@@ -65,10 +65,10 @@ export function APITester() {
             "focus-visible:ring-0 focus-visible:ring-offset-0",
           )}
           placeholder="/api/hello"
-          data-oid="yp1zi.9"
+          data-oid="y9m:9ix"
         />
 
-        <Button type="submit" variant="secondary" data-oid="rmr3ctx">
+        <Button type="submit" variant="secondary" data-oid="wze0zqo">
           Send
         </Button>
       </form>
@@ -83,7 +83,7 @@ export function APITester() {
           "font-mono resize-y",
           "placeholder:text-muted-foreground",
         )}
-        data-oid="zst1ijq"
+        data-oid="gqjl.h."
       />
     </div>
   );
