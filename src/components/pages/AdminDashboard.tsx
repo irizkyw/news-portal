@@ -13,6 +13,7 @@ import { useAuth } from "../auth/AuthContext"; // Import useAuth
 import { toast } from "sonner"; // Import toast for notifications
 import { User } from "../../types"; // Assuming a User type exists in types.d.ts
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { getUsers, createUser, updateUser, deleteUser } from "../../services/api"; // Import API service functions
 
 export function AdminDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -27,25 +28,11 @@ export function AdminDashboard() {
   const [isFetchingUsers, setIsFetchingUsers] = useState(false);
   const [isSavingUser, setIsSavingUser] = useState(false);
 
-  // Helper function to get auth token
-  const getAuthToken = () => {
-    return localStorage.getItem("authToken");
-  };
-
   // Fetch Users
   const fetchUsers = async () => {
     setIsFetchingUsers(true);
     try {
-      const response = await fetch("http://localhost:8080/users", {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getAuthToken() || "",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const data: User[] = await response.json();
+      const data = await getUsers();
       setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -59,31 +46,12 @@ export function AdminDashboard() {
   const handleSaveUser = async (formData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
     setIsSavingUser(true);
     try {
-      let response;
       if (editingUser) {
         // Update existing user
-        response = await fetch(`http://localhost:8080/users/${editingUser.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": getAuthToken() || "",
-          },
-          body: JSON.stringify(formData),
-        });
+        await updateUser(editingUser.id, formData);
       } else {
         // Create new user
-        response = await fetch("http://localhost:8080/users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": getAuthToken() || "",
-          },
-          body: JSON.stringify(formData),
-        });
-      }
-
-      if (!response.ok) {
-        throw new Error(`Failed to ${editingUser ? "update" : "create"} user`);
+        await createUser(formData);
       }
 
       toast.success(`User ${editingUser ? "updated" : "created"} successfully!`);
@@ -104,15 +72,7 @@ export function AdminDashboard() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/users/${userId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": getAuthToken() || "",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
+      await deleteUser(userId);
       toast.success("User deleted successfully!");
       fetchUsers(); // Refresh the list
     } catch (error) {
