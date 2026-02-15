@@ -1,14 +1,67 @@
-import React from "react";
-import { Button } from "../ui/button";
+import React, { useState, useEffect } from "react";
+import { NewsCard } from "./NewsCard";
+import { Article } from "../../types"; // Assuming Article type is defined in types.d.ts
 
 export function HeroSection() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHeroArticles = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/posts?isFeatured=true&limit=3");
+        if (!response.ok) {
+          throw new Error("Failed to fetch hero articles");
+        }
+        const data: Article[] = await response.json();
+        setArticles(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHeroArticles();
+  }, []);
+
+  if (loading) {
+    return <section className="container mx-auto px-4 py-8 text-center">Loading hero articles...</section>;
+  }
+
+  if (error) {
+    return <section className="container mx-auto px-4 py-8 text-center text-red-500">Error: {error}</section>;
+  }
+
+  // Ensure there's at least one article to display
+  if (articles.length === 0) {
+    return <section className="container mx-auto px-4 py-8 text-center">No featured articles available.</section>;
+  }
+
+  const featuredArticle = articles[0];
+  const supportingArticles = articles.slice(1, 3); // Get the next two articles
+
   return (
-    <section className="relative bg-cover bg-center h-[500px] flex items-center justify-center text-white" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1517646698188-e24c2ed5512b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}>
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-      <div className="relative z-10 text-center space-y-4">
-        <h1 className="text-5xl font-bold">Discover the Latest News</h1>
-        <p className="text-xl">Stay informed with in-depth articles and breaking stories.</p>
-        <Button size="lg" className="bg-primary hover:bg-primary-dark text-white">Read More</Button>
+    <section className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Featured Article */}
+        <div className="lg:col-span-2">
+          <NewsCard
+            article={featuredArticle}
+            variant="featured"
+          />
+        </div>
+
+        {/* Supporting Articles */}
+        <div className="space-y-6">
+          {supportingArticles.map((article) => (
+            <NewsCard
+              key={article.id}
+              article={article}
+              variant="compact"
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
