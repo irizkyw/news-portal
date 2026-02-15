@@ -1,9 +1,9 @@
 import React from "react";
 import { Clock, Eye } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Article } from "@/data/mockData";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Article } from "../../data/mockData";
 
 interface NewsCardProps {
   article: Article;

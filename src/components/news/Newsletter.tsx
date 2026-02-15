@@ -1,8 +1,8 @@
 import React from "react";
 import { Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Card, CardContent } from "../ui/card";
 
 export function Newsletter() {
   return (
