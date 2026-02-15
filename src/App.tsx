@@ -10,7 +10,7 @@ import { CategoryPage } from "@/components/pages/CategoryPage";
 import { TagPage } from "@/components/pages/TagPage";
 import { LoginPage } from "@/components/pages/LoginPage";
 import { RegisterPage } from "@/components/pages/RegisterPage";
-import { PreviewPage } from "@/components/pages/PreviewPage";
+import { PreviewPage } from "./components/pages/PreviewPage";
 import { ProfileSettingsPage } from "./components/pages/ProfileSettingsPage"; // Import ProfileSettingsPage
 import { ErrorPage } from "./components/pages/ErrorPage"; // Import ErrorPage
 import { ForgotPasswordPage } from "./components/pages/ForgotPasswordPage"; // Import ForgotPasswordPage
