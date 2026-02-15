@@ -29,21 +29,15 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         backgroundImage:
           "url('https://images.unsplash.com/photo-1506126613408-4e63a4b095e5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
       }}
-      data-oid="2o2:y4j"
     >
-      <Card
-        className="w-full max-w-sm bg-white/80 backdrop-blur-sm"
-        data-oid="w0j_g02"
-      >
-        <CardHeader data-oid="a2yll1k">
-          <CardTitle data-oid="v6hu7z.">Login</CardTitle>
+      <Card className="w-full max-w-sm bg-white/80 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
         </CardHeader>
-        <CardContent data-oid="hnuf8ua">
-          <div className="space-y-4" data-oid="c_yga24">
-            <div className="space-y-2" data-oid="w769tkt">
-              <Label htmlFor="email" data-oid="nregii6">
-                Email
-              </Label>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -51,28 +45,24 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                data-oid="t.7lp-t"
               />
             </div>
-            <div className="space-y-2" data-oid="4_hqtje">
-              <Label htmlFor="password" data-oid="ri8i0kz">
-                Password
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                data-oid="97333js"
               />
             </div>
-            <Button onClick={handleLogin} className="w-full" data-oid=".1qb.pd">
+            <Button onClick={handleLogin} className="w-full">
               Login
             </Button>
-            <div className="text-center text-sm" data-oid="ff-ug_6">
+            <div className="text-center text-sm">
               Don't have an account?{" "}
-              <Link to="/register" className="underline" data-oid="1j3_fnl">
+              <Link to="/register" className="underline">
                 Register
               </Link>
             </div>

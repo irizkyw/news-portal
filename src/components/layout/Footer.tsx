@@ -5,126 +5,126 @@ import { Input } from "@/components/ui/input";
 
 export function Footer() {
   return (
-    <footer className="bg-muted/30 border-t" data-oid="k2oa937">
-      <div className="container mx-auto px-4 py-12" data-oid="n3i22xm">
+    <footer className="bg-muted/30 border-t" data-oid="ibm8u5y">
+      <div className="container mx-auto px-4 py-12" data-oid="hvrur24">
         <div
           className="grid grid-cols-1 md:grid-cols-4 gap-8"
-          data-oid="a-_.:kd"
+          data-oid="3gc_jnv"
         >
           {/* Brand */}
-          <div className="space-y-4" data-oid="cnmh-jb">
-            <div className="flex items-center space-x-2" data-oid="91g.rof">
+          <div className="space-y-4" data-oid="pzhahp3">
+            <div className="flex items-center space-x-2" data-oid=".grc9sc">
               <div
                 className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center"
-                data-oid="m9f9ein"
+                data-oid=".bxyd7."
               >
                 <span
                   className="text-primary-foreground font-bold text-lg"
-                  data-oid="7uh7523"
+                  data-oid="rqrhxw7"
                 >
                   N
                 </span>
               </div>
-              <span className="font-bold text-xl" data-oid="9ood1u3">
+              <span className="font-bold text-xl" data-oid="_k5i.7c">
                 NewsFlow
               </span>
             </div>
-            <p className="text-sm text-muted-foreground" data-oid="ncxejt2">
+            <p className="text-sm text-muted-foreground" data-oid="pcd6x3s">
               Your trusted source for breaking news, in-depth analysis, and
               compelling stories from around the world.
             </p>
-            <div className="flex space-x-2" data-oid="qgyia_l">
+            <div className="flex space-x-2" data-oid="81ngkr9">
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-9 w-9 p-0"
-                data-oid=":l8lvz6"
+                data-oid="wak1ujq"
               >
-                <Facebook className="h-4 w-4" data-oid="-hbuo2l" />
+                <Facebook className="h-4 w-4" data-oid="jz-rltr" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-9 w-9 p-0"
-                data-oid="gek3fy5"
+                data-oid="l.l5pn8"
               >
-                <Twitter className="h-4 w-4" data-oid="t9ef6p:" />
+                <Twitter className="h-4 w-4" data-oid="yk9z_cu" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-9 w-9 p-0"
-                data-oid=":ontdot"
+                data-oid="dtlmeei"
               >
-                <Instagram className="h-4 w-4" data-oid="..4ok_e" />
+                <Instagram className="h-4 w-4" data-oid=":1hp970" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-9 w-9 p-0"
-                data-oid="sy584xa"
+                data-oid="_lyr9uu"
               >
-                <Linkedin className="h-4 w-4" data-oid="ts4hoti" />
+                <Linkedin className="h-4 w-4" data-oid="3:ulhck" />
               </Button>
             </div>
           </div>
 
           {/* Categories */}
-          <div className="space-y-4" data-oid="-zaxo18">
-            <h3 className="font-semibold" data-oid="9qu-qlm">
+          <div className="space-y-4" data-oid="jjrhq.6">
+            <h3 className="font-semibold" data-oid="53o.h4j">
               Categories
             </h3>
-            <ul className="space-y-2 text-sm" data-oid="xprc:b.">
-              <li data-oid="voinrvt">
+            <ul className="space-y-2 text-sm" data-oid="lefa.--">
+              <li data-oid="nub9yam">
                 <a
                   href="/category/politics"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="7fp-iok"
+                  data-oid="9sgfhr4"
                 >
                   Politics
                 </a>
               </li>
-              <li data-oid="0trdi56">
+              <li data-oid="-l:hhs2">
                 <a
                   href="/category/tech"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="_1.y:4s"
+                  data-oid="6jgy3rh"
                 >
                   Technology
                 </a>
               </li>
-              <li data-oid="bpzo5wj">
+              <li data-oid="4wdh2:l">
                 <a
                   href="/category/sports"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="4je2-8."
+                  data-oid="5ymn:70"
                 >
                   Sports
                 </a>
               </li>
-              <li data-oid="iros0_x">
+              <li data-oid="o3463or">
                 <a
                   href="/category/lifestyle"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid=":b5dhuz"
+                  data-oid="hnustht"
                 >
                   Lifestyle
                 </a>
               </li>
-              <li data-oid="acx7oq_">
+              <li data-oid="wu2ncs9">
                 <a
                   href="/category/business"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="4e_niww"
+                  data-oid="_al3bib"
                 >
                   Business
                 </a>
               </li>
-              <li data-oid="eq2v3ra">
+              <li data-oid="w98qdc7">
                 <a
                   href="/category/health"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="x_o4am9"
+                  data-oid="m-eze4j"
                 >
                   Health
                 </a>
@@ -133,52 +133,52 @@ export function Footer() {
           </div>
 
           {/* Company */}
-          <div className="space-y-4" data-oid="4qd1y.u">
-            <h3 className="font-semibold" data-oid="7-jxkpk">
+          <div className="space-y-4" data-oid="au3pyh6">
+            <h3 className="font-semibold" data-oid="ym9135d">
               Company
             </h3>
-            <ul className="space-y-2 text-sm" data-oid="1cx45ui">
-              <li data-oid="qx01cqr">
+            <ul className="space-y-2 text-sm" data-oid="cmcxqqg">
+              <li data-oid="c6gxuz0">
                 <a
                   href="/about"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="ewoah3q"
+                  data-oid="54cxwke"
                 >
                   About Us
                 </a>
               </li>
-              <li data-oid="zt0.tyo">
+              <li data-oid="t7k8oag">
                 <a
                   href="/contact"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="18_ht15"
+                  data-oid=":ljdrcf"
                 >
                   Contact
                 </a>
               </li>
-              <li data-oid="udo2gii">
+              <li data-oid="thk:txg">
                 <a
                   href="/careers"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="u4:9-in"
+                  data-oid="hgnqt5t"
                 >
                   Careers
                 </a>
               </li>
-              <li data-oid="o9b7bjv">
+              <li data-oid="gezqtd:">
                 <a
                   href="/privacy"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="_1aruke"
+                  data-oid="a6vxnui"
                 >
                   Privacy Policy
                 </a>
               </li>
-              <li data-oid="56.2hip">
+              <li data-oid="qet.cqb">
                 <a
                   href="/terms"
                   className="text-muted-foreground hover:text-foreground"
-                  data-oid="p0sn05g"
+                  data-oid="6deo28o"
                 >
                   Terms of Service
                 </a>
@@ -187,22 +187,22 @@ export function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div className="space-y-4" data-oid="cetvmcv">
-            <h3 className="font-semibold" data-oid="n9f8cre">
+          <div className="space-y-4" data-oid="48txv85">
+            <h3 className="font-semibold" data-oid="4yt4zce">
               Newsletter
             </h3>
-            <p className="text-sm text-muted-foreground" data-oid=":yenilj">
+            <p className="text-sm text-muted-foreground" data-oid="ct2umxy">
               Stay updated with our latest news and articles.
             </p>
-            <div className="flex space-x-2" data-oid="detcmi8">
+            <div className="flex space-x-2" data-oid="86xnxg2">
               <Input
                 placeholder="Enter your email"
                 className="flex-1"
-                data-oid="14r3sfg"
+                data-oid=":kl3-1m"
               />
 
-              <Button size="sm" data-oid="px60.:z">
-                <Mail className="h-4 w-4" data-oid="flq-:zx" />
+              <Button size="sm" data-oid="6bae3fu">
+                <Mail className="h-4 w-4" data-oid="iln5brr" />
               </Button>
             </div>
           </div>
@@ -210,9 +210,9 @@ export function Footer() {
 
         <div
           className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground"
-          data-oid="64a0tu1"
+          data-oid="6nj.ebo"
         >
-          <p data-oid="mr8n5_m">&copy; 2024 NewsFlow. All rights reserved.</p>
+          <p data-oid="c4c:4yn">&copy; 2024 NewsFlow. All rights reserved.</p>
         </div>
       </div>
     </footer>

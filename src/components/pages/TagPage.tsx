@@ -11,28 +11,23 @@ export function TagPage() {
   );
 
   return (
-    <main data-oid="lepuo-2">
-      <div className="container mx-auto px-4 py-8" data-oid="xic0imd">
-        <h1 className="text-3xl font-bold mb-8" data-oid="2wqjk5:">
-          Tag: {tag}
-        </h1>
+    <main>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Tag: {tag}</h1>
 
         {filteredArticles.length > 0 ? (
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="ak4lb-t"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredArticles.map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="um-k1vs" />
+              <NewsCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
-          <p className="text-center text-muted-foreground" data-oid="lvxlv4v">
+          <p className="text-center text-muted-foreground">
             No articles found for this tag.
           </p>
         )}
       </div>
-      <Newsletter data-oid="14nbyfi" />
+      <Newsletter />
     </main>
   );
 }
