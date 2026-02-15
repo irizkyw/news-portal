@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuill } from "react-quilljs";
+import "quill/dist/quill.snow.css";
 import { Save, Eye, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +16,49 @@ import {
 } from "@/components/ui/select";
 import { categories } from "@/data/mockData";
 
+function Editor({ value, onChange }) {
+  const { quill, quillRef } = useQuill({
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, false] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image"],
+        ["clean"],
+      ],
+    },
+    formats: [
+      "header",
+      "bold",
+      "italic",
+      "underline",
+      "strike",
+      "blockquote",
+      "list",
+      "bullet",
+      "link",
+      "image",
+    ],
+    placeholder: "Start writing your content here...",
+  });
+
+  useEffect(() => {
+    if (quill) {
+      quill.on("text-change", (delta, oldDelta, source) => {
+        if (source === "user") {
+          onChange(quill.root.innerHTML);
+        }
+      });
+
+      if (value && value !== quill.root.innerHTML) {
+        quill.root.innerHTML = value;
+      }
+    }
+  }, [quill, value, onChange]);
+
+  return <div ref={quillRef} />;
+}
+
 export function CreatePostForm() {
   const [formData, setFormData] = useState({
     title: "",
@@ -22,11 +67,17 @@ export function CreatePostForm() {
     category: "",
     featuredImage: "",
     status: "draft",
+    tags: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    const tags = formData.tags.split(",").map((tag) => tag.trim());
+    const newArticle = {
+      ...formData,
+      tags,
+    };
+    console.log("Form submitted:", newArticle);
     // Handle form submission
   };
 
@@ -34,19 +85,26 @@ export function CreatePostForm() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleContentChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, content: value }));
+  };
+
+  const handlePreview = () => {
+    localStorage.setItem("previewArticle", JSON.stringify(formData));
+    window.open("/preview", "_blank");
+  };
+
   return (
-    <div className="space-y-6" data-oid="4lkual2">
-      <div className="flex items-center justify-between" data-oid="03dp1q0">
-        <h2 className="text-2xl font-bold" data-oid="6tnm1xz">
-          Create New Post
-        </h2>
-        <div className="flex items-center space-x-2" data-oid="j_m8beg">
-          <Button variant="outline" data-oid="rnyh0n6">
-            <Eye className="h-4 w-4 mr-2" data-oid="m9sndmj" />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Create New Post</h2>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={handlePreview}>
+            <Eye className="h-4 w-4 mr-2" />
             Preview
           </Button>
-          <Button onClick={handleSubmit} data-oid=".6mj72_">
-            <Save className="h-4 w-4 mr-2" data-oid="hk.cdd." />
+          <Button onClick={handleSubmit}>
+            <Save className="h-4 w-4 mr-2" />
             Save Post
           </Button>
         </div>
@@ -55,100 +113,68 @@ export function CreatePostForm() {
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        data-oid="_fb_2km"
       >
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6" data-oid="flxo-gz">
-          <Card data-oid="vk4.mnb">
-            <CardHeader data-oid="ff7_zao">
-              <CardTitle data-oid="jrr81-x">Post Content</CardTitle>
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Post Content</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4" data-oid="s396xdz">
-              <div data-oid="6w17shh">
-                <Label htmlFor="title" data-oid="4dvmns_">
-                  Title
-                </Label>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
                   placeholder="Enter post title..."
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
                   className="text-lg font-semibold"
-                  data-oid="ljpa6c7"
                 />
               </div>
 
-              <div data-oid="h781u3-">
-                <Label htmlFor="excerpt" data-oid="psty8zp">
-                  Excerpt
-                </Label>
+              <div>
+                <Label htmlFor="excerpt">Excerpt</Label>
                 <Textarea
                   id="excerpt"
                   placeholder="Brief description of the post..."
                   value={formData.excerpt}
                   onChange={(e) => handleInputChange("excerpt", e.target.value)}
                   rows={3}
-                  data-oid="5-lsb-_"
                 />
               </div>
 
-              <div data-oid="2ridsl-">
-                <Label htmlFor="content" data-oid="x05rx8o">
-                  Content
-                </Label>
-                <Textarea
-                  id="content"
-                  placeholder="Write your article content here..."
-                  value={formData.content}
-                  onChange={(e) => handleInputChange("content", e.target.value)}
-                  rows={15}
-                  className="font-serif"
-                  data-oid="qbjj.jn"
-                />
-
-                <p
-                  className="text-sm text-muted-foreground mt-1"
-                  data-oid="m-wo--9"
-                >
-                  Rich text editor would be integrated here in a real
-                  application.
-                </p>
+              <div>
+                <Label>Content</Label>
+                <div className="bg-background">
+                  <Editor
+                    value={formData.content}
+                    onChange={handleContentChange}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Sidebar Settings */}
-        <div className="space-y-6" data-oid="zszmt4u">
-          <Card data-oid="7f9cqxh">
-            <CardHeader data-oid="502y8w3">
-              <CardTitle data-oid="psj3gw5">Post Settings</CardTitle>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Post Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4" data-oid="zg945zw">
-              <div data-oid="tofjp8k">
-                <Label htmlFor="category" data-oid=".832_bb">
-                  Category
-                </Label>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="category">Category</Label>
                 <Select
                   value={formData.category}
-                  onValueChange={(value) =>
-                    handleInputChange("category", value)
-                  }
-                  data-oid="31er24q"
+                  onValueChange={(value) => handleInputChange("category", value)}
                 >
-                  <SelectTrigger data-oid="nitewkt">
-                    <SelectValue
-                      placeholder="Select category"
-                      data-oid="7pp:sri"
-                    />
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent data-oid="sg8_30w">
+                  <SelectContent>
                     {categories.map((category) => (
-                      <SelectItem
-                        key={category.id}
-                        value={category.slug}
-                        data-oid="ky2h63n"
-                      >
+                      <SelectItem key={category.id} value={category.slug}>
                         {category.name}
                       </SelectItem>
                     ))}
@@ -156,44 +182,46 @@ export function CreatePostForm() {
                 </Select>
               </div>
 
-              <div data-oid="r9zcxj.">
-                <Label htmlFor="status" data-oid="sw3e.qw">
-                  Status
-                </Label>
+              <div>
+                <Label htmlFor="tags">Tags</Label>
+                <Input
+                  id="tags"
+                  placeholder="Enter tags, comma-separated"
+                  value={formData.tags}
+                  onChange={(e) => handleInputChange("tags", e.target.value)}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="status">Status</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => handleInputChange("status", value)}
-                  data-oid="alsdazy"
                 >
-                  <SelectTrigger data-oid="m8d9vjx">
-                    <SelectValue data-oid="b9yqgqb" />
+                  <SelectTrigger>
+                    <SelectValue />
                   </SelectTrigger>
-                  <SelectContent data-oid="z_vwp.6">
-                    <SelectItem value="draft" data-oid="g1ihdp5">
-                      Draft
-                    </SelectItem>
-                    <SelectItem value="published" data-oid="v26rtqc">
-                      Published
-                    </SelectItem>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </CardContent>
           </Card>
 
-          <Card data-oid="4z9wh8k">
-            <CardHeader data-oid="o4cskgo">
-              <CardTitle data-oid="tt29:l:">Featured Image</CardTitle>
+          <Card>
+            <CardHeader>
+              <CardTitle>Featured Image</CardTitle>
             </CardHeader>
-            <CardContent data-oid="nh096rx">
-              <div className="space-y-4" data-oid="m7zd81i">
+            <CardContent>
+              <div className="space-y-4">
                 {formData.featuredImage ? (
-                  <div className="relative" data-oid="70b_iim">
+                  <div className="relative">
                     <img
                       src={formData.featuredImage}
                       alt="Featured"
                       className="w-full h-32 object-cover rounded-lg"
-                      data-oid="_h:t3jq"
                     />
 
                     <Button
@@ -201,37 +229,25 @@ export function CreatePostForm() {
                       size="sm"
                       className="absolute top-2 right-2"
                       onClick={() => handleInputChange("featuredImage", "")}
-                      data-oid="z8s16zh"
                     >
                       Remove
                     </Button>
                   </div>
                 ) : (
-                  <div
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center"
-                    data-oid="tqe3.0y"
-                  >
-                    <Upload
-                      className="h-8 w-8 mx-auto mb-2 text-muted-foreground"
-                      data-oid="w_:9qtl"
-                    />
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
+                    <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
 
-                    <p
-                      className="text-sm text-muted-foreground mb-2"
-                      data-oid="h16ngwp"
-                    >
+                    <p className="text-sm text-muted-foreground mb-2">
                       Click to upload or drag and drop
                     </p>
-                    <Button variant="outline" size="sm" data-oid="2xqtz2q">
+                    <Button variant="outline" size="sm">
                       Choose File
                     </Button>
                   </div>
                 )}
 
-                <div data-oid="c92l3im">
-                  <Label htmlFor="imageUrl" data-oid="loarg7r">
-                    Or enter image URL
-                  </Label>
+                <div>
+                  <Label htmlFor="imageUrl">Or enter image URL</Label>
                   <Input
                     id="imageUrl"
                     placeholder="https://example.com/image.jpg"
@@ -239,22 +255,19 @@ export function CreatePostForm() {
                     onChange={(e) =>
                       handleInputChange("featuredImage", e.target.value)
                     }
-                    data-oid="jz8p4pu"
                   />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card data-oid="ik1gglq">
-            <CardHeader data-oid="h-8gb40">
-              <CardTitle data-oid="-qo0ig_">SEO Settings</CardTitle>
+          <Card>
+            <CardHeader>
+              <CardTitle>SEO Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4" data-oid="gc-t1xv">
-              <div data-oid="f1o-38q">
-                <Label htmlFor="slug" data-oid="64n4tvq">
-                  URL Slug
-                </Label>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="slug">URL Slug</Label>
                 <Input
                   id="slug"
                   placeholder="post-url-slug"
@@ -264,19 +277,15 @@ export function CreatePostForm() {
                     .replace(/[^\w-]/g, "")}
                   readOnly
                   className="bg-muted"
-                  data-oid="v0r1s93"
                 />
               </div>
 
-              <div data-oid="1rsufe4">
-                <Label htmlFor="metaDescription" data-oid="1o4vas1">
-                  Meta Description
-                </Label>
+              <div>
+                <Label htmlFor="metaDescription">Meta Description</Label>
                 <Textarea
                   id="metaDescription"
                   placeholder="SEO description..."
                   rows={3}
-                  data-oid="t5et3hw"
                 />
               </div>
             </CardContent>

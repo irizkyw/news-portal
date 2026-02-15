@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Search, Menu, Moon, Sun, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,82 +17,76 @@ import { categories } from "@/data/mockData";
 interface NavbarProps {
   darkMode: boolean;
   toggleDarkMode: () => void;
-  onNavigate: (page: "home" | "article" | "admin", slug?: string) => void;
+  isLoggedIn: boolean;
+  onLogout: () => void;
 }
 
-export function Navbar({ darkMode, toggleDarkMode, onNavigate }: NavbarProps) {
-  const [isLoggedIn] = useState(false); // Mock login state
+export function Navbar({
+  darkMode,
+  toggleDarkMode,
+  isLoggedIn,
+  onLogout,
+}: NavbarProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && searchQuery.trim() !== "") {
+      navigate(`/search?q=${searchQuery}`);
+    }
+  };
 
   const NavLinks = () => (
     <>
       {categories.slice(0, 4).map((category) => (
-        <a
+        <Link
           key={category.id}
-          href={`/category/${category.slug}`}
+          to={`/category/${category.slug}`}
           className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          data-oid="o0wqe0m"
         >
           {category.name}
-        </a>
+        </Link>
       ))}
     </>
   );
 
   return (
-    <header
-      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-      data-oid="fs7u._7"
-    >
-      <div className="container mx-auto px-4" data-oid="26zrvj4">
-        <div
-          className="flex h-16 items-center justify-between"
-          data-oid="rx06me3"
-        >
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-4" data-oid="oiqmv4n">
-            <a
-              href="/"
-              className="flex items-center space-x-2"
-              data-oid="ta3yb3y"
-            >
-              <div
-                className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center"
-                data-oid="wiqdw1x"
-              >
-                <span
-                  className="text-primary-foreground font-bold text-lg"
-                  data-oid="zq7ds-_"
-                >
+          <div className="flex items-center space-x-4">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">
                   N
                 </span>
               </div>
-              <span className="font-bold text-xl" data-oid="0k:nv3e">
-                NewsFlow
-              </span>
-            </a>
+              <span className="font-bold text-xl">NewsFlow</span>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav
-            className="hidden md:flex items-center space-x-6"
-            data-oid="22cv28f"
-          >
-            <NavLinks data-oid="5500g43" />
+          <nav className="hidden md:flex items-center space-x-6">
+            <NavLinks />
           </nav>
 
           {/* Search and Actions */}
-          <div className="flex items-center space-x-4" data-oid="st6x7y6">
+          <div className="flex items-center space-x-4">
             {/* Search */}
-            <div className="relative hidden sm:block" data-oid="wkjbqys">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                data-oid="l_uqmnq"
-              />
+            <div className="relative hidden sm:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
               <Input
                 placeholder="Search news..."
                 className="pl-10 w-64"
-                data-oid="ti-whm-"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchSubmit}
               />
             </div>
 
@@ -101,90 +96,78 @@ export function Navbar({ darkMode, toggleDarkMode, onNavigate }: NavbarProps) {
               size="sm"
               onClick={toggleDarkMode}
               className="h-9 w-9 p-0"
-              data-oid="8yw7e:a"
             >
               {darkMode ? (
-                <Sun className="h-4 w-4" data-oid="2m_ma6e" />
+                <Sun className="h-4 w-4" />
               ) : (
-                <Moon className="h-4 w-4" data-oid="wdxrh92" />
+                <Moon className="h-4 w-4" />
               )}
             </Button>
 
             {/* User Menu */}
             {isLoggedIn ? (
-              <DropdownMenu data-oid="1qq6-5p">
-                <DropdownMenuTrigger asChild data-oid="kdgby7o">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     className="relative h-9 w-9 rounded-full"
-                    data-oid="edj08ep"
                   >
-                    <Avatar className="h-9 w-9" data-oid="l19q64m">
-                      <AvatarImage
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-                        data-oid=".c_:v18"
-                      />
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" />
 
-                      <AvatarFallback data-oid="ab5-mdw">JD</AvatarFallback>
+                      <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-56"
-                  align="end"
-                  data-oid="pxyra:p"
-                >
-                  <DropdownMenuItem data-oid="p7qai:u">
-                    <User className="mr-2 h-4 w-4" data-oid="2fiblq6" />
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator data-oid="s_wmvu4" />
-                  <DropdownMenuItem data-oid="0xshbg5">
-                    Settings
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem onClick={onLogout}>
+                    Logout
                   </DropdownMenuItem>
-                  <DropdownMenuItem data-oid="9rwfanf">Logout</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="default" size="sm" data-oid="a7opu09">
-                Login
-              </Button>
+              <Link to="/login">
+                <Button variant="default" size="sm">
+                  Login
+                </Button>
+              </Link>
             )}
 
             {/* Mobile Menu */}
-            <Sheet data-oid="eyv1a:w">
-              <SheetTrigger asChild data-oid=":ws4zmr">
+            <Sheet>
+              <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="md:hidden h-9 w-9 p-0"
-                  data-oid="-k4r2tx"
                 >
-                  <Menu className="h-4 w-4" data-oid="ljyoyl6" />
+                  <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80" data-oid="vc7-m6f">
-                <div
-                  className="flex flex-col space-y-4 mt-6"
-                  data-oid="sktcrjx"
-                >
+              <SheetContent side="right" className="w-80">
+                <div className="flex flex-col space-y-4 mt-6">
                   {/* Mobile Search */}
-                  <div className="relative" data-oid="_fmsvxe">
-                    <Search
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                      data-oid="s7au5cw"
-                    />
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
                     <Input
                       placeholder="Search news..."
                       className="pl-10"
-                      data-oid="4d88.ye"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      onKeyDown={handleSearchSubmit}
                     />
                   </div>
 
                   {/* Mobile Navigation */}
-                  <nav className="flex flex-col space-y-3" data-oid="6oo5-9b">
-                    <NavLinks data-oid="m5.-d8-" />
+                  <nav className="flex flex-col space-y-3">
+                    <NavLinks />
                   </nav>
                 </div>
               </SheetContent>
