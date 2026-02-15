@@ -57,33 +57,73 @@ function App() {
     location.pathname.startsWith("/preview");
 
   return (
-    <div className={darkMode ? "dark" : ""}>
-      <div className="min-h-screen bg-background text-foreground">
+    <div className={darkMode ? "dark" : ""} data-oid="xyh6.:9">
+      <div
+        className="min-h-screen bg-background text-foreground"
+        data-oid="skz:g-r"
+      >
         {!isAdminRoute && (
           <Navbar
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
             isLoggedIn={isLoggedIn}
             onLogout={handleLogout}
+            data-oid="sdprwqd"
           />
         )}
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/news/:slug" element={<ArticlePage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/search" element={<SearchResultsPage />} />
-          <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/tag/:tag" element={<TagPage />} />
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Routes data-oid="xc.s__7">
+          <Route
+            path="/"
+            element={<HomePage data-oid="-622sh." />}
+            data-oid="9.9etu-"
+          />
+          <Route
+            path="/news/:slug"
+            element={<ArticlePage data-oid="8-for8j" />}
+            data-oid="4dsrxxy"
+          />
+          <Route
+            path="/admin"
+            element={<AdminDashboard data-oid="bqmzux_" />}
+            data-oid="qy8tztx"
+          />
+          <Route
+            path="/search"
+            element={<SearchResultsPage data-oid="36u0zch" />}
+            data-oid="twd38:t"
+          />
+          <Route
+            path="/category/:slug"
+            element={<CategoryPage data-oid="_wa9-x4" />}
+            data-oid="dw7acy0"
+          />
+          <Route
+            path="/tag/:tag"
+            element={<TagPage data-oid="ndlbd:n" />}
+            data-oid="ktpp89n"
+          />
+          <Route
+            path="/login"
+            element={<LoginPage onLogin={handleLogin} data-oid="-gcmf.z" />}
+            data-oid="8nusju2"
+          />
           <Route
             path="/register"
-            element={<RegisterPage onRegister={handleRegister} />}
+            element={
+              <RegisterPage onRegister={handleRegister} data-oid="gfx_yw7" />
+            }
+            data-oid="w31hns0"
           />
-          <Route path="/preview" element={<PreviewPage />} />
+
+          <Route
+            path="/preview"
+            element={<PreviewPage data-oid="mmfbhsz" />}
+            data-oid="yn6hcdv"
+          />
         </Routes>
 
-        {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <Footer data-oid="pet_sn9" />}
       </div>
     </div>
   );

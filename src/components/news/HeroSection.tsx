@@ -61,17 +61,26 @@ export function HeroSection() {
   }
 
   return (
-    <section className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <section className="container mx-auto px-4 py-8" data-oid="1.jp_tq">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" data-oid="q17jx.0">
         {/* Main Featured Article */}
-        <div className="lg:col-span-2">
-          <NewsCard article={featuredArticle} variant="featured" />
+        <div className="lg:col-span-2" data-oid="wlgr2jj">
+          <NewsCard
+            article={featuredArticle}
+            variant="featured"
+            data-oid="p4v8d86"
+          />
         </div>
 
         {/* Supporting Articles */}
-        <div className="space-y-6">
+        <div className="space-y-6" data-oid="6qaiq1v">
           {supportingArticles.map((article) => (
-            <NewsCard key={article.id} article={article} variant="compact" />
+            <NewsCard
+              key={article.id}
+              article={article}
+              variant="compact"
+              data-oid="tkur-pg"
+            />
           ))}
         </div>
       </div>
