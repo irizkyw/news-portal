@@ -4,26 +4,16 @@ import (
 	"database/sql"
 	"net/http"
 	"news-portal/backend/database"
+	"news-portal/backend/models" // Import models package
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User struct {
-	ID        int       `db:"id"`
-	Email     string    `db:"email"`
-	Name      string    `db:"name"`
-	Password  string    `db:"password"`
-	Avatar    string    `db:"avatar"`
-	Bio       string    `db:"bio"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
-}
-
 func GetUsers(c *gin.Context) {
-	var users []User
-	if err := database.DB.Select(&users, "SELECT * FROM users"); err != nil {
+	var users []models.User
+	if err := database.DB.Select(&users, "SELECT id, email, name, role, avatar, bio, created_at, updated_at FROM users"); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -32,8 +22,8 @@ func GetUsers(c *gin.Context) {
 
 func GetUser(c *gin.Context) {
 	id := c.Param("id")
-	var user User
-	if err := database.DB.Get(&user, "SELECT * FROM users WHERE id = ?", id); err != nil {
+	var user models.User
+	if err := database.DB.Get(&user, "SELECT id, email, name, role, avatar, bio, created_at, updated_at FROM users WHERE id = ?", id); err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
@@ -48,6 +38,7 @@ type CreateUserRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Name     string `json:"name"`
 	Password string `json:"password" binding:"required"`
+	Role     string `json:"role"` // Allow role to be set on creation, e.g., by admin
 	Avatar   string `json:"avatar"`
 	Bio      string `json:"bio"`
 }
@@ -65,7 +56,12 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	result, err := database.DB.Exec("INSERT INTO users (email, name, password, avatar, bio) VALUES (?, ?, ?, ?, ?)", req.Email, req.Name, string(hashedPassword), req.Avatar, req.Bio)
+	// Default role to "user" if not provided or if the caller is not an admin (checked by middleware)
+	if req.Role == "" {
+		req.Role = "user"
+	}
+
+	result, err := database.DB.Exec("INSERT INTO users (email, name, password, role, avatar, bio) VALUES (?, ?, ?, ?, ?, ?)", req.Email, req.Name, string(hashedPassword), req.Role, req.Avatar, req.Bio)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -77,8 +73,8 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	var user User
-	if err := database.DB.Get(&user, "SELECT * FROM users WHERE id = ?", id); err != nil {
+	var user models.User
+	if err := database.DB.Get(&user, "SELECT id, email, name, role, avatar, bio, created_at, updated_at FROM users WHERE id = ?", id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -89,6 +85,7 @@ func CreateUser(c *gin.Context) {
 type UpdateUserRequest struct {
 	Email  string `json:"email"`
 	Name   string `json:"name"`
+	Role   string `json:"role"` // Allow role to be updated, e.g., by admin
 	Avatar string `json:"avatar"`
 	Bio    string `json:"bio"`
 }
@@ -101,13 +98,50 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if _, err := database.DB.Exec("UPDATE users SET email = ?, name = ?, avatar = ?, bio = ? WHERE id = ?", req.Email, req.Name, req.Avatar, req.Bio, id); err != nil {
+	// Get the role of the user making the request from context
+	callerRole, _ := c.Get("role") // AuthMiddleware sets this
+
+	// Only allow admin to update the role field
+	if req.Role != "" && callerRole != "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden: Only admin can update user roles"})
+		return
+	}
+
+	// Construct the update query dynamically
+	query := "UPDATE users SET updated_at = ?"
+	args := []interface{}{time.Now()}
+
+	if req.Email != "" {
+		query += ", email = ?"
+		args = append(args, req.Email)
+	}
+	if req.Name != "" {
+		query += ", name = ?"
+		args = append(args, req.Name)
+	}
+	if req.Avatar != "" {
+		query += ", avatar = ?"
+		args = append(args, req.Avatar)
+	}
+	if req.Bio != "" {
+		query += ", bio = ?"
+		args = append(args, req.Bio)
+	}
+	if req.Role != "" && callerRole == "admin" { // Only update role if provided AND caller is admin
+		query += ", role = ?"
+		args = append(args, req.Role)
+	}
+
+	query += " WHERE id = ?"
+	args = append(args, id)
+
+	if _, err := database.DB.Exec(query, args...); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var user User
-	if err := database.DB.Get(&user, "SELECT * FROM users WHERE id = ?", id); err != nil {
+	var user models.User
+	if err := database.DB.Get(&user, "SELECT id, email, name, role, avatar, bio, created_at, updated_at FROM users WHERE id = ?", id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
