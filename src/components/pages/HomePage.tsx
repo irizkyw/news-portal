@@ -1,8 +1,8 @@
 import React from "react";
-import { HeroSection } from "@/components/news/HeroSection";
-import { TrendingSection } from "@/components/news/TrendingSection";
-import { LatestNews } from "@/components/news/LatestNews";
-import { Newsletter } from "@/components/news/Newsletter";
+import { HeroSection } from "../news/HeroSection";
+import { TrendingSection } from "../news/TrendingSection";
+import { LatestNews } from "../news/LatestNews";
+import { Newsletter } from "../news/Newsletter";
 
 export function HomePage() {
   return (
