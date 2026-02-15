@@ -1,11 +1,17 @@
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://localhost:8080"; // Changed to match backend base path
 
-export interface Author {
+export interface User {
   id: string;
+  email: string;
   name: string;
-  avatar: string;
-  bio: string;
+  role: string;
+  avatar?: string;
+  bio?: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export type Author = User; // Author is essentially a User
 
 export interface Category {
   id: string;
@@ -51,9 +57,21 @@ export interface WeeklyTraffic {
 export interface GetPostsParams {
   sortBy?: "latest" | "popular" | "trending" | "views";
   limit?: number;
+  isFeatured?: boolean;
   categorySlug?: string;
   tagName?: string;
 }
+
+// Helper to get auth token
+const getAuthToken = (): string => {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    // In a real app, you might redirect to login or throw a more specific error
+    console.error("Auth token not found.");
+    return "";
+  }
+  return token;
+};
 
 // Mengambil semua artikel dari backend dengan parameter opsional
 export const getPosts = async (params?: GetPostsParams): Promise<Article[]> => {
@@ -110,6 +128,7 @@ export const createPost = async (postData: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": getAuthToken(),
     },
     body: JSON.stringify(postData),
   });
@@ -130,18 +149,92 @@ export const getCategories = async (): Promise<Category[]> => {
   return response.json();
 };
 
-// Mengambil daftar penulis (user)
-export const getAuthors = async (): Promise<Author[]> => {
-  const response = await fetch(`${API_BASE_URL}/users`);
+// User Management API Calls
+export const getUsers = async (): Promise<User[]> => {
+  const response = await fetch(`${API_BASE_URL}/users`, {
+    headers: {
+      "Authorization": getAuthToken(),
+    },
+  });
   if (!response.ok) {
-    throw new Error("Gagal mengambil data penulis");
+    throw new Error("Failed to fetch users");
   }
   return response.json();
 };
 
+export const getUser = async (id: string): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    headers: {
+      "Authorization": getAuthToken(),
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch user");
+  }
+  return response.json();
+};
+
+export const createUser = async (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'password'> & { password?: string }): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": getAuthToken(),
+    },
+    body: JSON.stringify(userData),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to create user");
+  }
+  return response.json();
+};
+
+export const updateUser = async (id: string, userData: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": getAuthToken(),
+    },
+    body: JSON.stringify(userData),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to update user");
+  }
+  return response.json();
+};
+
+export const deleteUser = async (id: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": getAuthToken(),
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to delete user");
+  }
+};
+
+
+// Mengambil daftar penulis (user) - This function is now redundant, use getUsers
+// export const getAuthors = async (): Promise<Author[]> => {
+//   const response = await fetch(`${API_BASE_URL}/users`);
+//   if (!response.ok) {
+//     throw new Error("Gagal mengambil data penulis");
+//   }
+//   return response.json();
+// };
+
 // SEKARANG MENGAMBIL DARI BACKEND: Statistik Dashboard
 export const getDashboardStats = async (): Promise<DashboardStats> => {
-  const response = await fetch(`${API_BASE_URL}/stats/dashboard`);
+  const response = await fetch(`${API_BASE_URL}/stats/dashboard`, {
+    headers: {
+      "Authorization": getAuthToken(),
+    },
+  });
   if (!response.ok) {
     throw new Error("Gagal mengambil statistik dashboard");
   }
@@ -150,7 +243,11 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
 
 // SEKARANG MENGAMBIL DARI BACKEND: Data Grafik Mingguan
 export const getWeeklyTrafficData = async (): Promise<WeeklyTraffic[]> => {
-  const response = await fetch(`${API_BASE_URL}/stats/traffic`);
+  const response = await fetch(`${API_BASE_URL}/stats/traffic`, {
+    headers: {
+      "Authorization": getAuthToken(),
+    },
+  });
   if (!response.ok) {
     throw new Error("Gagal mengambil data traffic mingguan");
   }
@@ -173,7 +270,7 @@ export const subscribeToNewsletter = async (email: string) => {
   return response.json();
 };
 
-export const login = async (credentials: { email: string; password: string }): Promise<{ token: string }> => {
+export const login = async (credentials: { email: string; password: string }): Promise<{ token: string; user: User }> => {
   const response = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
     headers: {
@@ -189,7 +286,7 @@ export const login = async (credentials: { email: string; password: string }): P
   return response.json();
 };
 
-export const register = async (userData: { name: string; email: string; password: string }): Promise<any> => {
+export const register = async (userData: { name: string; email: string; password: string; role?: string }): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}/users`, { // Assuming /api/users is the register endpoint
     method: "POST",
     headers: {
@@ -199,6 +296,7 @@ export const register = async (userData: { name: string; email: string; password
       name: userData.name,
       email: userData.email,
       password: userData.password,
+      role: userData.role || "user", // Default role to "user"
       avatar: "", // Default empty avatar
       bio: "",    // Default empty bio
     }),

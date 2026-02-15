@@ -32,8 +32,18 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem('authToken');
     const storedUser = localStorage.getItem('authUser');
     if (token && storedUser) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsLoggedIn(true);
+        setUser(parsedUser);
+      } catch (e) {
+        console.error("Failed to parse stored user data from localStorage:", e);
+        // Clear invalid data and log out
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        setIsLoggedIn(false);
+        setUser(null);
+      }
     }
   }, []);
 
