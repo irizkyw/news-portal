@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { HomePage } from "@/components/pages/HomePage";
-import { ArticlePage } from "@/components/pages/ArticlePage";
-import { AdminDashboard } from "@/components/pages/AdminDashboard";
-import { SearchResultsPage } from "@/components/pages/SearchResultsPage";
-import { CategoryPage } from "@/components/pages/CategoryPage";
-import { TagPage } from "@/components/pages/TagPage";
-import { LoginPage } from "@/components/pages/LoginPage";
-import { RegisterPage } from "@/components/pages/RegisterPage";
+import { Navbar } from "./components/layout/Navbar";
+import { Footer } from "./components/layout/Footer";
+import { HomePage } from "./components/pages/HomePage";
+import { ArticlePage } from "./components/pages/ArticlePage";
+import { AdminDashboard } from "./components/pages/AdminDashboard";
+import { SearchResultsPage } from "./components/pages/SearchResultsPage";
+import { CategoryPage } from "./components/pages/CategoryPage";
+import { TagPage } from "./components/pages/TagPage";
+import { LoginPage } from "./components/pages/LoginPage";
+import { RegisterPage } from "./components/pages/RegisterPage";
 import { PreviewPage } from "./components/pages/PreviewPage";
 import { ProfileSettingsPage } from "./components/pages/ProfileSettingsPage"; // Import ProfileSettingsPage
 import { ErrorPage } from "./components/pages/ErrorPage"; // Import ErrorPage
