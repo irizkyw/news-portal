@@ -81,7 +81,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["admin", "editor"]}>
                 <AdminDashboard data-oid="6dq6av6" />
               </ProtectedRoute>
             }
@@ -92,7 +92,7 @@ function App() {
           <Route
             path="/dashboard/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["admin", "editor", "user"]}>
                 <ProfileSettingsPage />
               </ProtectedRoute>
             }
