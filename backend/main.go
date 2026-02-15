@@ -6,12 +6,24 @@ import (
 	"news-portal/backend/database"
 	"news-portal/backend/handlers"
 	"news-portal/backend/seed"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors" // Import the cors package
 )
 
 func main() {
 	router := gin.Default()
+
+	// Configure CORS middleware
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Allow frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	if err := database.Connect(false); err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
