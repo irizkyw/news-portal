@@ -64,62 +64,62 @@ export function LatestNews() {
   };
 
   return (
-    <section className="container mx-auto px-4 py-8" data-oid="knip3ei">
+    <section className="container mx-auto px-4 py-8" data-oid="d01m:_g">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="w-full"
-        data-oid="fg2dxk9"
+        data-oid="mehpap6"
       >
         <div
           className="flex items-center justify-between mb-6"
-          data-oid="b1itjfw"
+          data-oid="9734epy"
         >
-          <h2 className="text-2xl font-bold" data-oid=":ogsz0l">
+          <h2 className="text-2xl font-bold" data-oid=":3_if5f">
             Latest News
           </h2>
-          <TabsList data-oid="l1xrd.g">
-            <TabsTrigger value="latest" data-oid="66fji-g">
+          <TabsList data-oid="3nj836g">
+            <TabsTrigger value="latest" data-oid="fwl_yzc">
               Latest
             </TabsTrigger>
-            <TabsTrigger value="popular" data-oid="u:5k:uz">
+            <TabsTrigger value="popular" data-oid="ozxf8y.">
               Popular
             </TabsTrigger>
-            <TabsTrigger value="trending" data-oid="auca94x">
+            <TabsTrigger value="trending" data-oid="z2-gjyd">
               Trending
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="latest" data-oid=":gwx15b">
+        <TabsContent value="latest" data-oid="_kfkmwf">
           <div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="lhkfywc"
+            data-oid=".::65tw"
           >
             {getFilteredArticles("latest").map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="s42b754" />
+              <NewsCard key={article.id} article={article} data-oid="-4gikgf" />
             ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="popular" data-oid="bjm3wp3">
+        <TabsContent value="popular" data-oid="73aogjw">
           <div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="nccx:ig"
+            data-oid="h:vn7p8"
           >
             {getFilteredArticles("popular").map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="6h06ts1" />
+              <NewsCard key={article.id} article={article} data-oid="99sp-qy" />
             ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="trending" data-oid="ro11c-l">
+        <TabsContent value="trending" data-oid="a93p610">
           <div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="xzfaue0"
+            data-oid="5zphxl6"
           >
             {getFilteredArticles("trending").map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="-xa7i_m" />
+              <NewsCard key={article.id} article={article} data-oid="0f1yuev" />
             ))}
           </div>
         </TabsContent>

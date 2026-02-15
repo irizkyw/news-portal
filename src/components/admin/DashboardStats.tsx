@@ -41,7 +41,7 @@ export function DashboardStats() {
   return (
     <div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-      data-oid="jiof9g9"
+      data-oid="wtn-x3a"
     >
       {stats.map((stat, index) => {
         const Icon = stat.icon;
@@ -49,40 +49,40 @@ export function DashboardStats() {
         const isNegative = stat.change < 0;
 
         return (
-          <Card key={index} data-oid=":5fepxk">
+          <Card key={index} data-oid="khivns5">
             <CardHeader
               className="flex flex-row items-center justify-between space-y-0 pb-2"
-              data-oid="j85kccl"
+              data-oid="_wzanf:"
             >
               <CardTitle
                 className="text-sm font-medium text-muted-foreground"
-                data-oid="jr44_x6"
+                data-oid="wsxn4jt"
               >
                 {stat.title}
               </CardTitle>
               <Icon
                 className="h-4 w-4 text-muted-foreground"
-                data-oid="0i_-eer"
+                data-oid="nrjsl_t"
               />
             </CardHeader>
-            <CardContent data-oid="db83m_k">
-              <div className="text-2xl font-bold" data-oid="2bctoec">
+            <CardContent data-oid="oo5cp2q">
+              <div className="text-2xl font-bold" data-oid="ayapjpv">
                 {stat.value}
               </div>
               <div
                 className="flex items-center space-x-1 text-xs text-muted-foreground"
-                data-oid="5cp:7ck"
+                data-oid="j.u7ug8"
               >
                 {isPositive && (
                   <TrendingUp
                     className="h-3 w-3 text-green-500"
-                    data-oid="rmyzvwo"
+                    data-oid="hzvqy4i"
                   />
                 )}
                 {isNegative && (
                   <TrendingDown
                     className="h-3 w-3 text-red-500"
-                    data-oid="5_qop1-"
+                    data-oid="iymesvh"
                   />
                 )}
                 <span
@@ -93,12 +93,12 @@ export function DashboardStats() {
                         ? "text-red-500"
                         : "text-muted-foreground"
                   }
-                  data-oid="8wkcfpp"
+                  data-oid="u4uwcyc"
                 >
                   {isPositive ? "+" : ""}
                   {stat.change}%
                 </span>
-                <span data-oid="554-ndq">from last month</span>
+                <span data-oid="buqj0_l">from last month</span>
               </div>
             </CardContent>
           </Card>

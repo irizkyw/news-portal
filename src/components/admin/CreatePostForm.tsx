@@ -57,7 +57,7 @@ function Editor({ value, onChange }) {
     }
   }, [quill, value, onChange]);
 
-  return <div ref={quillRef} data-oid="y3cwzhn" />;
+  return <div ref={quillRef} data-oid="_sy9k1q" />;
 }
 
 export function CreatePostForm() {
@@ -96,18 +96,18 @@ export function CreatePostForm() {
   };
 
   return (
-    <div className="space-y-6" data-oid="yacb6x4">
-      <div className="flex items-center justify-between" data-oid="7whwltn">
-        <h2 className="text-2xl font-bold" data-oid="gwrbra.">
+    <div className="space-y-6" data-oid="imt2m4k">
+      <div className="flex items-center justify-between" data-oid="kz_cn1z">
+        <h2 className="text-2xl font-bold" data-oid="uvoonbq">
           Create New Post
         </h2>
-        <div className="flex items-center space-x-2" data-oid="soa_ipi">
-          <Button variant="outline" onClick={handlePreview} data-oid="nbn2qma">
-            <Eye className="h-4 w-4 mr-2" data-oid="0r9uk:_" />
+        <div className="flex items-center space-x-2" data-oid="sw7vdnn">
+          <Button variant="outline" onClick={handlePreview} data-oid="cvb6bey">
+            <Eye className="h-4 w-4 mr-2" data-oid="tr:_-lc" />
             Preview
           </Button>
-          <Button onClick={handleSubmit} data-oid="i8ej4bx">
-            <Save className="h-4 w-4 mr-2" data-oid="b79xh2q" />
+          <Button onClick={handleSubmit} data-oid="xxyro_3">
+            <Save className="h-4 w-4 mr-2" data-oid="7pr7e-e" />
             Save Post
           </Button>
         </div>
@@ -116,17 +116,17 @@ export function CreatePostForm() {
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        data-oid="7s5.rpa"
+        data-oid="v2eg4mm"
       >
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6" data-oid="5dd0tk4">
-          <Card data-oid="uxzz4xm">
-            <CardHeader data-oid="k4h_j0h">
-              <CardTitle data-oid="2h2vg7f">Post Content</CardTitle>
+        <div className="lg:col-span-2 space-y-6" data-oid="-j952t2">
+          <Card data-oid="4kc4lv_">
+            <CardHeader data-oid="tg9oomm">
+              <CardTitle data-oid="8ajg5-q">Post Content</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4" data-oid="-t:jq16">
-              <div data-oid="lmnnq_d">
-                <Label htmlFor="title" data-oid="21iv2.y">
+            <CardContent className="space-y-4" data-oid="clkmp.3">
+              <div data-oid="uz2bpc7">
+                <Label htmlFor="title" data-oid="au58ju.">
                   Title
                 </Label>
                 <Input
@@ -135,12 +135,12 @@ export function CreatePostForm() {
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
                   className="text-lg font-semibold"
-                  data-oid="6lbg8-h"
+                  data-oid="uiog6:b"
                 />
               </div>
 
-              <div data-oid="qtu.lfc">
-                <Label htmlFor="excerpt" data-oid="__elpo0">
+              <div data-oid="1ytdagi">
+                <Label htmlFor="excerpt" data-oid="f8ruzui">
                   Excerpt
                 </Label>
                 <Textarea
@@ -149,17 +149,17 @@ export function CreatePostForm() {
                   value={formData.excerpt}
                   onChange={(e) => handleInputChange("excerpt", e.target.value)}
                   rows={3}
-                  data-oid="24sktf9"
+                  data-oid="y5g10y3"
                 />
               </div>
 
-              <div data-oid="qj1ulji">
-                <Label data-oid=".6ae0pa">Content</Label>
-                <div className="bg-background" data-oid="o.ghwto">
+              <div data-oid="a65tch9">
+                <Label data-oid="fphbd-m">Content</Label>
+                <div className="bg-background" data-oid="lc:32pf">
                   <Editor
                     value={formData.content}
                     onChange={handleContentChange}
-                    data-oid="-09p.o-"
+                    data-oid="3m24z-c"
                   />
                 </div>
               </div>
@@ -168,14 +168,14 @@ export function CreatePostForm() {
         </div>
 
         {/* Sidebar Settings */}
-        <div className="space-y-6" data-oid="t2emg-s">
-          <Card data-oid="8g488_k">
-            <CardHeader data-oid="orlhsjx">
-              <CardTitle data-oid="y3igea-">Post Settings</CardTitle>
+        <div className="space-y-6" data-oid="arxsidd">
+          <Card data-oid="i33zlua">
+            <CardHeader data-oid="nd_gi7i">
+              <CardTitle data-oid="q90-ajc">Post Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4" data-oid="ephdalr">
-              <div data-oid="gdw277a">
-                <Label htmlFor="category" data-oid="-qnftr_">
+            <CardContent className="space-y-4" data-oid="70eu-24">
+              <div data-oid="5u73_yn">
+                <Label htmlFor="category" data-oid="561-0wt">
                   Category
                 </Label>
                 <Select
@@ -183,20 +183,20 @@ export function CreatePostForm() {
                   onValueChange={(value) =>
                     handleInputChange("category", value)
                   }
-                  data-oid="0-vet4m"
+                  data-oid="jjrbvgx"
                 >
-                  <SelectTrigger data-oid="7lc_khh">
+                  <SelectTrigger data-oid="a6djmaw">
                     <SelectValue
                       placeholder="Select category"
-                      data-oid="7gambry"
+                      data-oid="_vfnga2"
                     />
                   </SelectTrigger>
-                  <SelectContent data-oid="4tw13ks">
+                  <SelectContent data-oid="d:jyp3a">
                     {categories.map((category) => (
                       <SelectItem
                         key={category.id}
                         value={category.slug}
-                        data-oid="qt.n.xo"
+                        data-oid="51x-jj0"
                       >
                         {category.name}
                       </SelectItem>
@@ -205,8 +205,8 @@ export function CreatePostForm() {
                 </Select>
               </div>
 
-              <div data-oid="nf-7v__">
-                <Label htmlFor="tags" data-oid="wsc0t.v">
+              <div data-oid="zyjq7._">
+                <Label htmlFor="tags" data-oid="9a2.tg_">
                   Tags
                 </Label>
                 <Input
@@ -214,27 +214,27 @@ export function CreatePostForm() {
                   placeholder="Enter tags, comma-separated"
                   value={formData.tags}
                   onChange={(e) => handleInputChange("tags", e.target.value)}
-                  data-oid="8x.knhp"
+                  data-oid="olhjn31"
                 />
               </div>
 
-              <div data-oid="88o:9gu">
-                <Label htmlFor="status" data-oid="hlb39_5">
+              <div data-oid="43ctp8f">
+                <Label htmlFor="status" data-oid="rr:dg:i">
                   Status
                 </Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => handleInputChange("status", value)}
-                  data-oid="cxkl.yy"
+                  data-oid="2t3:lbv"
                 >
-                  <SelectTrigger data-oid="k6yhsl6">
-                    <SelectValue data-oid="k-v3f:f" />
+                  <SelectTrigger data-oid="0x2a.w4">
+                    <SelectValue data-oid="ovu9r0m" />
                   </SelectTrigger>
-                  <SelectContent data-oid="gpqbrkq">
-                    <SelectItem value="draft" data-oid="y_0-pm4">
+                  <SelectContent data-oid="c-pdygz">
+                    <SelectItem value="draft" data-oid="yy1r5or">
                       Draft
                     </SelectItem>
-                    <SelectItem value="published" data-oid="za4n43k">
+                    <SelectItem value="published" data-oid="j.77bhu">
                       Published
                     </SelectItem>
                   </SelectContent>
@@ -243,19 +243,19 @@ export function CreatePostForm() {
             </CardContent>
           </Card>
 
-          <Card data-oid="i0jwxm0">
-            <CardHeader data-oid="qxvj4q9">
-              <CardTitle data-oid="n_u199d">Featured Image</CardTitle>
+          <Card data-oid="l3ckl8q">
+            <CardHeader data-oid="u-q3oq7">
+              <CardTitle data-oid="ukxccdb">Featured Image</CardTitle>
             </CardHeader>
-            <CardContent data-oid="w-.okf3">
-              <div className="space-y-4" data-oid="cc3v.pp">
+            <CardContent data-oid="ao2wmb7">
+              <div className="space-y-4" data-oid="dzvev60">
                 {formData.featuredImage ? (
-                  <div className="relative" data-oid="o.x_mxz">
+                  <div className="relative" data-oid="ed359_u">
                     <img
                       src={formData.featuredImage}
                       alt="Featured"
                       className="w-full h-32 object-cover rounded-lg"
-                      data-oid="zji1f2_"
+                      data-oid=".fjx9:p"
                     />
 
                     <Button
@@ -263,7 +263,7 @@ export function CreatePostForm() {
                       size="sm"
                       className="absolute top-2 right-2"
                       onClick={() => handleInputChange("featuredImage", "")}
-                      data-oid="g:l-jt5"
+                      data-oid="trp7tbk"
                     >
                       Remove
                     </Button>
@@ -271,27 +271,27 @@ export function CreatePostForm() {
                 ) : (
                   <div
                     className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center"
-                    data-oid="21e-.pk"
+                    data-oid="y78szj6"
                   >
                     <Upload
                       className="h-8 w-8 mx-auto mb-2 text-muted-foreground"
-                      data-oid="g9:wyx9"
+                      data-oid="uatt1.f"
                     />
 
                     <p
                       className="text-sm text-muted-foreground mb-2"
-                      data-oid="_37mux0"
+                      data-oid="6vrqq6y"
                     >
                       Click to upload or drag and drop
                     </p>
-                    <Button variant="outline" size="sm" data-oid="pyb2ryb">
+                    <Button variant="outline" size="sm" data-oid="r-gvyew">
                       Choose File
                     </Button>
                   </div>
                 )}
 
-                <div data-oid="r434oh5">
-                  <Label htmlFor="imageUrl" data-oid="7dudvvr">
+                <div data-oid="mib0v:c">
+                  <Label htmlFor="imageUrl" data-oid="qqg6_g:">
                     Or enter image URL
                   </Label>
                   <Input
@@ -301,20 +301,20 @@ export function CreatePostForm() {
                     onChange={(e) =>
                       handleInputChange("featuredImage", e.target.value)
                     }
-                    data-oid="97578y4"
+                    data-oid="linmjjl"
                   />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card data-oid="_tbvydr">
-            <CardHeader data-oid="z3lqecn">
-              <CardTitle data-oid="a9i1cfm">SEO Settings</CardTitle>
+          <Card data-oid="3r:9lv5">
+            <CardHeader data-oid="4czxqjj">
+              <CardTitle data-oid="z7m04kc">SEO Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4" data-oid="jshzek3">
-              <div data-oid="a95jypt">
-                <Label htmlFor="slug" data-oid="rru52e_">
+            <CardContent className="space-y-4" data-oid="_apbvg0">
+              <div data-oid="wqqy-ze">
+                <Label htmlFor="slug" data-oid=".:dzr3g">
                   URL Slug
                 </Label>
                 <Input
@@ -326,19 +326,19 @@ export function CreatePostForm() {
                     .replace(/[^\w-]/g, "")}
                   readOnly
                   className="bg-muted"
-                  data-oid="u6.vdfw"
+                  data-oid="i-v_fzy"
                 />
               </div>
 
-              <div data-oid="b5:xwgi">
-                <Label htmlFor="metaDescription" data-oid="tsntbbw">
+              <div data-oid="8ehvlk.">
+                <Label htmlFor="metaDescription" data-oid="v.2o:sm">
                   Meta Description
                 </Label>
                 <Textarea
                   id="metaDescription"
                   placeholder="SEO description..."
                   rows={3}
-                  data-oid=":yci-oc"
+                  data-oid="_vj7gvw"
                 />
               </div>
             </CardContent>

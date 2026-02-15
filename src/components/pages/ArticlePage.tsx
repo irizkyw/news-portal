@@ -19,9 +19,9 @@ export function ArticlePage() {
     return (
       <div
         className="container mx-auto px-4 py-8 text-center"
-        data-oid="o.__emk"
+        data-oid=".642gx8"
       >
-        <h1 className="text-3xl font-bold" data-oid="0rybfxe">
+        <h1 className="text-3xl font-bold" data-oid="xf0s2zq">
           Article not found
         </h1>
       </div>
@@ -51,26 +51,26 @@ export function ArticlePage() {
   };
 
   return (
-    <main data-oid="zi0f.:e">
-      <div className="container mx-auto px-4 py-8" data-oid="r.ceu1h">
+    <main data-oid="e4xntmf">
+      <div className="container mx-auto px-4 py-8" data-oid="bx4tuti">
         <div
           className="grid grid-cols-1 lg:grid-cols-4 gap-8"
-          data-oid="_1e:eln"
+          data-oid="fbz.dnz"
         >
           {/* Main Article */}
-          <article className="lg:col-span-3" data-oid="t8tpkm:">
+          <article className="lg:col-span-3" data-oid="v7mwlak">
             {/* Article Header */}
-            <div className="mb-8" data-oid="zsqf2.a">
+            <div className="mb-8" data-oid="w8ag:go">
               <Badge
                 className={article.category.color}
                 variant="secondary"
-                data-oid="54qjpvd"
+                data-oid="o10l6yg"
               >
                 {article.category.name}
               </Badge>
               <h1
                 className="text-4xl font-bold mt-4 mb-6 font-serif leading-tight"
-                data-oid="ii.ieq5"
+                data-oid="mzc1ep-"
               >
                 {article.title}
               </h1>
@@ -78,26 +78,26 @@ export function ArticlePage() {
               {/* Article Meta */}
               <div
                 className="flex items-center justify-between flex-wrap gap-4 pb-6 border-b"
-                data-oid="eeouc9p"
+                data-oid=".z37cg9"
               >
-                <div className="flex items-center space-x-4" data-oid="t0o49ty">
-                  <Avatar className="h-12 w-12" data-oid="4atfxe6">
+                <div className="flex items-center space-x-4" data-oid="xv0ko9x">
+                  <Avatar className="h-12 w-12" data-oid="1twbmuw">
                     <AvatarImage
                       src={article.author.avatar}
-                      data-oid="._1mgmt"
+                      data-oid="3mumjyv"
                     />
 
-                    <AvatarFallback data-oid="x.795tg">
+                    <AvatarFallback data-oid="w:-b54i">
                       {article.author.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div data-oid="rvpe.7c">
-                    <p className="font-semibold" data-oid="0mek:ot">
+                  <div data-oid="kebvy_x">
+                    <p className="font-semibold" data-oid="4oxl6ui">
                       {article.author.name}
                     </p>
                     <p
                       className="text-sm text-muted-foreground"
-                      data-oid="kgwsexx"
+                      data-oid="3b40vwb"
                     >
                       {formatDate(article.publishedAt)}
                     </p>
@@ -106,21 +106,21 @@ export function ArticlePage() {
 
                 <div
                   className="flex items-center space-x-6 text-sm text-muted-foreground"
-                  data-oid=":hw6:sg"
+                  data-oid="fag1xzg"
                 >
                   <div
                     className="flex items-center space-x-1"
-                    data-oid="79eiw7w"
+                    data-oid="g92z_0z"
                   >
-                    <Clock className="h-4 w-4" data-oid="-9vhx.i" />
-                    <span data-oid="s-7ft9p">{article.readTime} min read</span>
+                    <Clock className="h-4 w-4" data-oid="oy-6vf." />
+                    <span data-oid="radr2vf">{article.readTime} min read</span>
                   </div>
                   <div
                     className="flex items-center space-x-1"
-                    data-oid="pq80wjt"
+                    data-oid="x27fe-p"
                   >
-                    <Eye className="h-4 w-4" data-oid="70r7p71" />
-                    <span data-oid=":.edp_x">
+                    <Eye className="h-4 w-4" data-oid="juvzzgi" />
+                    <span data-oid="9-lyhfp">
                       {formatViews(article.views)} views
                     </span>
                   </div>
@@ -129,45 +129,45 @@ export function ArticlePage() {
             </div>
 
             {/* Featured Image */}
-            <div className="mb-8" data-oid="ra25:-d">
+            <div className="mb-8" data-oid="j:r6twg">
               <img
                 src={article.featuredImage}
                 alt={article.title}
                 className="w-full h-64 md:h-96 object-cover rounded-lg"
-                data-oid="2qepvt4"
+                data-oid="6mhob46"
               />
             </div>
 
             {/* Article Content */}
             <div
               className="prose prose-lg max-w-none font-serif"
-              data-oid="1dplnrq"
+              data-oid="0fl_d_z"
             >
               <div
                 dangerouslySetInnerHTML={{ __html: article.content }}
-                data-oid="ma-ert_"
+                data-oid="bhlyn1z"
               />
             </div>
 
             {/* Article Actions */}
             <div
               className="flex items-center justify-between pt-8 mt-8 border-t"
-              data-oid="arkt09r"
+              data-oid="6bwjf_s"
             >
-              <div className="flex items-center space-x-2" data-oid="otv0tqb">
-                <Button variant="outline" size="sm" data-oid="u4yq1n.">
-                  <Share2 className="h-4 w-4 mr-2" data-oid="0319kc0" />
+              <div className="flex items-center space-x-2" data-oid="q9ah9-p">
+                <Button variant="outline" size="sm" data-oid="pf11lr.">
+                  <Share2 className="h-4 w-4 mr-2" data-oid="z-5ec74" />
                   Share
                 </Button>
-                <Button variant="outline" size="sm" data-oid="q3wa6b.">
-                  <Bookmark className="h-4 w-4 mr-2" data-oid="wmayku6" />
+                <Button variant="outline" size="sm" data-oid="icijag.">
+                  <Bookmark className="h-4 w-4 mr-2" data-oid=".u1guxb" />
                   Save
                 </Button>
               </div>
-              <div className="flex items-center space-x-2" data-oid="g.s7dlz">
+              <div className="flex items-center space-x-2" data-oid="imu-zzn">
                 {article.tags.map((tag) => (
-                  <Link to={`/tag/${tag}`} key={tag} data-oid="x0s2y3m">
-                    <Badge variant="secondary" data-oid="9769:bc">
+                  <Link to={`/tag/${tag}`} key={tag} data-oid="v8xc8b.">
+                    <Badge variant="secondary" data-oid="ii0e85y">
                       {tag}
                     </Badge>
                   </Link>
@@ -175,26 +175,26 @@ export function ArticlePage() {
               </div>
             </div>
             {/* Author Bio */}
-            <Card className="mt-8" data-oid="anz393j">
-              <CardContent className="p-6" data-oid="tyo4ofe">
-                <div className="flex items-start space-x-4" data-oid="_pa24ma">
-                  <Avatar className="h-16 w-16" data-oid="4ithlri">
+            <Card className="mt-8" data-oid="you:8p_">
+              <CardContent className="p-6" data-oid="ejirbtn">
+                <div className="flex items-start space-x-4" data-oid="ke45ln8">
+                  <Avatar className="h-16 w-16" data-oid="-ip91vp">
                     <AvatarImage
                       src={article.author.avatar}
-                      data-oid="6yo7irn"
+                      data-oid="3ib:u7j"
                     />
 
-                    <AvatarFallback data-oid="465w3od">
+                    <AvatarFallback data-oid="ufz-q1p">
                       {article.author.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div data-oid="xmr4lre">
-                    <h3 className="font-semibold text-lg" data-oid="145-p1:">
+                  <div data-oid="c-pj8in">
+                    <h3 className="font-semibold text-lg" data-oid="x5shfqc">
                       {article.author.name}
                     </h3>
                     <p
                       className="text-muted-foreground mt-1"
-                      data-oid="gkzh012"
+                      data-oid="es9:qos"
                     >
                       {article.author.bio}
                     </p>
@@ -205,33 +205,33 @@ export function ArticlePage() {
           </article>
 
           {/* Sidebar */}
-          <aside className="space-y-6" data-oid=".du3ro3">
-            <Card data-oid="2phnt3n">
-              <CardHeader data-oid="r.65y53">
-                <CardTitle data-oid="m4dp8y5">Related Articles</CardTitle>
+          <aside className="space-y-6" data-oid="o.38::4">
+            <Card data-oid="gwaavd5">
+              <CardHeader data-oid="n5y:v2.">
+                <CardTitle data-oid="qbj1:mu">Related Articles</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4" data-oid="_m.t--c">
+              <CardContent className="space-y-4" data-oid="dp.:aen">
                 {relatedArticles.map((relatedArticle) => (
                   <div
                     key={relatedArticle.id}
                     className="border-b last:border-b-0 pb-4 last:pb-0"
-                    data-oid="z4w9v0a"
+                    data-oid="zvxt:g_"
                   >
                     <NewsCard
                       article={relatedArticle}
                       variant="compact"
-                      data-oid="i5v:40_"
+                      data-oid="_.ocb9_"
                     />
                   </div>
                 ))}
               </CardContent>
             </Card>
 
-            <Card data-oid="zful7l2">
-              <CardHeader data-oid="sk4yms-">
-                <CardTitle data-oid="xir8-g.">Popular This Week</CardTitle>
+            <Card data-oid="v.0ugn5">
+              <CardHeader data-oid="3247buj">
+                <CardTitle data-oid="37ra-nv">Popular This Week</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4" data-oid="sr-vrcr">
+              <CardContent className="space-y-4" data-oid="-.m7gq5">
                 {articles
                   .filter((a) => a.isPopular)
                   .slice(0, 3)
@@ -239,29 +239,29 @@ export function ArticlePage() {
                     <div
                       key={popularArticle.id}
                       className="flex items-start space-x-3"
-                      data-oid="d8w9tss"
+                      data-oid="ydn0sn3"
                     >
                       <span
                         className="text-2xl font-bold text-muted-foreground"
-                        data-oid="28892gv"
+                        data-oid="1o_x5pa"
                       >
                         {index + 1}
                       </span>
-                      <div data-oid="g-v4ljk">
+                      <div data-oid="3wdha20">
                         <h4
                           className="font-semibold text-sm line-clamp-2 hover:text-primary cursor-pointer"
-                          data-oid="u_9bhsn"
+                          data-oid="ca6x8oa"
                         >
                           <a
                             href={`/news/${popularArticle.slug}`}
-                            data-oid="f3dr6.r"
+                            data-oid=".q4s2v0"
                           >
                             {popularArticle.title}
                           </a>
                         </h4>
                         <p
                           className="text-xs text-muted-foreground mt-1"
-                          data-oid="0lp7o73"
+                          data-oid="ab9mn9-"
                         >
                           {formatViews(popularArticle.views)} views
                         </p>
@@ -273,7 +273,7 @@ export function ArticlePage() {
           </aside>
         </div>
       </div>
-      <Newsletter data-oid="bn4_g4b" />
+      <Newsletter data-oid="bcgoj4y" />
     </main>
   );
 }

@@ -30,64 +30,64 @@ export function NewsCard({ article, variant = "default" }: NewsCardProps) {
 
   if (variant === "featured") {
     return (
-      <Card className="overflow-hidden border-0 shadow-lg" data-oid="xdjn.tl">
-        <div className="relative" data-oid="42z.tfx">
+      <Card className="overflow-hidden border-0 shadow-lg" data-oid="cuk20zz">
+        <div className="relative" data-oid="jw2t0.4">
           <img
             src={article.featuredImage}
             alt={article.title}
             className="w-full h-64 md:h-80 object-cover"
-            data-oid="5yv4jfq"
+            data-oid="icfnhl5"
           />
 
-          <div className="absolute top-4 left-4" data-oid="wqfolie">
-            <Badge className={article.category.color} data-oid=".x.oq7-">
+          <div className="absolute top-4 left-4" data-oid="zpe8gzu">
+            <Badge className={article.category.color} data-oid="lr8..l9">
               {article.category.name}
             </Badge>
           </div>
         </div>
-        <CardContent className="p-6" data-oid="hlamyq-">
+        <CardContent className="p-6" data-oid="8x.uxp.">
           <h2
             className="text-2xl font-bold mb-3 line-clamp-2 hover:text-primary cursor-pointer"
-            data-oid="53_a0ou"
+            data-oid="zencz_f"
           >
-            <a href={`/news/${article.slug}`} data-oid="ym6an2h">
+            <a href={`/news/${article.slug}`} data-oid="kvyun:y">
               {article.title}
             </a>
           </h2>
           <p
             className="text-muted-foreground mb-4 line-clamp-3"
-            data-oid="esuar7_"
+            data-oid="mo14c6g"
           >
             {article.excerpt}
           </p>
-          <div className="flex items-center justify-between" data-oid="ec_36v3">
-            <div className="flex items-center space-x-3" data-oid="cvi-.2b">
-              <Avatar className="h-8 w-8" data-oid="6d1uydw">
-                <AvatarImage src={article.author.avatar} data-oid="47h1871" />
-                <AvatarFallback data-oid="f1utw6a">
+          <div className="flex items-center justify-between" data-oid="hras7o.">
+            <div className="flex items-center space-x-3" data-oid="kycza62">
+              <Avatar className="h-8 w-8" data-oid="962.end">
+                <AvatarImage src={article.author.avatar} data-oid="yo9pppc" />
+                <AvatarFallback data-oid="r5-tnzy">
                   {article.author.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="text-sm" data-oid="aodvorw">
-                <p className="font-medium" data-oid="ci9rjgh">
+              <div className="text-sm" data-oid="rxqnjx9">
+                <p className="font-medium" data-oid="mfg_k7y">
                   {article.author.name}
                 </p>
-                <p className="text-muted-foreground" data-oid="4ajni0j">
+                <p className="text-muted-foreground" data-oid="_uu9tsj">
                   {formatDate(article.publishedAt)}
                 </p>
               </div>
             </div>
             <div
               className="flex items-center space-x-4 text-sm text-muted-foreground"
-              data-oid=":2ba0dr"
+              data-oid="cqnu73y"
             >
-              <div className="flex items-center space-x-1" data-oid="5krmvr7">
-                <Clock className="h-4 w-4" data-oid="7jkc-_q" />
-                <span data-oid="o0ce0h8">{article.readTime} min</span>
+              <div className="flex items-center space-x-1" data-oid="_63s.::">
+                <Clock className="h-4 w-4" data-oid="9mrpwr:" />
+                <span data-oid="zwah1o6">{article.readTime} min</span>
               </div>
-              <div className="flex items-center space-x-1" data-oid="w__98jq">
-                <Eye className="h-4 w-4" data-oid="90-vti5" />
-                <span data-oid="3u6mxhh">{formatViews(article.views)}</span>
+              <div className="flex items-center space-x-1" data-oid="0mbiqja">
+                <Eye className="h-4 w-4" data-oid="j.memh_" />
+                <span data-oid="47r.ga1">{formatViews(article.views)}</span>
               </div>
             </div>
           </div>
@@ -100,38 +100,38 @@ export function NewsCard({ article, variant = "default" }: NewsCardProps) {
     return (
       <Card
         className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow"
-        data-oid="v8nf0lx"
+        data-oid="ymjmj4z"
       >
-        <div className="flex" data-oid="rd7kw.k">
+        <div className="flex" data-oid="_ovw1aa">
           <img
             src={article.featuredImage}
             alt={article.title}
             className="w-24 h-24 object-cover flex-shrink-0"
-            data-oid="qrf.h_2"
+            data-oid="c83z6hd"
           />
 
-          <CardContent className="p-4 flex-1" data-oid="pjtj_xd">
+          <CardContent className="p-4 flex-1" data-oid="2s6vkjk">
             <Badge
               className={`${article.category.color} mb-2`}
               variant="secondary"
-              data-oid="f7z4mln"
+              data-oid="ybqh7hr"
             >
               {article.category.name}
             </Badge>
             <h3
               className="font-semibold text-sm line-clamp-2 mb-2 hover:text-primary cursor-pointer"
-              data-oid="3nvtvqf"
+              data-oid="03xailv"
             >
-              <a href={`/news/${article.slug}`} data-oid="i.49md4">
+              <a href={`/news/${article.slug}`} data-oid="f9yjio0">
                 {article.title}
               </a>
             </h3>
             <div
               className="flex items-center justify-between text-xs text-muted-foreground"
-              data-oid="ismlhlp"
+              data-oid="88t530g"
             >
-              <span data-oid="atajqbv">{formatDate(article.publishedAt)}</span>
-              <span data-oid="57fjmp:">{article.readTime} min read</span>
+              <span data-oid="ol0456.">{formatDate(article.publishedAt)}</span>
+              <span data-oid="dt5h_m:">{article.readTime} min read</span>
             </div>
           </CardContent>
         </div>
@@ -142,65 +142,65 @@ export function NewsCard({ article, variant = "default" }: NewsCardProps) {
   return (
     <Card
       className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow"
-      data-oid="aiahklu"
+      data-oid="66sgr0s"
     >
-      <div className="relative" data-oid="btslf92">
+      <div className="relative" data-oid="cn0g0gc">
         <img
           src={article.featuredImage}
           alt={article.title}
           className="w-full h-48 object-cover"
-          data-oid="bbigi9q"
+          data-oid="isgjuax"
         />
 
-        <div className="absolute top-3 left-3" data-oid="2iu8s9p">
-          <Badge className={article.category.color} data-oid="_eqg6t1">
+        <div className="absolute top-3 left-3" data-oid="a2okznw">
+          <Badge className={article.category.color} data-oid="eiuer_x">
             {article.category.name}
           </Badge>
         </div>
       </div>
-      <CardContent className="p-4" data-oid="qkeh1aq">
+      <CardContent className="p-4" data-oid="seirbfb">
         <h3
           className="font-semibold text-lg mb-2 line-clamp-2 hover:text-primary cursor-pointer"
-          data-oid="a_osi00"
+          data-oid="j.4-v:z"
         >
-          <a href={`/news/${article.slug}`} data-oid="c_far1e">
+          <a href={`/news/${article.slug}`} data-oid="lu28nvi">
             {article.title}
           </a>
         </h3>
         <p
           className="text-muted-foreground text-sm mb-4 line-clamp-2"
-          data-oid="_r4z0-b"
+          data-oid="z.s3msp"
         >
           {article.excerpt}
         </p>
-        <div className="flex items-center justify-between" data-oid="gb:j_wx">
-          <div className="flex items-center space-x-2" data-oid="eqoahxp">
-            <Avatar className="h-6 w-6" data-oid="lvb8i6b">
-              <AvatarImage src={article.author.avatar} data-oid="dgtcfva" />
-              <AvatarFallback className="text-xs" data-oid="l8sy8ps">
+        <div className="flex items-center justify-between" data-oid="zgy92t8">
+          <div className="flex items-center space-x-2" data-oid="yow5t:b">
+            <Avatar className="h-6 w-6" data-oid="400p-m4">
+              <AvatarImage src={article.author.avatar} data-oid="1_.4xaq" />
+              <AvatarFallback className="text-xs" data-oid="scpx4ev">
                 {article.author.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div className="text-xs" data-oid="p05t7gc">
-              <p className="font-medium" data-oid="ga3jl_b">
+            <div className="text-xs" data-oid=".6ob8fl">
+              <p className="font-medium" data-oid="3butzkj">
                 {article.author.name}
               </p>
-              <p className="text-muted-foreground" data-oid="1kx1gy6">
+              <p className="text-muted-foreground" data-oid="ynor79m">
                 {formatDate(article.publishedAt)}
               </p>
             </div>
           </div>
           <div
             className="flex items-center space-x-3 text-xs text-muted-foreground"
-            data-oid="thv_0m4"
+            data-oid="vk1p.za"
           >
-            <div className="flex items-center space-x-1" data-oid="p4_vrh1">
-              <Clock className="h-3 w-3" data-oid="4esgkwt" />
-              <span data-oid="5:5hcnq">{article.readTime}m</span>
+            <div className="flex items-center space-x-1" data-oid="ydc0u5q">
+              <Clock className="h-3 w-3" data-oid="wz6426-" />
+              <span data-oid="1bgsr8.">{article.readTime}m</span>
             </div>
-            <div className="flex items-center space-x-1" data-oid="56sofwm">
-              <Eye className="h-3 w-3" data-oid="3apoi0:" />
-              <span data-oid="g646btt">{formatViews(article.views)}</span>
+            <div className="flex items-center space-x-1" data-oid="k62bz74">
+              <Eye className="h-3 w-3" data-oid="m0pz_yh" />
+              <span data-oid="9liur0e">{formatViews(article.views)}</span>
             </div>
           </div>
         </div>

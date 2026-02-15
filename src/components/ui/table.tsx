@@ -6,12 +6,12 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto" data-oid="-6m55p:">
+  <div className="relative w-full overflow-auto" data-oid="js:lsh8">
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}
       {...props}
-      data-oid="wt.79f4"
+      data-oid="8vgio2y"
     />
   </div>
 ));
@@ -25,7 +25,7 @@ const TableHeader = React.forwardRef<
     ref={ref}
     className={cn("[&_tr]:border-b", className)}
     {...props}
-    data-oid="bgj9qm1"
+    data-oid=".js7o.v"
   />
 ));
 TableHeader.displayName = "TableHeader";
@@ -38,7 +38,7 @@ const TableBody = React.forwardRef<
     ref={ref}
     className={cn("[&_tr:last-child]:border-0", className)}
     {...props}
-    data-oid="7om6ux9"
+    data-oid="1799i5b"
   />
 ));
 TableBody.displayName = "TableBody";
@@ -54,7 +54,7 @@ const TableFooter = React.forwardRef<
       className,
     )}
     {...props}
-    data-oid="85x8gqf"
+    data-oid="ylmkq.2"
   />
 ));
 TableFooter.displayName = "TableFooter";
@@ -70,7 +70,7 @@ const TableRow = React.forwardRef<
       className,
     )}
     {...props}
-    data-oid="as342d6"
+    data-oid="ecwf6:l"
   />
 ));
 TableRow.displayName = "TableRow";
@@ -86,7 +86,7 @@ const TableHead = React.forwardRef<
       className,
     )}
     {...props}
-    data-oid=".mq6t.7"
+    data-oid="8t4um0n"
   />
 ));
 TableHead.displayName = "TableHead";
@@ -102,7 +102,7 @@ const TableCell = React.forwardRef<
       className,
     )}
     {...props}
-    data-oid=":3js6kk"
+    data-oid="671_lm7"
   />
 ));
 TableCell.displayName = "TableCell";
@@ -115,7 +115,7 @@ const TableCaption = React.forwardRef<
     ref={ref}
     className={cn("mt-4 text-sm text-muted-foreground", className)}
     {...props}
-    data-oid="2:cikg-"
+    data-oid="nc:57r0"
   />
 ));
 TableCaption.displayName = "TableCaption";

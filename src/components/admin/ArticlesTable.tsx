@@ -65,24 +65,24 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
   };
 
   return (
-    <div className="space-y-4" data-oid="q7iajy7">
+    <div className="space-y-4" data-oid=".xm926v">
       {/* Header */}
-      <div className="flex items-center justify-between" data-oid="lcpsb.j">
-        <h2 className="text-2xl font-bold" data-oid="lbgny97">
+      <div className="flex items-center justify-between" data-oid="3noi7cu">
+        <h2 className="text-2xl font-bold" data-oid="ok40kld">
           Manage Articles
         </h2>
-        <Button onClick={onCreateNew} data-oid="v93m5qf">
-          <Plus className="h-4 w-4 mr-2" data-oid="xw-ly4j" />
+        <Button onClick={onCreateNew} data-oid="6ct-7xb">
+          <Plus className="h-4 w-4 mr-2" data-oid="d344:uz" />
           Create New Post
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4" data-oid="8p0qfbw">
-        <div className="relative flex-1 max-w-sm" data-oid="9z:pkz6">
+      <div className="flex items-center space-x-4" data-oid="w:7qx5_">
+        <div className="relative flex-1 max-w-sm" data-oid="sz4b392">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-            data-oid="h8g692z"
+            data-oid="k2eq-cz"
           />
 
           <Input
@@ -90,27 +90,27 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
-            data-oid="ikjxjsw"
+            data-oid="pernq8-"
           />
         </div>
         <Select
           value={selectedCategory}
           onValueChange={setSelectedCategory}
-          data-oid=".56wr9h"
+          data-oid="tdtmalk"
         >
-          <SelectTrigger className="w-48" data-oid="x-x9w3v">
-            <Filter className="h-4 w-4 mr-2" data-oid="i2d2n_r" />
-            <SelectValue placeholder="Filter by category" data-oid="h199yhr" />
+          <SelectTrigger className="w-48" data-oid="c:l:0li">
+            <Filter className="h-4 w-4 mr-2" data-oid="mzy_-b9" />
+            <SelectValue placeholder="Filter by category" data-oid="1.9sa6y" />
           </SelectTrigger>
-          <SelectContent data-oid="-w8zono">
-            <SelectItem value="all" data-oid="-zid9em">
+          <SelectContent data-oid="ew07z74">
+            <SelectItem value="all" data-oid="3py7hj6">
               All Categories
             </SelectItem>
             {categories.map((category) => (
               <SelectItem
                 key={category.id}
                 value={category.slug}
-                data-oid="ajlryce"
+                data-oid="f0idz16"
               >
                 {category.name}
               </SelectItem>
@@ -120,105 +120,105 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg" data-oid="ic3ezmi">
-        <Table data-oid="e6cgdos">
-          <TableHeader data-oid="sfvnccy">
-            <TableRow data-oid="gkzv7_4">
-              <TableHead data-oid="xkohgpd">Title</TableHead>
-              <TableHead data-oid="to_4_7v">Status</TableHead>
-              <TableHead data-oid="qgsfh3l">Category</TableHead>
-              <TableHead data-oid="ng:k8qm">Author</TableHead>
-              <TableHead data-oid="pc1uyr4">Date</TableHead>
-              <TableHead data-oid="g312z-7">Views</TableHead>
-              <TableHead className="w-12" data-oid="5adx0u0"></TableHead>
+      <div className="border rounded-lg" data-oid="51qz8c:">
+        <Table data-oid="6zvzhpp">
+          <TableHeader data-oid="i8l56lj">
+            <TableRow data-oid=".g7:b51">
+              <TableHead data-oid="y44z9ml">Title</TableHead>
+              <TableHead data-oid=":cyg-b-">Status</TableHead>
+              <TableHead data-oid="_zdtbau">Category</TableHead>
+              <TableHead data-oid="59-fa6f">Author</TableHead>
+              <TableHead data-oid="5gwknvc">Date</TableHead>
+              <TableHead data-oid="8uv7yj9">Views</TableHead>
+              <TableHead className="w-12" data-oid="80ztb6c"></TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody data-oid="fpe4r1x">
+          <TableBody data-oid="2bisjf3">
             {currentItems.map((article) => (
-              <TableRow key={article.id} data-oid="q6puil7">
-                <TableCell data-oid="fri:fkf">
-                  <div className="max-w-xs" data-oid="bbvzq.:">
-                    <p className="font-medium truncate" data-oid="fgv4o_m">
+              <TableRow key={article.id} data-oid=":7xfpgk">
+                <TableCell data-oid="yswg1o:">
+                  <div className="max-w-xs" data-oid="scl_b89">
+                    <p className="font-medium truncate" data-oid="o2on:sv">
                       {article.title}
                     </p>
                     <p
                       className="text-sm text-muted-foreground truncate"
-                      data-oid="eoqd01q"
+                      data-oid="dh-o6n1"
                     >
                       {article.excerpt}
                     </p>
                   </div>
                 </TableCell>
-                <TableCell data-oid="4pf3uwv">
+                <TableCell data-oid=":sutt3n">
                   <Badge
                     variant={
                       article.status === "published" ? "default" : "secondary"
                     }
-                    data-oid="zchpc-v"
+                    data-oid="6-xxu41"
                   >
                     {article.status}
                   </Badge>
                 </TableCell>
-                <TableCell data-oid="tefgtm0">
+                <TableCell data-oid="hxionzn">
                   <Badge
                     className={article.category.color}
                     variant="secondary"
-                    data-oid="u16rmlo"
+                    data-oid="7w1:w20"
                   >
                     {article.category.name}
                   </Badge>
                 </TableCell>
-                <TableCell data-oid="k7uz5rm">
+                <TableCell data-oid="e8mtij_">
                   <div
                     className="flex items-center space-x-2"
-                    data-oid="g:u.y8a"
+                    data-oid="a-p26k2"
                   >
                     <img
                       src={article.author.avatar}
                       alt={article.author.name}
                       className="h-6 w-6 rounded-full"
-                      data-oid="z-b71.0"
+                      data-oid="lrxej1z"
                     />
 
-                    <span className="text-sm" data-oid="eh_1908">
+                    <span className="text-sm" data-oid="j2mvoyq">
                       {article.author.name}
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm" data-oid="0832p35">
+                <TableCell className="text-sm" data-oid="3-jl6a1">
                   {formatDate(article.publishedAt)}
                 </TableCell>
-                <TableCell className="text-sm" data-oid="v86uwdj">
+                <TableCell className="text-sm" data-oid="pnbqmf5">
                   {article.views.toLocaleString()}
                 </TableCell>
-                <TableCell data-oid="4.wves0">
-                  <DropdownMenu data-oid="kw0wq_q">
-                    <DropdownMenuTrigger asChild data-oid="50.dgnp">
+                <TableCell data-oid="3mxzvz1">
+                  <DropdownMenu data-oid="hfb3b.b">
+                    <DropdownMenuTrigger asChild data-oid="xzwiss9">
                       <Button
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0"
-                        data-oid="fr23neg"
+                        data-oid="5z3oads"
                       >
                         <MoreHorizontal
                           className="h-4 w-4"
-                          data-oid=".zzj:7y"
+                          data-oid="kv_6cy4"
                         />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" data-oid="qph-n82">
-                      <DropdownMenuItem data-oid="zq9dbs6">
+                    <DropdownMenuContent align="end" data-oid="7_0c91v">
+                      <DropdownMenuItem data-oid="gyge_af">
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem data-oid="f4.:71z">
+                      <DropdownMenuItem data-oid="lkbemfg">
                         View
                       </DropdownMenuItem>
-                      <DropdownMenuItem data-oid="gyv2bv2">
+                      <DropdownMenuItem data-oid="ejwrz54">
                         Duplicate
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-destructive"
-                        data-oid="lhk.g:0"
+                        data-oid="7wrmk_z"
                       >
                         Delete
                       </DropdownMenuItem>
@@ -233,9 +233,9 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
       {/* Pagination */}
       <div
         className="flex justify-end items-center space-x-4"
-        data-oid=".9q2c8q"
+        data-oid=".qua54i"
       >
-        <span className="text-sm text-muted-foreground" data-oid="x6azrwa">
+        <span className="text-sm text-muted-foreground" data-oid="pc8vp4:">
           Page {currentPage} of {totalPages}
         </span>
         <Button
@@ -243,7 +243,7 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
           disabled={currentPage === 1}
           variant="outline"
           size="sm"
-          data-oid="kw2yoab"
+          data-oid="gkmv36h"
         >
           Previous
         </Button>
@@ -252,7 +252,7 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
           disabled={currentPage === totalPages}
           variant="outline"
           size="sm"
-          data-oid="9otf4ie"
+          data-oid="z2_o.j-"
         >
           Next
         </Button>
