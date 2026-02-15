@@ -11,6 +11,10 @@ import { TagPage } from "@/components/pages/TagPage";
 import { LoginPage } from "@/components/pages/LoginPage";
 import { RegisterPage } from "@/components/pages/RegisterPage";
 import { PreviewPage } from "@/components/pages/PreviewPage";
+import { ProfileSettingsPage } from "./components/pages/ProfileSettingsPage"; // Import ProfileSettingsPage
+import { ErrorPage } from "./components/pages/ErrorPage"; // Import ErrorPage
+import { ForgotPasswordPage } from "./components/pages/ForgotPasswordPage"; // Import ForgotPasswordPage
+import { ProtectedRoute, AuthRedirect } from "./components/auth/AuthComponents"; // Import Auth Components
 import "../styles/globals.css";
 
 function App() {
@@ -19,11 +23,17 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Check for dark mode preference and auth token on mount
   useEffect(() => {
     const isDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
+    }
+
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      setIsLoggedIn(true);
     }
   }, []);
 
@@ -38,22 +48,26 @@ function App() {
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = (token: string) => { // Accept token as argument
+    localStorage.setItem("authToken", token);
     setIsLoggedIn(true);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("authToken");
     setIsLoggedIn(false);
+    navigate("/login");
   };
 
-  const handleRegister = () => {
-    setIsLoggedIn(true);
-    navigate("/");
-  };
+  // handleRegister is no longer needed in App.tsx as RegisterPage handles its own navigation
+  // const handleRegister = () => {
+  //   setIsLoggedIn(true);
+  //   navigate("/");
+  // };
 
   const isAdminRoute =
-    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/preview");
 
   return (
@@ -85,10 +99,25 @@ function App() {
             data-oid="7-lstiq"
           />
 
+          {/* Protected Dashboard Route */}
           <Route
-            path="/admin"
-            element={<AdminDashboard data-oid="6dq6av6" />}
+            path="/dashboard"
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <AdminDashboard data-oid="6dq6av6" />
+              </ProtectedRoute>
+            }
             data-oid="u7j5ng0"
+          />
+
+          {/* Protected Profile Settings Route */}
+          <Route
+            path="/dashboard/profile"
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProfileSettingsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
@@ -109,16 +138,23 @@ function App() {
             data-oid="pm46xlw"
           />
 
+          {/* Redirect if already logged in */}
           <Route
             path="/login"
-            element={<LoginPage onLogin={handleLogin} data-oid="8oquhlb" />}
+            element={
+              <AuthRedirect isLoggedIn={isLoggedIn}>
+                <LoginPage onLogin={handleLogin} data-oid="8oquhlb" />
+              </AuthRedirect>
+            }
             data-oid="njhl3d4"
           />
 
           <Route
             path="/register"
             element={
-              <RegisterPage onRegister={handleRegister} data-oid="xleb_5j" />
+              <AuthRedirect isLoggedIn={isLoggedIn}>
+                <RegisterPage data-oid="xleb_5j" />
+              </AuthRedirect>
             }
             data-oid="qfsks6."
           />
@@ -128,6 +164,20 @@ function App() {
             element={<PreviewPage data-oid="g8hmdnt" />}
             data-oid="1lw0gmc"
           />
+
+          {/* Forgot Password Route */}
+          <Route
+            path="/forgot-password"
+            element={
+              <AuthRedirect isLoggedIn={isLoggedIn}>
+                <ForgotPasswordPage />
+              </AuthRedirect>
+            }
+          />
+
+          {/* Error Routes */}
+          <Route path="/error/:statusCode" element={<ErrorPage />} />
+          <Route path="*" element={<ErrorPage />} /> {/* Catch-all 404 */}
         </Routes>
 
         {!isAdminRoute && <Footer data-oid="kav0wws" />}
