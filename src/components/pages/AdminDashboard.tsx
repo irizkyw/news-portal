@@ -1,14 +1,131 @@
-import React, { useState } from "react";
-import { DashboardSidebar } from "@/components/admin/DashboardSidebar";
-import { DashboardStats } from "@/components/admin/DashboardStats";
-import { ArticlesTable } from "@/components/admin/ArticlesTable";
-import { CreatePostForm } from "@/components/admin/CreatePostForm";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { weeklyTrafficData } from "@/data/mockData";
+import React, { useState, useEffect } from "react";
+import { DashboardSidebar } from "../admin/DashboardSidebar";
+import { DashboardStats } from "../admin/DashboardStats";
+import { ArticlesTable } from "../admin/ArticlesTable";
+import { CreatePostForm } from "../admin/CreatePostForm";
+import { UserManagementTable } from "../admin/UserManagementTable"; // Import UserManagementTable
+import { UserEditForm } from "../admin/UserEditForm"; // Import UserEditForm
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { weeklyTrafficData } from "../../data/mockData";
+import { Button } from "../ui/button"; // Import Button
+import { PlusCircle } from "lucide-react"; // Import PlusCircle icon
+import { useAuth } from "../auth/AuthContext"; // Import useAuth
+import { toast } from "sonner"; // Import toast for notifications
+import { User } from "../../types"; // Assuming a User type exists in types.d.ts
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export function AdminDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState("overview");
+  const { user: currentUser } = useAuth(); // Get current user for auth checks
+  const navigate = useNavigate(); // For redirection after login/logout, if needed
+
+  // State for User Management
+  const [users, setUsers] = useState<User[]>([]);
+  const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [isFetchingUsers, setIsFetchingUsers] = useState(false);
+  const [isSavingUser, setIsSavingUser] = useState(false);
+
+  // Helper function to get auth token
+  const getAuthToken = () => {
+    return localStorage.getItem("authToken");
+  };
+
+  // Fetch Users
+  const fetchUsers = async () => {
+    setIsFetchingUsers(true);
+    try {
+      const response = await fetch("http://localhost:8080/users", {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getAuthToken() || "",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const data: User[] = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Failed to load users.");
+    } finally {
+      setIsFetchingUsers(false);
+    }
+  };
+
+  // Handle saving a user (create or update)
+  const handleSaveUser = async (formData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
+    setIsSavingUser(true);
+    try {
+      let response;
+      if (editingUser) {
+        // Update existing user
+        response = await fetch(`http://localhost:8080/users/${editingUser.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": getAuthToken() || "",
+          },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        // Create new user
+        response = await fetch("http://localhost:8080/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": getAuthToken() || "",
+          },
+          body: JSON.stringify(formData),
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${editingUser ? "update" : "create"} user`);
+      }
+
+      toast.success(`User ${editingUser ? "updated" : "created"} successfully!`);
+      setShowUserForm(false);
+      setEditingUser(undefined);
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error("Error saving user:", error);
+      toast.error(`Failed to ${editingUser ? "update" : "create"} user.`);
+    } finally {
+      setIsSavingUser(false);
+    }
+  };
+
+  // Handle deleting a user
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) {
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:8080/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": getAuthToken() || "",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      toast.success("User deleted successfully!");
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast.error("Failed to delete user.");
+    }
+  };
+
+  useEffect(() => {
+    if (activeItem === "users") {
+      fetchUsers();
+    }
+  }, [activeItem]); // Refetch users when the 'users' tab is activated
 
   const renderContent = () => {
     switch (activeItem) {
@@ -134,19 +251,29 @@ export function AdminDashboard() {
 
       case "users":
         return (
-          <div className="space-y-6" data-oid="s56qgbj">
-            <h1 className="text-3xl font-bold" data-oid="vwcn0r6">
-              Users
-            </h1>
-            <Card data-oid="b9fpq9f">
-              <CardContent className="p-6" data-oid="han-b3l">
-                <div className="text-center py-12" data-oid="alb2pgq">
-                  <p className="text-muted-foreground" data-oid="7t400oa">
-                    User management interface would be here
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold">User Management</h1>
+              <Button onClick={() => { setEditingUser(undefined); setShowUserForm(true); }}>
+                <PlusCircle className="mr-2 h-4 w-4" /> Add New User
+              </Button>
+            </div>
+            {isFetchingUsers ? (
+              <p>Loading users...</p>
+            ) : showUserForm ? (
+              <UserEditForm
+                user={editingUser}
+                onSave={handleSaveUser}
+                onCancel={() => setShowUserForm(false)}
+                isSaving={isSavingUser}
+              />
+            ) : (
+              <UserManagementTable
+                users={users}
+                onEditUser={(user) => { setEditingUser(user); setShowUserForm(true); }}
+                onDeleteUser={handleDeleteUser}
+              />
+            )}
           </div>
         );
 
