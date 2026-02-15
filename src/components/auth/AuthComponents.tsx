@@ -1,14 +1,15 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // Import useAuth
 
 interface AuthRouteProps {
-  isLoggedIn: boolean;
   redirectPath?: string;
   children?: React.ReactNode;
 }
 
 // ProtectedRoute ensures only logged-in users can access certain routes
-export function ProtectedRoute({ isLoggedIn, redirectPath = '/login', children }: AuthRouteProps) {
+export function ProtectedRoute({ redirectPath = '/login', children }: AuthRouteProps) {
+  const { isLoggedIn } = useAuth(); // Get isLoggedIn from context
   if (!isLoggedIn) {
     return <Navigate to={redirectPath} replace />;
   }
@@ -16,7 +17,8 @@ export function ProtectedRoute({ isLoggedIn, redirectPath = '/login', children }
 }
 
 // AuthRedirect ensures logged-in users cannot access auth pages (login, register, forgot password)
-export function AuthRedirect({ isLoggedIn, redirectPath = '/', children }: AuthRouteProps) {
+export function AuthRedirect({ redirectPath = '/', children }: AuthRouteProps) {
+  const { isLoggedIn } = useAuth(); // Get isLoggedIn from context
   if (isLoggedIn) {
     return <Navigate to={redirectPath} replace />;
   }

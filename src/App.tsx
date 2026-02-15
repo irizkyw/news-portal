@@ -15,25 +15,21 @@ import { ProfileSettingsPage } from "./components/pages/ProfileSettingsPage"; //
 import { ErrorPage } from "./components/pages/ErrorPage"; // Import ErrorPage
 import { ForgotPasswordPage } from "./components/pages/ForgotPasswordPage"; // Import ForgotPasswordPage
 import { ProtectedRoute, AuthRedirect } from "./components/auth/AuthComponents"; // Import Auth Components
+import { AuthContextProvider, useAuth } from "./components/auth/AuthContext"; // Import AuthContext
 import "../styles/globals.css";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isLoggedIn, login, logout } = useAuth(); // Use AuthContext
 
-  // Check for dark mode preference and auth token on mount
+  // Check for dark mode preference on mount
   useEffect(() => {
     const isDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
-    }
-
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      setIsLoggedIn(true);
     }
   }, []);
 
@@ -47,24 +43,6 @@ function App() {
       localStorage.setItem("darkMode", "false");
     }
   };
-
-  const handleLogin = (token: string) => { // Accept token as argument
-    localStorage.setItem("authToken", token);
-    setIsLoggedIn(true);
-    navigate("/dashboard");
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setIsLoggedIn(false);
-    navigate("/login");
-  };
-
-  // handleRegister is no longer needed in App.tsx as RegisterPage handles its own navigation
-  // const handleRegister = () => {
-  //   setIsLoggedIn(true);
-  //   navigate("/");
-  // };
 
   const isAdminRoute =
     location.pathname.startsWith("/dashboard") ||
@@ -81,7 +59,7 @@ function App() {
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
             isLoggedIn={isLoggedIn}
-            onLogout={handleLogout}
+            onLogout={logout}
             data-oid=":agavcx"
           />
         )}
@@ -103,7 +81,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ProtectedRoute>
                 <AdminDashboard data-oid="6dq6av6" />
               </ProtectedRoute>
             }
@@ -114,7 +92,7 @@ function App() {
           <Route
             path="/dashboard/profile"
             element={
-              <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ProtectedRoute>
                 <ProfileSettingsPage />
               </ProtectedRoute>
             }
@@ -142,8 +120,8 @@ function App() {
           <Route
             path="/login"
             element={
-              <AuthRedirect isLoggedIn={isLoggedIn}>
-                <LoginPage onLogin={handleLogin} data-oid="8oquhlb" />
+              <AuthRedirect>
+                <LoginPage onLogin={login} data-oid="8oquhlb" />
               </AuthRedirect>
             }
             data-oid="njhl3d4"
@@ -152,7 +130,7 @@ function App() {
           <Route
             path="/register"
             element={
-              <AuthRedirect isLoggedIn={isLoggedIn}>
+              <AuthRedirect>
                 <RegisterPage data-oid="xleb_5j" />
               </AuthRedirect>
             }
@@ -169,7 +147,7 @@ function App() {
           <Route
             path="/forgot-password"
             element={
-              <AuthRedirect isLoggedIn={isLoggedIn}>
+              <AuthRedirect>
                 <ForgotPasswordPage />
               </AuthRedirect>
             }
@@ -186,4 +164,11 @@ function App() {
   );
 }
 
-export default App;
+// Export the App component wrapped with AuthContextProvider
+export default function WrappedApp() {
+  return (
+    <AuthContextProvider>
+      <App />
+    </AuthContextProvider>
+  );
+}
