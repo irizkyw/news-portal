@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080"; // Changed to match backend base path
+const API_BASE_URL = "http://localhost:8080/api"; // Changed to match backend base path
 
 export interface User {
   id: string;
@@ -28,7 +28,7 @@ export interface Article {
   content: string;
   featuredImage: string;
   category?: Category; // Make the whole category object optional
-  author?: Author;    // Make author optional as well for consistency
+  author?: Author; // Make author optional as well for consistency
   publishedAt: string;
   readTime: number;
   views: number;
@@ -128,7 +128,7 @@ export const createPost = async (postData: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
     body: JSON.stringify(postData),
   });
@@ -153,7 +153,7 @@ export const getCategories = async (): Promise<Category[]> => {
 export const getUsers = async (): Promise<User[]> => {
   const response = await fetch(`${API_BASE_URL}/users`, {
     headers: {
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
   });
   if (!response.ok) {
@@ -165,7 +165,7 @@ export const getUsers = async (): Promise<User[]> => {
 export const getUser = async (id: string): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}/users/${id}`, {
     headers: {
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
   });
   if (!response.ok) {
@@ -174,12 +174,16 @@ export const getUser = async (id: string): Promise<User> => {
   return response.json();
 };
 
-export const createUser = async (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'password'> & { password?: string }): Promise<User> => {
+export const createUser = async (
+  userData: Omit<User, "id" | "createdAt" | "updatedAt" | "password"> & {
+    password?: string;
+  },
+): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
     body: JSON.stringify(userData),
   });
@@ -190,12 +194,15 @@ export const createUser = async (userData: Omit<User, 'id' | 'createdAt' | 'upda
   return response.json();
 };
 
-export const updateUser = async (id: string, userData: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User> => {
+export const updateUser = async (
+  id: string,
+  userData: Partial<Omit<User, "id" | "createdAt" | "updatedAt">>,
+): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}/users/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
     body: JSON.stringify(userData),
   });
@@ -210,14 +217,13 @@ export const deleteUser = async (id: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/users/${id}`, {
     method: "DELETE",
     headers: {
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
   });
   if (!response.ok) {
     throw new Error("Failed to delete user");
   }
 };
-
 
 // Mengambil daftar penulis (user) - This function is now redundant, use getUsers
 // export const getAuthors = async (): Promise<Author[]> => {
@@ -232,7 +238,7 @@ export const deleteUser = async (id: string): Promise<void> => {
 export const getDashboardStats = async (): Promise<DashboardStats> => {
   const response = await fetch(`${API_BASE_URL}/stats/dashboard`, {
     headers: {
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
   });
   if (!response.ok) {
@@ -245,7 +251,7 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
 export const getWeeklyTrafficData = async (): Promise<WeeklyTraffic[]> => {
   const response = await fetch(`${API_BASE_URL}/stats/traffic`, {
     headers: {
-      "Authorization": getAuthToken(),
+      Authorization: getAuthToken(),
     },
   });
   if (!response.ok) {
@@ -270,7 +276,10 @@ export const subscribeToNewsletter = async (email: string) => {
   return response.json();
 };
 
-export const login = async (credentials: { email: string; password: string }): Promise<{ token: string; user: User }> => {
+export const login = async (credentials: {
+  email: string;
+  password: string;
+}): Promise<{ token: string; user: User }> => {
   const response = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
     headers: {
@@ -286,8 +295,14 @@ export const login = async (credentials: { email: string; password: string }): P
   return response.json();
 };
 
-export const register = async (userData: { name: string; email: string; password: string; role?: string }): Promise<User> => {
-  const response = await fetch(`${API_BASE_URL}/users`, { // Assuming /api/users is the register endpoint
+export const register = async (userData: {
+  name: string;
+  email: string;
+  password: string;
+  role?: string;
+}): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/users`, {
+    // Assuming /api/users is the register endpoint
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -298,7 +313,7 @@ export const register = async (userData: { name: string; email: string; password
       password: userData.password,
       role: userData.role || "user", // Default role to "user"
       avatar: "", // Default empty avatar
-      bio: "",    // Default empty bio
+      bio: "", // Default empty bio
     }),
   });
 

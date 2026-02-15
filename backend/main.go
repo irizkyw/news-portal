@@ -8,8 +8,8 @@ import (
 	"news-portal/backend/seed"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors" // Import the cors package
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
