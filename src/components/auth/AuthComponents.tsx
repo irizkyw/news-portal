@@ -32,7 +32,12 @@ export function ProtectedRoute({ redirectPath = '/login', unauthorizedRedirectPa
 
 // AuthRedirect ensures logged-in users cannot access auth pages (login, register, forgot password)
 export function AuthRedirect({ redirectPath = '/', children }: AuthRouteProps) {
-  const { isLoggedIn } = useAuth(); // Get isLoggedIn from context
+  const { isLoggedIn, isLoading } = useAuth(); // Get isLoggedIn and isLoading from context
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a spinner
+  }
+
   if (isLoggedIn) {
     return <Navigate to={redirectPath} replace />;
   }
