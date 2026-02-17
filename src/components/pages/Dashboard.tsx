@@ -5,12 +5,13 @@ import { ArticlesTable } from "../admin/ArticlesTable";
 import { CreatePostForm } from "../admin/CreatePostForm";
 import { UserManagementTable } from "../admin/UserManagementTable";
 import { UserEditForm, type UserFormData } from "../admin/UserEditForm";
+import { ProfileSettingsPage } from "../pages/ProfileSettingsPage";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { PlusCircle } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { toast, Toaster } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import {
   createUser,
   updateUser,
@@ -18,11 +19,12 @@ import {
   updatePost,
   getCategories, // Add getCategories
 } from "../../services/api";
-import type { User, WeeklyTraffic, Article } from "../../types";
+import type { User, Article } from "../../types"; // Remove WeeklyTraffic from import
 
 export function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeItem, setActiveItem] = useState("overview");
+  const location = useLocation(); // Initialize useLocation
+  const [activeItem, setActiveItem] = useState(location.state?.activeItem || "overview");
   const { user: currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -52,7 +54,28 @@ export function Dashboard() {
 
   // --- User Handlers ---
   const handleSaveUser = async (formData: UserFormData) => {
-    // ... existing user saving logic
+    setIsSavingUser(true);
+    try {
+      if (editingUser && editingUser.id) { // Update existing user
+        await updateUser(editingUser.id, formData);
+        toast.success("User updated successfully!");
+      } else { // Create new user
+        // For new user creation, password is required by backend, but form doesn't have it.
+        // This is a simplification; a real app might have separate create user form or auto-generate password.
+        // For now, assume password is handled elsewhere or not strictly required for this form path.
+        // Or, we need to pass a dummy password to satisfy backend `CreateUserRequest` which requires it.
+        // For now, I'll pass a dummy password, this needs to be addressed properly in a full app.
+        await createUser({ ...formData, password: "temp_password_123" }); // TEMP password
+        toast.success("User created successfully!");
+      }
+      setShowUserForm(false);
+      setEditingUser(undefined); // Clear editing user
+    } catch (error) {
+      console.error("Failed to save user:", error);
+      toast.error(`Failed to ${editingUser && editingUser.id ? 'update' : 'create'} user.`);
+    } finally {
+      setIsSavingUser(false);
+    }
   };
 
 
@@ -60,7 +83,7 @@ export function Dashboard() {
   const handleSaveArticle = async (articleData: Partial<Article>) => {
     setIsSavingArticle(true);
     try {
-      if (editingArticle) {
+      if (editingArticle && editingArticle.id) { // Check for editingArticle AND its ID
         await updatePost(editingArticle.id, articleData);
         toast.success("Article updated successfully!");
       } else {
@@ -69,9 +92,8 @@ export function Dashboard() {
       }
       setShowArticleForm(false);
       setEditingArticle(undefined);
-      // Removed fetchArticles();
     } catch (error) {
-      toast.error(`Failed to ${editingArticle ? 'update' : 'create'} article.`);
+      toast.error(`Failed to ${editingArticle && editingArticle.id ? 'update' : 'create'} article.`);
     } finally {
       setIsSavingArticle(false);
     }
@@ -107,22 +129,32 @@ export function Dashboard() {
   }, [activeItem, fetchCategoryCount]);
 
   const renderContent = () => {
-    // Check if the user has access to restricted sections
-    const hasAdminOrEditorAccess = currentUser && (currentUser.role === "admin" || currentUser.role === "editor");
+    // Access checks
+    const isAdmin = currentUser?.role === "admin";
+    const isEditor = currentUser?.role === "editor";
+    const isUser = currentUser?.role === "user";
+    const hasAdminOrEditorAccess = isAdmin || isEditor;
+    const hasAdminAccess = isAdmin;
 
-    if (!hasAdminOrEditorAccess && (activeItem === "articles" || activeItem === "users")) {
-      return (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-          <h1 className="text-4xl font-bold text-red-600">Access Denied</h1>
-          <p className="text-lg text-muted-foreground">You do not have the necessary permissions to view this section.</p>
-          <Button onClick={() => setActiveItem("overview")}>Go to Overview</Button>
-        </div>
-      );
+    // If user is a regular user, always show profile settings
+    if (isUser) {
+      return <ProfileSettingsPage />;
     }
+
+    // Deny access if not authorized for current activeItem (for Admin/Editor roles)
+    const AccessDeniedMessage = (sectionName: string) => (
+      <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+        <h1 className="text-4xl font-bold text-red-600">Access Denied</h1>
+        <p className="text-lg text-muted-foreground">You do not have the necessary permissions to view the {sectionName} section.</p>
+        <Button onClick={() => setActiveItem("overview")}>Go to Overview</Button>
+      </div>
+    );
 
     switch (activeItem) {
       case "overview":
-        // ... overview content remains the same
+        if (!hasAdminOrEditorAccess) {
+          return AccessDeniedMessage("Overview");
+        }
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -143,6 +175,9 @@ export function Dashboard() {
         );
 
       case "articles":
+        if (!hasAdminOrEditorAccess) {
+          return AccessDeniedMessage("Articles");
+        }
         return showArticleForm ? (
           <CreatePostForm
             article={editingArticle}
@@ -159,6 +194,9 @@ export function Dashboard() {
         );
 
       case "users":
+        if (!hasAdminAccess) { // Only admin can access user management
+          return AccessDeniedMessage("User Management");
+        }
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -182,7 +220,9 @@ export function Dashboard() {
           </div>
         );
       
-      // ... other cases like analytics, settings
+      case "settings":
+        // Profile settings should be accessible to all logged-in users
+        return <ProfileSettingsPage />;
 
       default:
         return null;

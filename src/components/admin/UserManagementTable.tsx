@@ -14,6 +14,17 @@ import { useAuth } from "../auth/AuthContext";
 import { getUsers, deleteUser } from "../../services/api"; // Import API functions
 import type { User } from "../../types";
 import { Input } from "../ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"; // Import Shadcn AlertDialog
 
 interface UserManagementTableProps {
   onEditUser: (user: User) => void;
@@ -46,9 +57,6 @@ export function UserManagementTable({ onEditUser }: UserManagementTableProps) {
   }, [fetchUsers]);
 
   const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
     try {
       await deleteUser(userId);
       toast.success("User deleted successfully.");
@@ -59,9 +67,10 @@ export function UserManagementTable({ onEditUser }: UserManagementTableProps) {
     }
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (loading) {
@@ -76,11 +85,8 @@ export function UserManagementTable({ onEditUser }: UserManagementTableProps) {
     <div className="space-y-4">
       {/* Header and Search */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Manage Users</h2>
         <div className="relative flex-1 max-w-sm">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search users..."
             value={searchTerm}
@@ -122,14 +128,38 @@ export function UserManagementTable({ onEditUser }: UserManagementTableProps) {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user.id)}
-                        disabled={currentUser?.id === user.id} // Prevent admin from deleting themselves
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={currentUser?.id === user.id} // Prevent admin from deleting themselves
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete the user
+                              {user.name && ` "${user.name}"`} and remove their
+                              data.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteUser(user.id)}
+                            >
+                              Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>

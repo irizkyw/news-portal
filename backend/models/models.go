@@ -48,8 +48,8 @@ type User struct {
 	Name      string    `db:"name" json:"name"`
 	Password  string    `db:"password" json:"-"` // Dikecualikan dari output JSON
 	Role      string    `db:"role" json:"role"`
-	Avatar    string    `db:"avatar" json:"avatar"`
-	Bio       string    `db:"bio" json:"bio"`
+	Avatar    *string    `db:"avatar" json:"avatar"`
+	Bio       *string    `db:"bio" json:"bio"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
 }

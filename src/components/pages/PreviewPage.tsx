@@ -104,7 +104,13 @@ export function PreviewPage() {
                 {article.author && (
                   <div className="flex items-center space-x-4" data-oid="x5qlw8v">
                     <Avatar className="h-12 w-12" data-oid="vfqg6r9">
-                      <AvatarImage src={article.author.avatar} data-oid="thcb7i1" />
+                      <AvatarImage
+                        src={
+                          article.author.avatar || 
+                          `https://ui-avatars.com/api/?name=${article.author.name || "A"}&background=random`
+                        }
+                        data-oid="thcb7i1"
+                      />
                       <AvatarFallback data-oid="yojrq2q">
                         {article.author.name?.charAt(0) || 'A'}
                       </AvatarFallback>

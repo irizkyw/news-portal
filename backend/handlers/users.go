@@ -35,12 +35,12 @@ func GetUser(c *gin.Context) {
 }
 
 type CreateUserRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Name     string `json:"name"`
-	Password string `json:"password" binding:"required"`
-	Role     string `json:"role"` // Allow role to be set on creation, e.g., by admin
-	Avatar   string `json:"avatar"`
-	Bio      string `json:"bio"`
+	Email    string  `json:"email" binding:"required"`
+	Name     string  `json:"name"`
+	Password string  `json:"password" binding:"required"`
+	Role     string  `json:"role"` // Allow role to be set on creation, e.g., by admin
+	Avatar   *string `json:"avatar"`
+	Bio      *string `json:"bio"`
 }
 
 func CreateUser(c *gin.Context) {
@@ -83,11 +83,11 @@ func CreateUser(c *gin.Context) {
 }
 
 type UpdateUserRequest struct {
-	Email  string `json:"email"`
-	Name   string `json:"name"`
-	Role   string `json:"role"` // Allow role to be updated, e.g., by admin
-	Avatar string `json:"avatar"`
-	Bio    string `json:"bio"`
+	Email  *string `json:"email"` // Made fields nullable for partial updates
+	Name   *string `json:"name"`
+	Role   *string `json:"role"` // Allow role to be updated, e.g., by admin
+	Avatar *string `json:"avatar"`
+	Bio    *string `json:"bio"`
 }
 
 func UpdateUser(c *gin.Context) {
@@ -102,7 +102,7 @@ func UpdateUser(c *gin.Context) {
 	callerRole, _ := c.Get("role") // AuthMiddleware sets this
 
 	// Only allow admin to update the role field
-	if req.Role != "" && callerRole != "admin" {
+	if req.Role != nil && *req.Role != "" && callerRole != "admin" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden: Only admin can update user roles"})
 		return
 	}
@@ -111,25 +111,25 @@ func UpdateUser(c *gin.Context) {
 	query := "UPDATE users SET updated_at = ?"
 	args := []interface{}{time.Now()}
 
-	if req.Email != "" {
+	if req.Email != nil {
 		query += ", email = ?"
-		args = append(args, req.Email)
+		args = append(args, *req.Email)
 	}
-	if req.Name != "" {
+	if req.Name != nil {
 		query += ", name = ?"
-		args = append(args, req.Name)
+		args = append(args, *req.Name)
 	}
-	if req.Avatar != "" {
+	if req.Avatar != nil { // Check if avatar is explicitly provided
 		query += ", avatar = ?"
-		args = append(args, req.Avatar)
+		args = append(args, *req.Avatar)
 	}
-	if req.Bio != "" {
+	if req.Bio != nil {
 		query += ", bio = ?"
-		args = append(args, req.Bio)
+		args = append(args, *req.Bio)
 	}
-	if req.Role != "" && callerRole == "admin" { // Only update role if provided AND caller is admin
+	if req.Role != nil && callerRole == "admin" { // Only update role if provided AND caller is admin
 		query += ", role = ?"
-		args = append(args, req.Role)
+		args = append(args, *req.Role)
 	}
 
 	query += " WHERE id = ?"

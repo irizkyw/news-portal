@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, Menu, Moon, Sun, User } from "lucide-react";
+import {
+  Search,
+  Menu,
+  Moon,
+  Sun,
+  User,
+  LogOut,
+  LayoutDashboard,
+  Settings,
+} from "lucide-react"; // Import Settings icon
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,6 +23,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getCategories } from "@/services/api";
 import type { Category } from "@/types";
+import { useAuth } from "../auth/AuthContext"; // Import useAuth
 
 interface NavbarProps {
   darkMode: boolean;
@@ -22,15 +32,11 @@ interface NavbarProps {
   onLogout: () => void;
 }
 
-export function Navbar({
-  darkMode,
-  toggleDarkMode,
-  isLoggedIn,
-  onLogout,
-}: NavbarProps) {
+export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
+  const { isLoggedIn, logout, user: currentUser } = useAuth(); // Use useAuth directly
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -61,43 +67,45 @@ export function Navbar({
           key={category.id}
           to={`/category/${category.slug}`}
           className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          data-oid="_efwyv2"
         >
           {category.name}
         </Link>
       ))}
+      {isLoggedIn && (currentUser?.role === "admin" || currentUser?.role === "editor") && (
+        <Link
+          to="/dashboard"
+          className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Dashboard
+        </Link>
+      )}
     </>
   );
 
   return (
     <header
       className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-      data-oid="_git10a"
     >
-      <div className="container mx-auto px-4" data-oid="049ilbj">
+      <div className="container mx-auto px-4">
         <div
           className="flex h-16 items-center justify-between"
-          data-oid="v0qhdxo"
         >
           {/* Logo */}
-          <div className="flex items-center space-x-4" data-oid="nbgrkaa">
+          <div className="flex items-center space-x-4">
             <Link
               to="/"
               className="flex items-center space-x-2"
-              data-oid="22ndhx0"
             >
               <div
                 className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center"
-                data-oid="cwjzd1c"
               >
                 <span
                   className="text-primary-foreground font-bold text-lg"
-                  data-oid="nk7y3of"
                 >
                   N
                 </span>
               </div>
-              <span className="font-bold text-xl" data-oid="zn.-v2o">
+              <span className="font-bold text-xl">
                 NewsFlow
               </span>
             </Link>
@@ -106,18 +114,16 @@ export function Navbar({
           {/* Desktop Navigation */}
           <nav
             className="hidden md:flex items-center space-x-6"
-            data-oid="2k0:4ic"
           >
-            <NavLinks data-oid="sesgl4n" />
+            <NavLinks />
           </nav>
 
           {/* Search and Actions */}
-          <div className="flex items-center space-x-4" data-oid="s:9-bll">
+          <div className="flex items-center space-x-4">
             {/* Search */}
-            <div className="relative hidden sm:block" data-oid="nn6s3pz">
+            <div className="relative hidden sm:block">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                data-oid=".2tfwn5"
               />
 
               <Input
@@ -126,7 +132,6 @@ export function Navbar({
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchSubmit}
-                data-oid="eah7dqp"
               />
             </div>
 
@@ -136,82 +141,86 @@ export function Navbar({
               size="sm"
               onClick={toggleDarkMode}
               className="h-9 w-9 p-0"
-              data-oid="8y0m3nm"
             >
               {darkMode ? (
-                <Sun className="h-4 w-4" data-oid="32w_jug" />
+                <Sun className="h-4 w-4" />
               ) : (
-                <Moon className="h-4 w-4" data-oid="j-m-9oi" />
+                <Moon className="h-4 w-4" />
               )}
             </Button>
 
             {/* User Menu */}
             {isLoggedIn ? (
-              <DropdownMenu data-oid="msmpzi5">
-                <DropdownMenuTrigger asChild data-oid="n2mopwk">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     className="relative h-9 w-9 rounded-full"
-                    data-oid="i-omjot"
                   >
-                    <Avatar className="h-9 w-9" data-oid="fs6ff83">
+                    <Avatar className="h-9 w-9">
                       <AvatarImage
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-                        data-oid="s_0kcep"
+                        src={
+                          currentUser?.avatar ||
+                          `https://ui-avatars.com/api/?name=${currentUser?.name || "U"}&background=random`
+                        }
                       />
 
-                      <AvatarFallback data-oid="ebxacza">JD</AvatarFallback>
+                      <AvatarFallback>
+                        {currentUser?.name?.charAt(0) || "U"}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   className="w-56"
                   align="end"
-                  data-oid="p4gzon_"
                 >
-                  <DropdownMenuItem data-oid="q:wku3-">
-                    <User className="mr-2 h-4 w-4" data-oid="w-mrwft" />
+                  {(currentUser?.role === "admin" || currentUser?.role === "editor") && (
+                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem
+                    onClick={() => navigate("/dashboard", { state: { activeItem: "settings" } })}
+                  >
+                    <User className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator data-oid="mzuizge" />
-                  <DropdownMenuItem data-oid="toi:qbq">
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onLogout} data-oid="wmur5a5">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/login" data-oid="hy6g3:z">
-                <Button variant="default" size="sm" data-oid="r1vjdlv">
+              <Link to="/login">
+                <Button variant="default" size="sm">
                   Login
                 </Button>
               </Link>
             )}
 
             {/* Mobile Menu */}
-            <Sheet data-oid="o5c9sow">
-              <SheetTrigger asChild data-oid="i:7iyiy">
+            <Sheet>
+              <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="md:hidden h-9 w-9 p-0"
-                  data-oid="vls146k"
                 >
-                  <Menu className="h-4 w-4" data-oid="_zoco2c" />
+                  <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80" data-oid="2yiv4km">
+              <SheetContent side="right" className="w-80">
                 <div
                   className="flex flex-col space-y-4 mt-6"
-                  data-oid="gho_5w-"
                 >
                   {/* Mobile Search */}
-                  <div className="relative" data-oid="emoof17">
+                  <div className="relative">
                     <Search
                       className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                      data-oid="ytj7egk"
                     />
 
                     <Input
@@ -220,13 +229,38 @@ export function Navbar({
                       value={searchQuery}
                       onChange={handleSearchChange}
                       onKeyDown={handleSearchSubmit}
-                      data-oid="ra7zt39"
                     />
                   </div>
 
                   {/* Mobile Navigation */}
-                  <nav className="flex flex-col space-y-3" data-oid="yxfsh2r">
-                    <NavLinks data-oid="tynoy76" />
+                  <nav className="flex flex-col space-y-3">
+                    <NavLinks />
+                    {isLoggedIn && (
+                      <>
+                        {(currentUser?.role === "admin" || currentUser?.role === "editor") && (
+                          <Link
+                            to="/dashboard"
+                            className="text-sm font-medium hover:text-foreground transition-colors"
+                          >
+                            Dashboard
+                          </Link>
+                        )}
+                        <Link
+                          to="/dashboard"
+                          state={{ activeItem: "settings" }}
+                          className="text-sm font-medium hover:text-foreground transition-colors"
+                        >
+                          Profile
+                        </Link>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-sm font-medium hover:text-foreground transition-colors p-0"
+                          onClick={logout}
+                        >
+                          Logout
+                        </Button>
+                      </>
+                    )}
                   </nav>
                 </div>
               </SheetContent>

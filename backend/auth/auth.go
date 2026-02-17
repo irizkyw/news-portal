@@ -42,7 +42,7 @@ func Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := database.DB.Get(&user, "SELECT id, email, password, role FROM users WHERE email = ?", req.Email); err != nil {
+	if err := database.DB.Get(&user, "SELECT id, email, name, password, role, avatar, bio FROM users WHERE email = ?", req.Email); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email atau password salah"})
 		return
 	}
@@ -108,17 +108,19 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	id, _ := result.LastInsertId()
+	id, err := result.LastInsertId()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mendapatkan ID user baru"})
+		return
+	}
 
-	// 4. Return user data (tanpa password)
-	// Kita bisa langsung generate token disini agar user langsung login (opsional),
-	// tapi untuk sekarang kita return data user saja agar konsisten dengan `api.ts`.
-	c.JSON(http.StatusCreated, gin.H{
-		"id":    id,
-		"email": req.Email,
-		"name":  req.Name,
-		"role":  defaultRole,
-	})
+	var newUser models.User
+	if err := database.DB.Get(&newUser, "SELECT id, email, name, role, avatar, bio, created_at, updated_at FROM users WHERE id = ?", id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data user baru"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"user": newUser})
 }
 
 func AuthMiddleware() gin.HandlerFunc {

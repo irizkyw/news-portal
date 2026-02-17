@@ -109,7 +109,9 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
   }, []);
 
   useEffect(() => {
-    if (article) {
+    // Only reset form fields if article data is available AND categories are loaded
+    // This prevents issues where category Select component can't pre-select before options are available
+    if (article && categories.length > 0) {
       reset({
         title: article.title || "",
         excerpt: article.excerpt || "",
@@ -121,7 +123,7 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
         isFeatured: article.isFeatured || false,
         isPopular: article.isPopular || false,
       });
-    } else {
+    } else if (!article) { // For new posts, reset to defaults
       reset({
         title: "",
         excerpt: "",
@@ -134,7 +136,7 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
         isPopular: false,
       });
     }
-  }, [article, reset]);
+  }, [article, categories, reset]); // Add categories to dependency array
 
   const onSubmit = (data: PostFormData) => {
     const finalData: Partial<Article> = {
@@ -223,7 +225,8 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
                 <Controller
                   name="categoryId"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field }) => {
+                    return (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger ref={field.ref}><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>
@@ -232,7 +235,7 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
                         ))}
                       </SelectContent>
                     </Select>
-                  )}
+                  )}}
                 />
                 {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId.message}</p>}
               </div>

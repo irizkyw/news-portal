@@ -88,16 +88,6 @@ function App() {
             data-oid="u7j5ng0"
           />
 
-          {/* Protected Profile Settings Route */}
-          <Route
-            path="/dashboard/profile"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "editor", "user"]}>
-                <ProfileSettingsPage />
-              </ProtectedRoute>
-            }
-          />
-
           <Route
             path="/search"
             element={<SearchResultsPage data-oid="-nuniwi" />}

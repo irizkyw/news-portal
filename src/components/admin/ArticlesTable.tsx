@@ -231,7 +231,10 @@ export function ArticlesTable({ onCreateNew, onEdit, onDuplicate }: ArticlesTabl
                 <TableCell>
                   <div className="flex items-center space-x-2">
                     <img
-                      src={article.author?.avatar || '/placeholder-avatar.png'}
+                      src={
+                        article.author?.avatar || 
+                        `https://ui-avatars.com/api/?name=${article.author?.name || "A"}&background=random`
+                      }
                       alt={article.author?.name || 'Author'}
                       className="h-6 w-6 rounded-full"
                     />
