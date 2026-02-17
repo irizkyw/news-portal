@@ -1,8 +1,39 @@
 package models
 
 import (
+	"strings"
 	"time"
 )
+
+// StringArray adalah tipe kustom untuk menangani konversi otomatis
+// dari string (koma terpisah) di database ke slice string di Go.
+type StringArray []string
+
+// Scan mengimplementasikan interface sql.Scanner untuk membaca data dari database.
+func (a *StringArray) Scan(value interface{}) error {
+	if value == nil {
+		*a = []string{}
+		return nil
+	}
+
+	var s string
+	switch v := value.(type) {
+	case string:
+		s = v
+	case []byte:
+		s = string(v)
+	default:
+		*a = []string{}
+		return nil
+	}
+
+	if s == "" {
+		*a = []string{}
+	} else {
+		*a = strings.Split(s, ",")
+	}
+	return nil
+}
 
 type Category struct {
 	ID    string `db:"id" json:"id"`
@@ -15,7 +46,7 @@ type User struct {
 	ID        string    `db:"id" json:"id"`
 	Email     string    `db:"email" json:"email"`
 	Name      string    `db:"name" json:"name"`
-	Password  string    `db:"password" json:"-"` // Exclude from JSON output
+	Password  string    `db:"password" json:"-"` // Dikecualikan dari output JSON
 	Role      string    `db:"role" json:"role"`
 	Avatar    string    `db:"avatar" json:"avatar"`
 	Bio       string    `db:"bio" json:"bio"`
@@ -47,15 +78,13 @@ type Post struct {
 	CreatedAt     time.Time `db:"created_at" json:"createdAt"`
 	UpdatedAt     time.Time `db:"updated_at" json:"updatedAt"`
 
-	// Flattened Category fields
-	// Menggunakan pointer (*string) agar field ini bisa NULL (karena LEFT JOIN)
-	// dan akan muncul sebagai null di JSON jika kosong, bukan object complex.
+	// Category fields (Flattened)
 	CategoryID    *string `db:"category_id" json:"category_id"`
 	CategoryName  *string `db:"category_name" json:"category_name"`
 	CategorySlug  *string `db:"category_slug" json:"category_slug"`
 	CategoryColor *string `db:"category_color" json:"category_color"`
 
-	// Flattened Author fields
+	// Author fields (Flattened)
 	AuthorID        *string    `db:"author_id" json:"author_id"`
 	AuthorName      *string    `db:"author_name" json:"author_name"`
 	AuthorEmail     *string    `db:"author_email" json:"author_email"`
@@ -63,9 +92,11 @@ type Post struct {
 	AuthorBio       *string    `db:"author_bio" json:"author_bio"`
 	AuthorCreatedAt *time.Time `db:"author_created_at" json:"author_created_at"`
 	AuthorUpdatedAt *time.Time `db:"author_updated_at" json:"author_updated_at"`
+
+	// Tags sekarang otomatis menjadi JSON array ["tag1", "tag2"]
+	Tags StringArray `db:"tags" json:"tags"`
 }
 
-// DashboardStats mendefinisikan struktur data untuk statistik dashboard
 type DashboardStats struct {
 	TotalViews        int64   `db:"total_views" json:"totalViews"`
 	TotalArticles     int     `db:"total_articles" json:"totalArticles"`
@@ -77,7 +108,6 @@ type DashboardStats struct {
 	BounceRateChange  float64 `db:"bounce_rate_change" json:"bounceRateChange"`
 }
 
-// WeeklyTraffic mendefinisikan struktur data untuk grafik mingguan
 type WeeklyTraffic struct {
 	Day   string `db:"day" json:"day"`
 	Views int    `db:"views" json:"views"`

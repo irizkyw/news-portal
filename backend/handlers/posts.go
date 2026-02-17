@@ -46,18 +46,23 @@ type PostResponse struct {
 	UpdatedAt     time.Time         `json:"updatedAt"`
 	Category      *CategoryResponse `json:"category,omitempty"`
 	Author        *AuthorResponse   `json:"author,omitempty"`
+	Tags          []string          `json:"tags,omitempty"`
 }
 
 func GetPosts(c *gin.Context) {
-	query := `
+	// Base query including joins for author, category, and tags
+	baseQuery := `
 		SELECT
 			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
 			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
-			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color
+			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color,
+			GROUP_CONCAT(t.name SEPARATOR ',') AS tags
 		FROM posts p
 		LEFT JOIN users a ON p.author_id = a.id
 		LEFT JOIN post_categories pc ON p.id = pc.post_id
 		LEFT JOIN categories c ON pc.category_id = c.id
+		LEFT JOIN post_tags pt ON p.id = pt.post_id
+		LEFT JOIN tags t ON pt.tag_id = t.id
 	`
 	whereClauses := []string{"p.status = 'published'"}
 	args := []interface{}{}
@@ -74,11 +79,23 @@ func GetPosts(c *gin.Context) {
 		whereClauses = append(whereClauses, "(p.title LIKE ? OR p.excerpt LIKE ? OR p.content LIKE ?)")
 		args = append(args, searchPattern, searchPattern, searchPattern)
 	}
-	// Add other filters like tagName if needed in the future
+	if tagName := c.Query("tagName"); tagName != "" {
+		// Use FIND_IN_SET for filtering by tags in a comma-separated string
+		// This requires the GROUP_CONCAT(t.name) to be in the main query
+		whereClauses = append(whereClauses, "FIND_IN_SET(?, GROUP_CONCAT(t.name))")
+		args = append(args, tagName)
+	}
 
+	query := baseQuery
 	if len(whereClauses) > 0 {
 		query += " WHERE " + strings.Join(whereClauses, " AND ")
 	}
+
+	query += ` GROUP BY
+        p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
+        a.id, a.name, a.email, a.avatar, a.bio,
+        c.id, c.name, c.slug, c.color
+    `
 
 	sortBy := c.Query("sortBy")
 	switch sortBy {
@@ -154,6 +171,11 @@ func GetPosts(c *gin.Context) {
 				category.Color = *p.CategoryColor
 			}
 			postsResponse[i].Category = category
+		}
+
+		// Populate Tags
+		if len(p.Tags) > 0 {
+			postsResponse[i].Tags = p.Tags
 		}
 	}
 

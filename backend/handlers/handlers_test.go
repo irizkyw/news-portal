@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"news-portal/backend/database"
+	"news-portal/backend/models" // Import the models package
 	"os"
 	"testing"
 
@@ -42,7 +43,7 @@ func TestGetUsers(t *testing.T) {
 	// Check the response
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var users []User
+	var users []models.User
 	err := json.Unmarshal(w.Body.Bytes(), &users)
 	assert.NoError(t, err)
 }

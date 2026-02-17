@@ -29,7 +29,6 @@ func GetDashboardStats(c *gin.Context) {
 
 	// Menggunakan database.DB.Get untuk mengambil satu baris data
 	if err := database.DB.Get(&stats, query); err != nil {
-		// Jika data tidak ditemukan, kita bisa mengembalikan data kosong daripada error 500
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Data statistik dashboard belum tersedia",
 		})
