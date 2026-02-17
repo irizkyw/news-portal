@@ -64,8 +64,19 @@ func GetPosts(c *gin.Context) {
 		LEFT JOIN post_tags pt ON p.id = pt.post_id
 		LEFT JOIN tags t ON pt.tag_id = t.id
 	`
-	whereClauses := []string{"p.status = 'published'"}
+	whereClauses := []string{}
 	args := []interface{}{}
+
+	statusFilter := c.Query("status")
+	if statusFilter != "" && (statusFilter == "all" || statusFilter == "draft" || statusFilter == "pending" || statusFilter == "published") {
+		if statusFilter != "all" {
+			whereClauses = append(whereClauses, "p.status = ?")
+			args = append(args, statusFilter)
+		}
+	} else {
+		// Default to published if no valid status filter is provided
+		whereClauses = append(whereClauses, "p.status = 'published'")
+	}
 
 	if c.Query("isFeatured") == "true" {
 		whereClauses = append(whereClauses, "p.is_featured = TRUE")
@@ -95,7 +106,6 @@ func GetPosts(c *gin.Context) {
         p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
         a.id, a.name, a.email, a.avatar, a.bio,
         c.id, c.name, c.slug, c.color
-    `
 
 	sortBy := c.Query("sortBy")
 	switch sortBy {
@@ -216,7 +226,7 @@ type CreatePostRequest struct {
 	IsFeatured    bool       `json:"isFeatured"`
 	IsPopular     bool       `json:"isPopular"`
 	PublishedAt   *time.Time `json:"publishedAt"` // Allow null for draft posts
-	AuthorID      int        `json:"authorId" binding:"required"`
+	AuthorID      string     `json:"authorId" binding:"required"`
 	CategoryID    string     `json:"categoryId"`
 }
 
