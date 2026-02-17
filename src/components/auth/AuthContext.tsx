@@ -6,9 +6,9 @@ import type { User as AuthUser } from '../../types';
 interface AuthContextType {
   isLoggedIn: boolean;
   user: AuthUser | null;
+  isLoading: boolean; // Add isLoading to the context type
   login: (token: string, user: AuthUser) => void;
   logout: () => void;
-  // Potentially add other auth-related functions or state
 }
 
 // Create the context with default (empty) values
@@ -18,24 +18,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthContextProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Add isLoading state
 
   // On initial load, check for an existing token and user data in localStorage
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const storedUser = localStorage.getItem('authUser');
-    if (token && storedUser) {
-      try {
+    try {
+      if (token && storedUser) {
         const parsedUser = JSON.parse(storedUser);
         setIsLoggedIn(true);
         setUser(parsedUser);
-      } catch (e) {
-        console.error("Failed to parse stored user data from localStorage:", e);
-        // Clear invalid data and log out
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('authUser');
-        setIsLoggedIn(false);
-        setUser(null);
       }
+    } catch (e) {
+      console.error("Failed to parse stored user data from localStorage:", e);
+      // Clear invalid data
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('authUser');
+      setIsLoggedIn(false);
+      setUser(null);
+    } finally {
+      setIsLoading(false); // Set loading to false after checking
     }
   }, []);
 
@@ -59,6 +62,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const contextValue: AuthContextType = {
     isLoggedIn,
     user,
+    isLoading, // Expose isLoading
     login,
     logout,
   };

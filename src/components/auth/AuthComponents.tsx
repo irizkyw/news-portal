@@ -11,7 +11,12 @@ interface AuthRouteProps {
 
 // ProtectedRoute ensures only logged-in users can access certain routes
 export function ProtectedRoute({ redirectPath = '/login', unauthorizedRedirectPath = '/', allowedRoles, children }: AuthRouteProps) {
-  const { isLoggedIn, user } = useAuth(); // Get isLoggedIn and user from context
+  const { isLoggedIn, user, isLoading } = useAuth(); // Get isLoading, isLoggedIn and user from context
+
+  if (isLoading) {
+    // You can return a loading spinner or a blank page here
+    return <div>Loading...</div>; 
+  }
 
   if (!isLoggedIn) {
     return <Navigate to={redirectPath} replace />;
