@@ -69,6 +69,11 @@ func GetPosts(c *gin.Context) {
 		whereClauses = append(whereClauses, "c.slug = ?")
 		args = append(args, categorySlug)
 	}
+	if search := c.Query("search"); search != "" {
+		searchPattern := "%" + search + "%"
+		whereClauses = append(whereClauses, "(p.title LIKE ? OR p.excerpt LIKE ? OR p.content LIKE ?)")
+		args = append(args, searchPattern, searchPattern, searchPattern)
+	}
 	// Add other filters like tagName if needed in the future
 
 	if len(whereClauses) > 0 {

@@ -7,37 +7,45 @@ import (
 	"news-portal/backend/handlers"
 	"news-portal/backend/seed"
 
-	"github.com/gin-contrib/cors" // Import the cors package
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
-	router.RedirectTrailingSlash = false
 
-	// Configure CORS middleware
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		AllowCredentials: true,
-	}))
+	// Kembalikan ke true (default) agar Gin menangani redirect rute secara otomatis.
+	// Ini mencegah rute terputus sebelum mencapai middleware CORS.
+	router.RedirectTrailingSlash = true
 
+	// Konfigurasi CORS Middleware yang diperbarui
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept"}
+	config.AllowCredentials = true
+
+	// Pastikan middleware ini dipasang paling awal sebelum rute lain
+	router.Use(cors.New(config))
+
+	// Inisialisasi Database
 	if err := database.Connect(false); err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("Gagal terhubung ke database: %v", err)
 	}
 	seed.Seed()
 
+	// Public Routes
 	router.POST("/login", auth.Login)
 	router.POST("/register", auth.Register)
+	router.POST("/subscribe", handlers.SubscribeToNewsletter)
 
 	// User routes
 	userRoutes := router.Group("/users")
 	userRoutes.Use(auth.AuthMiddleware())
 	{
 		userRoutes.GET("", auth.AuthzMiddleware("admin"), handlers.GetUsers)
-		userRoutes.POST("", auth.AuthzMiddleware("admin"), handlers.CreateUser) // Admin can create users
-		userRoutes.GET("/:id", handlers.GetUser)                                 // A user can get their own profile, admin can get any
+		userRoutes.POST("", auth.AuthzMiddleware("admin"), handlers.CreateUser)
+		userRoutes.GET("/:id", handlers.GetUser)
 		userRoutes.PUT("/:id", auth.AuthzMiddleware("admin"), handlers.UpdateUser)
 		userRoutes.DELETE("/:id", auth.AuthzMiddleware("admin"), handlers.DeleteUser)
 	}
@@ -62,5 +70,11 @@ func main() {
 		categoryRoutes.DELETE("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.DeleteCategory)
 	}
 
+	// Stats routes
+	router.GET("/stats/dashboard", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.GetDashboardStats)
+	router.GET("/stats/traffic", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.GetWeeklyTraffic)
+
+	// Jalankan server
+	log.Println("Server berjalan di http://localhost:8080")
 	router.Run(":8080")
 }

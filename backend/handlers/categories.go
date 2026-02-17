@@ -4,20 +4,14 @@ import (
 	"database/sql"
 	"net/http"
 	"news-portal/backend/database"
+	"news-portal/backend/models"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Category struct {
-	ID    int    `db:"id"`
-	Name  string `db:"name"`
-	Slug  string `db:"slug"`
-	Color string `db:"color"`
-}
-
 func GetCategories(c *gin.Context) {
-	var categories []Category
+	var categories []models.Category
 	if err := database.DB.Select(&categories, "SELECT * FROM categories"); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -27,7 +21,7 @@ func GetCategories(c *gin.Context) {
 
 func GetCategory(c *gin.Context) {
 	slug := c.Param("slug")
-	var category Category
+	var category models.Category
 	if err := database.DB.Get(&category, "SELECT * FROM categories WHERE slug = ?", slug); err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
@@ -65,7 +59,7 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
-	var category Category
+	var category models.Category
 	if err := database.DB.Get(&category, "SELECT * FROM categories WHERE id = ?", id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -94,7 +88,7 @@ func UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	var category Category
+	var category models.Category
 	if err := database.DB.Get(&category, "SELECT * FROM categories WHERE id = ?", id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
