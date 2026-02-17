@@ -12,9 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "../auth/AuthContext"; // Import useAuth
-import { updateUser } from "../../services/api"; // Import updateUser API
+import { updateUser, changePassword } from "../../services/api"; // Import updateUser and changePassword API
 
-// Schema for profile form validation
+// Schema for personal information form validation
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
@@ -24,9 +24,22 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
+// Schema for password change form validation
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(6, "New password must be at least 6 characters"),
+  confirmPassword: z.string().min(1, "Confirm password is required"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "New password and confirmation do not match",
+  path: ["confirmPassword"],
+});
+
+type PasswordFormData = z.infer<typeof passwordSchema>;
+
 export function ProfileSettingsPage() {
   const { user: currentUser, refreshUser } = useAuth(); // Get current user and refreshUser function
 
+  // Form for Personal Information
   const {
     register,
     handleSubmit,
@@ -42,7 +55,17 @@ export function ProfileSettingsPage() {
     },
   });
 
-  // Reset form with current user data when currentUser changes
+  // Form for Password Change
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPasswordForm,
+    formState: { errors: passwordErrors, isSubmitting: isChangingPassword },
+  } = useForm<PasswordFormData>({
+    resolver: zodResolver(passwordSchema),
+  });
+
+  // Reset personal info form with current user data when currentUser changes
   useEffect(() => {
     if (currentUser) {
       reset({
@@ -54,33 +77,37 @@ export function ProfileSettingsPage() {
     }
   }, [currentUser, reset]);
 
+  // Handle saving personal information
   const onSubmit = async (data: ProfileFormData) => {
     if (!currentUser?.id) {
       toast.error("User not logged in.");
       return;
     }
-    console.log("Submitting data:", data);
     try {
-      const updatedUser = await updateUser(currentUser.id, {
+      await updateUser(currentUser.id, {
         name: data.name,
         email: data.email,
         avatar: data.avatar,
         bio: data.bio,
       });
-      console.log("API response (updatedUser):", updatedUser);
       toast.success("Profile updated successfully!");
-      console.log("currentUser BEFORE refreshUser:", currentUser);
-      await refreshUser(); // Refresh user data in context
-      console.log("currentUser AFTER refreshUser:", currentUser); // Note: this will log the old value due to closure, check AuthContext console.log for actual updated user
+      await refreshUser(); // Refresh user data in context to update UI
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast.error("Failed to update profile.");
     }
   };
 
-  // Placeholder for password change handler
-  const onChangePassword = () => {
-    toast.info("Password change functionality not yet implemented.");
+  // Handle password change
+  const handlePasswordChange = async (data: PasswordFormData) => {
+    try {
+      await changePassword(data);
+      toast.success("Password updated successfully!");
+      resetPasswordForm(); // Clear password fields on success
+    } catch (error: any) {
+      console.error("Failed to change password:", error);
+      toast.error(error.message || "Failed to change password.");
+    }
   };
 
   if (!currentUser) {
@@ -157,28 +184,45 @@ export function ProfileSettingsPage() {
         </Card>
       </form>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Security</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="current-password">Current Password</Label>
-            <Input id="current-password" type="password" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="new-password">New Password</Label>
-            <Input id="new-password" type="password" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
-            <Input id="confirm-password" type="password" />
-          </div>
-          <Button variant="outline" onClick={onChangePassword}>
-            Update Password
-          </Button>
-        </CardContent>
-      </Card>
+      <form onSubmit={handlePasswordSubmit(handlePasswordChange)} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Security</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="current-password">Current Password</Label>
+              <Input id="current-password" type="password" {...registerPassword("currentPassword")} />
+              {passwordErrors.currentPassword && (
+                <p className="text-red-500 text-xs mt-1">
+                  {passwordErrors.currentPassword.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-password">New Password</Label>
+              <Input id="new-password" type="password" {...registerPassword("newPassword")} />
+              {passwordErrors.newPassword && (
+                <p className="text-red-500 text-xs mt-1">
+                  {passwordErrors.newPassword.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <Input id="confirm-password" type="password" {...registerPassword("confirmPassword")} />
+              {passwordErrors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1">
+                  {passwordErrors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+            <Button type="submit" variant="outline" disabled={isChangingPassword}>
+              {isChangingPassword ? "Updating..." : "Update Password"}
+            </Button>
+          </CardContent>
+        </Card>
+      </form>
     </div>
   );
 }

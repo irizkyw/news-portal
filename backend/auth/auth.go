@@ -16,6 +16,7 @@ import (
 var jwtKey = []byte("my_secret_key")
 
 type Claims struct {
+	UserID string `json:"userId"`
 	Email string `json:"email"`
 	Role  string `json:"role"`
 	jwt.RegisteredClaims
@@ -54,6 +55,7 @@ func Login(c *gin.Context) {
 
 	expirationTime := time.Now().Add(24 * time.Hour) // Token berlaku 24 jam
 	claims := &Claims{
+		UserID: user.ID,
 		Email: user.Email,
 		Role:  user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -148,6 +150,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		c.Set("user_id", claims.UserID) // Set user ID in context
 		c.Set("email", claims.Email)
 		c.Set("role", claims.Role)
 		c.Next()

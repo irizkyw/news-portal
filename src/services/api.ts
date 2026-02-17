@@ -296,3 +296,28 @@ export const register = async (userData: {
   }
   return response.json();
 };
+
+// Interface for password change request
+interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+// Function to change user password
+export const changePassword = async (passwordData: ChangePasswordRequest): Promise<{ message: string }> => {
+  const response = await fetch(`${API_BASE_URL}/users/me/password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAuthToken(),
+    },
+    body: JSON.stringify(passwordData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Gagal mengubah password");
+  }
+  return response.json();
+};

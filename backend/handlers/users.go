@@ -157,3 +157,62 @@ func DeleteUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
+
+// ChangePasswordRequest defines the request body for changing a user's password
+type ChangePasswordRequest struct {
+	CurrentPassword string `json:"currentPassword" binding:"required"`
+	NewPassword     string `json:"newPassword" binding:"required,min=6"`
+	ConfirmPassword string `json:"confirmPassword" binding:"required"`
+}
+
+// ChangePassword handles updating a user's password
+func ChangePassword(c *gin.Context) {
+	userID, exists := c.Get("user_id") // Get user ID from context (set by AuthMiddleware)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in context"})
+		return
+	}
+
+	var req ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if req.NewPassword != req.ConfirmPassword {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "New password and confirmation do not match"})
+		return
+	}
+
+	// Fetch user to verify current password
+	var user models.User
+	if err := database.DB.Get(&user, "SELECT id, password FROM users WHERE id = ?", userID); err != nil {
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user"})
+		return
+	}
+
+	// Verify current password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword)); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Current password is incorrect"})
+		return
+	}
+
+	// Hash new password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash new password"})
+		return
+	}
+
+	// Update password in database
+	if _, err := database.DB.Exec("UPDATE users SET password = ?, updated_at = ? WHERE id = ?", string(hashedPassword), time.Now(), userID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully"})
+}
