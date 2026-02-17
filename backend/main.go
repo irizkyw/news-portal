@@ -6,7 +6,6 @@ import (
 	"news-portal/backend/database"
 	"news-portal/backend/handlers"
 	"news-portal/backend/seed"
-	"time"
 
 	"github.com/gin-contrib/cors" // Import the cors package
 	"github.com/gin-gonic/gin"
@@ -14,15 +13,14 @@ import (
 
 func main() {
 	router := gin.Default()
+	router.RedirectTrailingSlash = false
 
 	// Configure CORS middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // Allow frontend origin
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
 	}))
 
 	if err := database.Connect(false); err != nil {
@@ -31,13 +29,14 @@ func main() {
 	seed.Seed()
 
 	router.POST("/login", auth.Login)
+	router.POST("/register", auth.Register)
 
 	// User routes
 	userRoutes := router.Group("/users")
 	userRoutes.Use(auth.AuthMiddleware())
 	{
-		userRoutes.GET("/", auth.AuthzMiddleware("admin"), handlers.GetUsers)
-		userRoutes.POST("/", auth.AuthzMiddleware("admin"), handlers.CreateUser) // Admin can create users
+		userRoutes.GET("", auth.AuthzMiddleware("admin"), handlers.GetUsers)
+		userRoutes.POST("", auth.AuthzMiddleware("admin"), handlers.CreateUser) // Admin can create users
 		userRoutes.GET("/:id", handlers.GetUser)                                 // A user can get their own profile, admin can get any
 		userRoutes.PUT("/:id", auth.AuthzMiddleware("admin"), handlers.UpdateUser)
 		userRoutes.DELETE("/:id", auth.AuthzMiddleware("admin"), handlers.DeleteUser)
@@ -46,9 +45,9 @@ func main() {
 	// Post routes
 	postRoutes := router.Group("/posts")
 	{
-		postRoutes.GET("/", handlers.GetPosts)
+		postRoutes.GET("", handlers.GetPosts)
 		postRoutes.GET("/:slug", handlers.GetPost)
-		postRoutes.POST("/", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.CreatePost)
+		postRoutes.POST("", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.CreatePost)
 		postRoutes.PUT("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.UpdatePost)
 		postRoutes.DELETE("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.DeletePost)
 	}
@@ -56,9 +55,9 @@ func main() {
 	// Category routes
 	categoryRoutes := router.Group("/categories")
 	{
-		categoryRoutes.GET("/", handlers.GetCategories)
+		categoryRoutes.GET("", handlers.GetCategories)
 		categoryRoutes.GET("/:slug", handlers.GetCategory)
-		categoryRoutes.POST("/", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.CreateCategory)
+		categoryRoutes.POST("", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.CreateCategory)
 		categoryRoutes.PUT("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.UpdateCategory)
 		categoryRoutes.DELETE("/:id", auth.AuthMiddleware(), auth.AuthzMiddleware("admin"), handlers.DeleteCategory)
 	}

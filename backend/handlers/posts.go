@@ -5,54 +5,154 @@ import (
 	"log"
 	"net/http"
 	"news-portal/backend/database"
-	"news-portal/backend/models" // Import models package
+	"news-portal/backend/models"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+// Define the nested response structures expected by the frontend
+type CategoryResponse struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Slug  string `json:"slug"`
+	Color string `json:"color"`
+}
+
+type AuthorResponse struct {
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
+	Bio    string `json:"bio"`
+}
+
+type PostResponse struct {
+	ID            string            `json:"id"`
+	Title         string            `json:"title"`
+	Slug          string            `json:"slug"`
+	Excerpt       string            `json:"excerpt"`
+	Content       string            `json:"content"`
+	FeaturedImage string            `json:"featuredImage"`
+	ReadTime      int               `json:"readTime"`
+	Views         int               `json:"views"`
+	Status        string            `json:"status"`
+	IsFeatured    bool              `json:"isFeatured"`
+	IsPopular     bool              `json:"isPopular"`
+	PublishedAt   time.Time         `json:"publishedAt"`
+	CreatedAt     time.Time         `json:"createdAt"`
+	UpdatedAt     time.Time         `json:"updatedAt"`
+	Category      *CategoryResponse `json:"category,omitempty"`
+	Author        *AuthorResponse   `json:"author,omitempty"`
+}
+
 func GetPosts(c *gin.Context) {
-	var posts []models.Post
 	query := `
 		SELECT
 			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
-			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio, a.created_at AS author_created_at, a.updated_at AS author_updated_at,
+			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
 			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color
 		FROM posts p
 		LEFT JOIN users a ON p.author_id = a.id
 		LEFT JOIN post_categories pc ON p.id = pc.post_id
 		LEFT JOIN categories c ON pc.category_id = c.id
-		WHERE p.status = 'published'
 	`
-	// Handle query parameters for filtering and sorting
-	// Example: ?isFeatured=true&limit=3
-	isFeatured := c.Query("isFeatured")
-	limit := c.Query("limit")
-	sortBy := c.Query("sortBy")
-
+	whereClauses := []string{"p.status = 'published'"}
 	args := []interface{}{}
 
-	if isFeatured == "true" {
-		query += " AND p.is_featured = TRUE"
+	if c.Query("isFeatured") == "true" {
+		whereClauses = append(whereClauses, "p.is_featured = TRUE")
+	}
+	if categorySlug := c.Query("categorySlug"); categorySlug != "" {
+		whereClauses = append(whereClauses, "c.slug = ?")
+		args = append(args, categorySlug)
+	}
+	// Add other filters like tagName if needed in the future
+
+	if len(whereClauses) > 0 {
+		query += " WHERE " + strings.Join(whereClauses, " AND ")
 	}
 
-	if sortBy == "popular" {
+	sortBy := c.Query("sortBy")
+	switch sortBy {
+	case "popular":
 		query += " ORDER BY p.views DESC"
-	} else if sortBy == "latest" || sortBy == "" { // Default to latest
+	case "trending": // Assuming trending might have its own logic, for now, same as popular
+		query += " ORDER BY p.views DESC"
+	default: // "latest" or empty
 		query += " ORDER BY p.published_at DESC"
 	}
 
-	if limit != "" {
-		query += " LIMIT ?"
-		args = append(args, limit)
+	if limitStr := c.Query("limit"); limitStr != "" {
+		if limit, err := strconv.Atoi(limitStr); err == nil {
+			query += " LIMIT ?"
+			args = append(args, limit)
+		}
 	}
 
-	if err := database.DB.Select(&posts, query, args...); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	var dbPosts []models.Post
+	if err := database.DB.Select(&dbPosts, query, args...); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query failed: " + err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, posts)
+
+	// Transform the flat DB structure to the nested JSON structure
+	postsResponse := make([]PostResponse, len(dbPosts))
+	for i, p := range dbPosts {
+		postsResponse[i] = PostResponse{
+			ID:            p.ID,
+			Title:         p.Title,
+			Slug:          p.Slug,
+			Excerpt:       p.Excerpt,
+			Content:       p.Content,
+			FeaturedImage: p.FeaturedImage,
+			ReadTime:      p.ReadTime,
+			Views:         p.Views,
+			Status:        p.Status,
+			IsFeatured:    p.IsFeatured,
+			IsPopular:     p.IsPopular,
+			PublishedAt:   p.PublishedAt,
+			CreatedAt:     p.CreatedAt,
+			UpdatedAt:     p.UpdatedAt,
+		}
+
+		// Safely build the nested Author object
+		if p.AuthorID != nil {
+			author := &AuthorResponse{ID: *p.AuthorID}
+			if p.AuthorName != nil {
+				author.Name = *p.AuthorName
+			}
+			if p.AuthorEmail != nil {
+				author.Email = *p.AuthorEmail
+			}
+			if p.AuthorAvatar != nil {
+				author.Avatar = *p.AuthorAvatar
+			}
+			if p.AuthorBio != nil {
+				author.Bio = *p.AuthorBio
+			}
+			postsResponse[i].Author = author
+		}
+
+		// Safely build the nested Category object
+		if p.CategoryID != nil {
+			category := &CategoryResponse{ID: *p.CategoryID}
+			if p.CategoryName != nil {
+				category.Name = *p.CategoryName
+			}
+			if p.CategorySlug != nil {
+				category.Slug = *p.CategorySlug
+			}
+			if p.CategoryColor != nil {
+				category.Color = *p.CategoryColor
+			}
+			postsResponse[i].Category = category
+		}
+	}
+
+	c.JSON(http.StatusOK, postsResponse)
 }
 
 func GetPost(c *gin.Context) {

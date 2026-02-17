@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"log"
 	"news-portal/backend/database"
-	"news-portal/backend/models" // Import models package
+
+	// "news-portal/backend/models" // Import models package
 	"strings"
 	"time"
 
-	"github.com/jmoiron/sqlx"
+	// "github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -249,8 +250,8 @@ func seedPosts(userIDs map[string]int, categoryIDs map[string]int) {
 		}
 
 		result, err := database.DB.Exec(`
-			INSERT INTO posts 
-			(title, slug, excerpt, content, featured_image, read_time, views, status, is_featured, is_popular, published_at, author_id) 
+			INSERT INTO posts
+			(title, slug, excerpt, content, featured_image, read_time, views, status, is_featured, is_popular, published_at, author_id)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			postData.Title, slug, postData.Excerpt, postData.Content, postData.FeaturedImage, 0, 0, postData.Status, postData.IsFeatured, postData.IsPopular, publishedAt, authorID)
 		if err != nil {
@@ -265,4 +266,3 @@ func seedPosts(userIDs map[string]int, categoryIDs map[string]int) {
 	}
 	log.Println("Seeded posts.")
 }
-
