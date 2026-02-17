@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../auth/AuthContext";
-import { User } from "../../types"; // Assuming a User type exists in types.d.ts
+import type { User } from "../../types"; // Assuming a User type exists in types.d.ts
 
 interface UserManagementTableProps {
   onEditUser: (user: User) => void;

@@ -1,14 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-// Define the shape of the user object
-interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  avatar?: string;
-  bio?: string;
-}
+import type { User as AuthUser } from '../../types';
 
 // Define the shape of the authentication context
 interface AuthContextType {
@@ -62,7 +54,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     setIsLoggedIn(false);
     setUser(null);
   };
-
+  
   // The value that will be supplied to any consumer of the context
   const contextValue: AuthContextType = {
     isLoggedIn,

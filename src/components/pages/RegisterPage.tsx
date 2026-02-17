@@ -3,42 +3,62 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { register as apiRegister } from "../../services/api";
 
-interface RegisterPageProps {
-  onRegister: () => void;
-}
-
-export function RegisterPage({ onRegister }: RegisterPageProps) {
+export function RegisterPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
-    // In a real app, you would have actual registration logic here
-    if (email && password) {
-      onRegister();
-    } else {
-      alert("Please fill in all fields");
+
+    try {
+      await apiRegister({ name, email, password });
+      setSuccess("Registration successful! Redirecting to login...");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); // Wait 2 seconds before redirecting
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <Card className="w-full max-w-sm">
-        <CardHeader data-oid="7cxrsns">
-          <CardTitle data-oid="wmj52nx">Register</CardTitle>
+        <CardHeader>
+          <CardTitle>Register</CardTitle>
         </CardHeader>
-        <CardContent data-oid="ecxwwaq">
-          <div className="space-y-4" data-oid="bqlj179">
-            <div className="space-y-2" data-oid="xhigx_b">
-              <Label htmlFor="email" data-oid=".kjn.6s">
-                Email
-              </Label>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            {success && <p className="text-green-500 text-sm text-center">{success}</p>}
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -46,49 +66,38 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                data-oid="6x1qfxz"
               />
             </div>
-            <div className="space-y-2" data-oid="f2_67a:">
-              <Label htmlFor="password" data-oid="f8_w5ez">
-                Password
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                data-oid="hfo6lff"
               />
             </div>
-            <div className="space-y-2" data-oid="jg1x.ll">
-              <Label htmlFor="confirm-password" data-oid="fx.zia4">
-                Confirm Password
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
               <Input
                 id="confirm-password"
                 type="password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                data-oid="c7qj0m5"
               />
             </div>
-            <Button
-              onClick={handleRegister}
-              className="w-full"
-              data-oid="e:5vmmn"
-            >
+            <Button type="submit" className="w-full">
               Register
             </Button>
-            <div className="text-center text-sm" data-oid="4y65yu.">
+            <div className="text-center text-sm">
               Already have an account?{" "}
-              <Link to="/login" className="underline" data-oid="_-ps09q">
+              <Link to="/login" className="underline">
                 Login
               </Link>
             </div>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </div>

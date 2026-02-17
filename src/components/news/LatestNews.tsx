@@ -1,128 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { NewsCard } from "./NewsCard";
-
-interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  featuredImage: string;
-  category: Category;
-  author: Author;
-  publishedAt: string;
-  readTime: number;
-  views: number;
-  status: "published" | "draft";
-  isFeatured: boolean;
-  isPopular: boolean;
-  tags: string[];
-}
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  color: string;
-}
-
-interface Author {
-  id: string;
-  name: string;
-  avatar: string;
-  bio: string;
-}
+import { getLatestPosts, getPopularPosts, getTrendingPosts } from "../../services/api";
+import type { Article } from "../../types";
 
 export function LatestNews() {
   const [activeTab, setActiveTab] = useState("latest");
   const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const res = await fetch("/posts");
-        const data = await res.json();
-        setArticles(data);
-      } catch (error) {
-        console.error("Failed to fetch articles:", error);
+  const fetchArticles = useCallback(async (tab: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      let data;
+      const limit = 6;
+      switch (tab) {
+        case "popular":
+          data = await getPopularPosts(limit);
+          break;
+        case "trending":
+          data = await getTrendingPosts(limit);
+          break;
+        case "latest":
+        default:
+          data = await getLatestPosts(limit);
+          break;
       }
-    };
-
-    fetchArticles();
+      setArticles(data);
+    } catch (err) {
+      console.error(`Failed to fetch ${tab} articles:`, err);
+      setError(`Could not load ${tab} articles.`);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const getFilteredArticles = (filter: string) => {
-    switch (filter) {
-      case "popular":
-        return articles.filter((article) => article.isPopular).slice(0, 6);
-      case "trending":
-        return articles.filter((article) => article.views > 15000).slice(0, 6);
-      default:
-        return articles.slice(0, 6);
+  useEffect(() => {
+    fetchArticles(activeTab);
+  }, [activeTab, fetchArticles]);
+  
+  const renderContent = () => {
+    if (loading) {
+      return <p>Loading articles...</p>;
     }
+    if (error) {
+      return <p className="text-red-500">{error}</p>;
+    }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {articles.map((article) => (
+          <NewsCard key={article.id} article={article} />
+        ))}
+      </div>
+    );
   };
 
   return (
-    <section className="container mx-auto px-4 py-8" data-oid="d01m:_g">
+    <section className="container mx-auto px-4 py-8">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="w-full"
-        data-oid="mehpap6"
       >
-        <div
-          className="flex items-center justify-between mb-6"
-          data-oid="9734epy"
-        >
-          <h2 className="text-2xl font-bold" data-oid=":3_if5f">
-            Latest News
-          </h2>
-          <TabsList data-oid="3nj836g">
-            <TabsTrigger value="latest" data-oid="fwl_yzc">
-              Latest
-            </TabsTrigger>
-            <TabsTrigger value="popular" data-oid="ozxf8y.">
-              Popular
-            </TabsTrigger>
-            <TabsTrigger value="trending" data-oid="z2-gjyd">
-              Trending
-            </TabsTrigger>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Latest News</h2>
+          <TabsList>
+            <TabsTrigger value="latest">Latest</TabsTrigger>
+            <TabsTrigger value="popular">Popular</TabsTrigger>
+            <TabsTrigger value="trending">Trending</TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="latest" data-oid="_kfkmwf">
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid=".::65tw"
-          >
-            {getFilteredArticles("latest").map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="-4gikgf" />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="popular" data-oid="73aogjw">
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="h:vn7p8"
-          >
-            {getFilteredArticles("popular").map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="99sp-qy" />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="trending" data-oid="a93p610">
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-oid="5zphxl6"
-          >
-            {getFilteredArticles("trending").map((article) => (
-              <NewsCard key={article.id} article={article} data-oid="0f1yuev" />
-            ))}
-          </div>
-        </TabsContent>
+        <TabsContent value="latest">{renderContent()}</TabsContent>
+        <TabsContent value="popular">{renderContent()}</TabsContent>
+        <TabsContent value="trending">{renderContent()}</TabsContent>
       </Tabs>
     </section>
   );

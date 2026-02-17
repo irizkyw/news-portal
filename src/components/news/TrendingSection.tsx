@@ -1,80 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { TrendingUp } from "lucide-react";
 import { NewsCard } from "./NewsCard";
-
-interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  featuredImage: string;
-  category: Category;
-  author: Author;
-  publishedAt: string;
-  readTime: number;
-  views: number;
-  status: "published" | "draft";
-  isFeatured: boolean;
-  isPopular: boolean;
-  tags: string[];
-}
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  color: string;
-}
-
-interface Author {
-  id: string;
-  name: string;
-  avatar: string;
-  bio: string;
-}
+import { getTrendingPosts } from "../../services/api";
+import type { Article } from "../../types";
 
 export function TrendingSection() {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchTrendingArticles = async () => {
       try {
-        const res = await fetch("/posts");
-        const data = await res.json();
-        setArticles(data);
-      } catch (error) {
-        console.error("Failed to fetch articles:", error);
+        setLoading(true);
+        // We can specify a limit, e.g., 10, for trending posts
+        const data = await getTrendingPosts(10);
+        // The backend doesn't have an isPopular field, so we just take the data as is.
+        // Or we can assume the API returns pre-sorted trending articles.
+        setArticles(data.slice(0, 4)); // Take the top 4 as before
+      } catch (err) {
+        console.error("Failed to fetch trending articles:", err);
+        setError("Could not load trending articles.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchArticles();
+    fetchTrendingArticles();
   }, []);
 
-  const trendingArticles = articles
-    .filter((article) => article.isPopular)
-    .slice(0, 4);
-
   return (
-    <section className="container mx-auto px-4 py-8" data-oid=":5k.mv:">
-      <div className="flex items-center space-x-2 mb-6" data-oid=":p_2g6t">
-        <TrendingUp className="h-6 w-6 text-primary" data-oid="cfidegd" />
-        <h2 className="text-2xl font-bold" data-oid="jqqaz8d">
-          Trending Now
-        </h2>
+    <section className="container mx-auto px-4 py-8">
+      <div className="flex items-center space-x-2 mb-6">
+        <TrendingUp className="h-6 w-6 text-primary" />
+        <h2 className="text-2xl font-bold">Trending Now</h2>
       </div>
 
-      <div className="flex overflow-x-auto space-x-6 pb-4" data-oid="z375gl:">
-        {trendingArticles.map((article) => (
-          <div
-            key={article.id}
-            className="flex-shrink-0 w-80"
-            data-oid="wr1l.1v"
-          >
-            <NewsCard article={article} data-oid="9v3.9sh" />
-          </div>
-        ))}
-      </div>
+      {loading && <p>Loading trending articles...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      
+      {!loading && !error && (
+        <div className="flex overflow-x-auto space-x-6 pb-4">
+          {articles.map((article) => (
+            <div
+              key={article.id}
+              className="flex-shrink-0 w-80"
+            >
+              <NewsCard article={article} />
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

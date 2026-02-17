@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Clock, Eye, Share2, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,31 +6,38 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewsCard } from "@/components/news/NewsCard";
-import { articles } from "@/data/mockData";
 import { Newsletter } from "@/components/news/Newsletter";
+import { getPost } from "@/services/api";
+import type { Article } from "@/types";
 
 export function ArticlePage() {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
+  const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // TODO: Fetch related articles from API
+  const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
+  // TODO: Fetch popular articles from API
+  const [popularArticles, setPopularArticles] = useState<Article[]>([]);
 
-  // In a real app, this would fetch the article by slug
-  const article = articles.find((a) => a.slug === slug);
 
-  if (!article) {
-    return (
-      <div
-        className="container mx-auto px-4 py-8 text-center"
-        data-oid=".642gx8"
-      >
-        <h1 className="text-3xl font-bold" data-oid="xf0s2zq">
-          Article not found
-        </h1>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!slug) return;
+    const fetchArticle = async () => {
+      try {
+        setLoading(true);
+        const fetchedArticle = await getPost(slug);
+        setArticle(fetchedArticle);
+      } catch (err) {
+        setError("Failed to fetch article.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchArticle();
+  }, [slug]);
 
-  const relatedArticles = articles
-    .filter((a) => a.id !== article.id && a.category.id === article.category.id)
-    .slice(0, 3);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -50,6 +57,22 @@ export function ArticlePage() {
     return views.toString();
   };
 
+  if (loading) {
+    return <div className="container mx-auto px-4 py-8 text-center">Loading article...</div>;
+  }
+
+  if (error || !article) {
+    return (
+      <div
+        className="container mx-auto px-4 py-8 text-center"
+      >
+        <h1 className="text-3xl font-bold">
+          {error || "Article not found"}
+        </h1>
+      </div>
+    );
+  }
+
   return (
     <main data-oid="e4xntmf">
       <div className="container mx-auto px-4 py-8" data-oid="bx4tuti">
@@ -61,13 +84,14 @@ export function ArticlePage() {
           <article className="lg:col-span-3" data-oid="v7mwlak">
             {/* Article Header */}
             <div className="mb-8" data-oid="w8ag:go">
-              <Badge
-                className={article.category.color}
-                variant="secondary"
-                data-oid="o10l6yg"
-              >
-                {article.category.name}
-              </Badge>
+              {article.category && (
+                 <Badge
+                    className={article.category.color || 'bg-gray-500'}
+                    variant="secondary"
+                  >
+                   {article.category.name}
+                 </Badge>
+              )}
               <h1
                 className="text-4xl font-bold mt-4 mb-6 font-serif leading-tight"
                 data-oid="mzc1ep-"
@@ -80,6 +104,7 @@ export function ArticlePage() {
                 className="flex items-center justify-between flex-wrap gap-4 pb-6 border-b"
                 data-oid=".z37cg9"
               >
+              {article.author && (
                 <div className="flex items-center space-x-4" data-oid="xv0ko9x">
                   <Avatar className="h-12 w-12" data-oid="1twbmuw">
                     <AvatarImage
@@ -103,6 +128,7 @@ export function ArticlePage() {
                     </p>
                   </div>
                 </div>
+                )}
 
                 <div
                   className="flex items-center space-x-6 text-sm text-muted-foreground"
@@ -164,7 +190,8 @@ export function ArticlePage() {
                   Save
                 </Button>
               </div>
-              <div className="flex items-center space-x-2" data-oid="imu-zzn">
+              {/* TODO: Implement tags feature */}
+              {/* <div className="flex items-center space-x-2" data-oid="imu-zzn">
                 {article.tags.map((tag) => (
                   <Link to={`/tag/${tag}`} key={tag} data-oid="v8xc8b.">
                     <Badge variant="secondary" data-oid="ii0e85y">
@@ -172,9 +199,10 @@ export function ArticlePage() {
                     </Badge>
                   </Link>
                 ))}
-              </div>
+              </div> */}
             </div>
             {/* Author Bio */}
+            {article.author && (
             <Card className="mt-8" data-oid="you:8p_">
               <CardContent className="p-6" data-oid="ejirbtn">
                 <div className="flex items-start space-x-4" data-oid="ke45ln8">
@@ -202,11 +230,13 @@ export function ArticlePage() {
                 </div>
               </CardContent>
             </Card>
+            )}
           </article>
 
           {/* Sidebar */}
           <aside className="space-y-6" data-oid="o.38::4">
-            <Card data-oid="gwaavd5">
+            {/* TODO: Implement related articles */}
+            {/* <Card data-oid="gwaavd5">
               <CardHeader data-oid="n5y:v2.">
                 <CardTitle data-oid="qbj1:mu">Related Articles</CardTitle>
               </CardHeader>
@@ -225,9 +255,10 @@ export function ArticlePage() {
                   </div>
                 ))}
               </CardContent>
-            </Card>
+            </Card> */}
 
-            <Card data-oid="v.0ugn5">
+            {/* TODO: Implement popular articles */}
+            {/* <Card data-oid="v.0ugn5">
               <CardHeader data-oid="3247buj">
                 <CardTitle data-oid="37ra-nv">Popular This Week</CardTitle>
               </CardHeader>
@@ -269,7 +300,7 @@ export function ArticlePage() {
                     </div>
                   ))}
               </CardContent>
-            </Card>
+            </Card> */}
           </aside>
         </div>
       </div>

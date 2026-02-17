@@ -3,7 +3,7 @@ import { Clock, Eye } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Article } from "../../data/mockData";
+import type { Article } from "../../types";
 
 interface NewsCardProps {
   article: Article;

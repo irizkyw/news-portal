@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
 	"news-portal/backend/database"
 	"news-portal/backend/models"
@@ -28,9 +29,16 @@ func GetDashboardStats(c *gin.Context) {
 	`
 
 	// Menggunakan database.DB.Get untuk mengambil satu baris data
-	if err := database.DB.Get(&stats, query); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Data statistik dashboard belum tersedia",
+	err := database.DB.Get(&stats, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Jika tidak ada baris ditemukan, kembalikan 200 OK dengan objek kosong
+			c.JSON(http.StatusOK, models.DashboardStats{})
+			return
+		}
+		// Untuk error lain, kembalikan 500 Internal Server Error
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data statistik dashboard: " + err.Error(),
 		})
 		return
 	}

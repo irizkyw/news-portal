@@ -1,66 +1,13 @@
-const API_BASE_URL = "http://localhost:8080/api"; // Changed to match backend base path
+import type {
+  User,
+  Article,
+  Category,
+  DashboardStats,
+  GetPostsParams,
+  WeeklyTraffic,
+} from "../types";
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  avatar?: string;
-  bio?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export type Author = User; // Author is essentially a User
-
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  color: string;
-}
-
-export interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  featuredImage: string;
-  category?: Category; // Make the whole category object optional
-  author?: Author; // Make author optional as well for consistency
-  publishedAt: string;
-  readTime: number;
-  views: number;
-  status: "published" | "draft";
-  isFeatured: boolean;
-  isPopular: boolean;
-  tags?: string[];
-}
-
-export interface DashboardStats {
-  totalViews: number;
-  totalArticles: number;
-  newSubscribers: number;
-  bounceRate: number;
-  viewsChange: number;
-  articlesChange: number;
-  subscribersChange: number;
-  bounceRateChange: number;
-}
-
-export interface WeeklyTraffic {
-  day: string;
-  views: number;
-}
-
-export interface GetPostsParams {
-  sortBy?: "latest" | "popular" | "trending" | "views";
-  limit?: number;
-  isFeatured?: boolean;
-  categorySlug?: string;
-  tagName?: string;
-}
+const API_BASE_URL = "http://localhost:8080"; // Corrected to match backend's root path
 
 // Helper to get auth token
 const getAuthToken = (): string => {
@@ -114,16 +61,7 @@ export const getPost = async (slug: string): Promise<Article> => {
 };
 
 // Membuat artikel baru
-export const createPost = async (postData: {
-  title: string;
-  excerpt: string;
-  content: string;
-  categoryId: string;
-  featuredImage: string;
-  status: string;
-  tags: string[];
-  authorId: string;
-}) => {
+export const createPost = async (postData: Partial<Article>) => {
   const response = await fetch(`${API_BASE_URL}/posts`, {
     method: "POST",
     headers: {
@@ -140,9 +78,52 @@ export const createPost = async (postData: {
   return response.json();
 };
 
+// Mengupdate artikel
+export const updatePost = async (id: string, postData: Partial<Article>): Promise<Article> => {
+  const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAuthToken(),
+    },
+    body: JSON.stringify(postData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Gagal mengupdate postingan");
+  }
+  return response.json();
+};
+
+// Menghapus artikel
+export const deletePost = async (id: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Gagal menghapus postingan");
+  }
+};
+
+
 // Mengambil kategori dari backend
 export const getCategories = async (): Promise<Category[]> => {
   const response = await fetch(`${API_BASE_URL}/categories`);
+  if (!response.ok) {
+    throw new Error("Gagal mengambil data kategori");
+  }
+  return response.json();
+};
+
+// Mengambil satu kategori berdasarkan slug
+export const getCategory = async (slug: string): Promise<Category> => {
+  const response = await fetch(`${API_BASE_URL}/categories/${slug}`);
   if (!response.ok) {
     throw new Error("Gagal mengambil data kategori");
   }
@@ -242,7 +223,8 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
     },
   });
   if (!response.ok) {
-    throw new Error("Gagal mengambil statistik dashboard");
+    const errorData = await response.json();
+    throw new Error(errorData.error || `Gagal mengambil statistik dashboard: ${response.status} ${response.statusText}`);
   }
   return response.json();
 };
@@ -299,22 +281,13 @@ export const register = async (userData: {
   name: string;
   email: string;
   password: string;
-  role?: string;
 }): Promise<User> => {
-  const response = await fetch(`${API_BASE_URL}/users`, {
-    // Assuming /api/users is the register endpoint
+  const response = await fetch(`${API_BASE_URL}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      name: userData.name,
-      email: userData.email,
-      password: userData.password,
-      role: userData.role || "user", // Default role to "user"
-      avatar: "", // Default empty avatar
-      bio: "", // Default empty bio
-    }),
+    body: JSON.stringify(userData),
   });
 
   if (!response.ok) {

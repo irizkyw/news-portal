@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { User } from "../../types"; // Assuming a User type exists in types.d.ts
+import type { User } from "../../types"; // Assuming a User type exists in types.d.ts
 import { toast } from "sonner";
 
 interface UserEditFormProps {
@@ -47,7 +47,7 @@ const userFormSchema = z.object({
   }).optional(),
 });
 
-type UserFormData = z.infer<typeof userFormSchema>;
+export type UserFormData = z.infer<typeof userFormSchema>;
 
 export function UserEditForm({ user, onSave, onCancel, isSaving }: UserEditFormProps) {
   const form = useForm<UserFormData>({

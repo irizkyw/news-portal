@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { MoreHorizontal, Search, Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,24 +24,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { articles, categories } from "@/data/mockData";
+import { getPosts, getCategories, deletePost } from "../../services/api";
+import type { Article, Category } from "../../types";
+import { toast } from "sonner";
 
 interface ArticlesTableProps {
   onCreateNew: () => void;
+  onEdit: (article: Article) => void;
 }
 
-export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
+export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [postsData, categoriesData] = await Promise.all([
+        getPosts(),
+        getCategories(),
+      ]);
+      setArticles(postsData);
+      setCategories(categoriesData);
+    } catch (err) {
+      setError("Failed to fetch data. Please try again.");
+      toast.error("Failed to fetch data.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleDelete = async (articleId: string) => {
+    if (!window.confirm("Are you sure you want to delete this article?")) {
+      return;
+    }
+    try {
+      await deletePost(articleId);
+      toast.success("Article deleted successfully.");
+      fetchData(); // Refetch data after deletion
+    } catch (err) {
+      toast.error("Failed to delete article.");
+      console.error(err);
+    }
+  };
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || article.category.slug === selectedCategory;
+      selectedCategory === "all" || article.category?.slug === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -57,60 +101,60 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
     });
   };
+  
+  if (loading) {
+    return <p>Loading articles...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
   return (
-    <div className="space-y-4" data-oid=".xm926v">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between" data-oid="3noi7cu">
-        <h2 className="text-2xl font-bold" data-oid="ok40kld">
-          Manage Articles
-        </h2>
-        <Button onClick={onCreateNew} data-oid="6ct-7xb">
-          <Plus className="h-4 w-4 mr-2" data-oid="d344:uz" />
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Manage Articles</h2>
+        <Button onClick={onCreateNew}>
+          <Plus className="h-4 w-4 mr-2" />
           Create New Post
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4" data-oid="w:7qx5_">
-        <div className="relative flex-1 max-w-sm" data-oid="sz4b392">
+      <div className="flex items-center space-x-4">
+        <div className="relative flex-1 max-w-sm">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-            data-oid="k2eq-cz"
           />
-
           <Input
             placeholder="Search articles..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
-            data-oid="pernq8-"
           />
         </div>
         <Select
           value={selectedCategory}
           onValueChange={setSelectedCategory}
-          data-oid="tdtmalk"
         >
-          <SelectTrigger className="w-48" data-oid="c:l:0li">
-            <Filter className="h-4 w-4 mr-2" data-oid="mzy_-b9" />
-            <SelectValue placeholder="Filter by category" data-oid="1.9sa6y" />
+          <SelectTrigger className="w-48">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
-          <SelectContent data-oid="ew07z74">
-            <SelectItem value="all" data-oid="3py7hj6">
-              All Categories
-            </SelectItem>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
             {categories.map((category) => (
               <SelectItem
                 key={category.id}
                 value={category.slug}
-                data-oid="f0idz16"
               >
                 {category.name}
               </SelectItem>
@@ -120,105 +164,66 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg" data-oid="51qz8c:">
-        <Table data-oid="6zvzhpp">
-          <TableHeader data-oid="i8l56lj">
-            <TableRow data-oid=".g7:b51">
-              <TableHead data-oid="y44z9ml">Title</TableHead>
-              <TableHead data-oid=":cyg-b-">Status</TableHead>
-              <TableHead data-oid="_zdtbau">Category</TableHead>
-              <TableHead data-oid="59-fa6f">Author</TableHead>
-              <TableHead data-oid="5gwknvc">Date</TableHead>
-              <TableHead data-oid="8uv7yj9">Views</TableHead>
-              <TableHead className="w-12" data-oid="80ztb6c"></TableHead>
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Author</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Views</TableHead>
+              <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody data-oid="2bisjf3">
+          <TableBody>
             {currentItems.map((article) => (
-              <TableRow key={article.id} data-oid=":7xfpgk">
-                <TableCell data-oid="yswg1o:">
-                  <div className="max-w-xs" data-oid="scl_b89">
-                    <p className="font-medium truncate" data-oid="o2on:sv">
-                      {article.title}
-                    </p>
-                    <p
-                      className="text-sm text-muted-foreground truncate"
-                      data-oid="dh-o6n1"
-                    >
-                      {article.excerpt}
-                    </p>
+              <TableRow key={article.id}>
+                <TableCell>
+                  <div className="max-w-xs">
+                    <p className="font-medium truncate">{article.title}</p>
+                    <p className="text-sm text-muted-foreground truncate">{article.excerpt}</p>
                   </div>
                 </TableCell>
-                <TableCell data-oid=":sutt3n">
-                  <Badge
-                    variant={
-                      article.status === "published" ? "default" : "secondary"
-                    }
-                    data-oid="6-xxu41"
-                  >
+                <TableCell>
+                  <Badge variant={article.status === "published" ? "default" : "secondary"}>
                     {article.status}
                   </Badge>
                 </TableCell>
-                <TableCell data-oid="hxionzn">
-                  <Badge
-                    className={article.category.color}
-                    variant="secondary"
-                    data-oid="7w1:w20"
-                  >
-                    {article.category.name}
-                  </Badge>
+                <TableCell>
+                  {article.category && (
+                    <Badge variant="secondary">
+                      {article.category.name}
+                    </Badge>
+                  )}
                 </TableCell>
-                <TableCell data-oid="e8mtij_">
-                  <div
-                    className="flex items-center space-x-2"
-                    data-oid="a-p26k2"
-                  >
+                <TableCell>
+                  <div className="flex items-center space-x-2">
                     <img
-                      src={article.author.avatar}
-                      alt={article.author.name}
+                      src={article.author?.avatar || '/placeholder-avatar.png'}
+                      alt={article.author?.name || 'Author'}
                       className="h-6 w-6 rounded-full"
-                      data-oid="lrxej1z"
                     />
-
-                    <span className="text-sm" data-oid="j2mvoyq">
-                      {article.author.name}
-                    </span>
+                    <span className="text-sm">{article.author?.name || 'N/A'}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm" data-oid="3-jl6a1">
-                  {formatDate(article.publishedAt)}
-                </TableCell>
-                <TableCell className="text-sm" data-oid="pnbqmf5">
-                  {article.views.toLocaleString()}
-                </TableCell>
-                <TableCell data-oid="3mxzvz1">
-                  <DropdownMenu data-oid="hfb3b.b">
-                    <DropdownMenuTrigger asChild data-oid="xzwiss9">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0"
-                        data-oid="5z3oads"
-                      >
-                        <MoreHorizontal
-                          className="h-4 w-4"
-                          data-oid="kv_6cy4"
-                        />
+                <TableCell className="text-sm">{formatDate(article.publishedAt)}</TableCell>
+                <TableCell className="text-sm">{article.views.toLocaleString()}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" data-oid="7_0c91v">
-                      <DropdownMenuItem data-oid="gyge_af">
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem data-oid="lkbemfg">
-                        View
-                      </DropdownMenuItem>
-                      <DropdownMenuItem data-oid="ejwrz54">
-                        Duplicate
-                      </DropdownMenuItem>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onEdit(article)}>Edit</DropdownMenuItem>
+                      <DropdownMenuItem>View</DropdownMenuItem>
+                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-destructive"
-                        data-oid="7wrmk_z"
+                        onClick={() => handleDelete(article.id)}
                       >
                         Delete
                       </DropdownMenuItem>
@@ -231,11 +236,8 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
         </Table>
       </div>
       {/* Pagination */}
-      <div
-        className="flex justify-end items-center space-x-4"
-        data-oid=".qua54i"
-      >
-        <span className="text-sm text-muted-foreground" data-oid="pc8vp4:">
+      <div className="flex justify-end items-center space-x-4">
+        <span className="text-sm text-muted-foreground">
           Page {currentPage} of {totalPages}
         </span>
         <Button
@@ -243,7 +245,6 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
           disabled={currentPage === 1}
           variant="outline"
           size="sm"
-          data-oid="gkmv36h"
         >
           Previous
         </Button>
@@ -252,7 +253,6 @@ export function ArticlesTable({ onCreateNew }: ArticlesTableProps) {
           disabled={currentPage === totalPages}
           variant="outline"
           size="sm"
-          data-oid="z2_o.j-"
         >
           Next
         </Button>

@@ -4,28 +4,27 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../auth/AuthContext";
+import { login as apiLogin } from "../../services/api";
 
-export function LoginPage({ onLogin }: { onLogin: (token: string) => void }) {
+export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder for actual login logic
-    console.log("Login attempt with:", { email, password });
+    setError(""); // Clear previous errors
 
-    // Simulate API call
     try {
-      // In a real app, you would make an API call here
-      // const response = await api.post('/login', { email, password });
-      // const token = response.data.token;
-      const token = "mock-auth-token"; // Replace with actual token from API
-      onLogin(token);
+      const { token, user } = await apiLogin({ email, password });
+      login(token, user); // Update auth context
       navigate("/dashboard"); // Redirect to dashboard on successful login
-    } catch (error) {
-      console.error("Login failed:", error);
-      // Handle login error (e.g., display error message)
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      setError(err.message || "An unexpected error occurred. Please try again.");
     }
   };
 
@@ -37,6 +36,7 @@ export function LoginPage({ onLogin }: { onLogin: (token: string) => void }) {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
             <div>
               <Label htmlFor="email">Email</Label>
               <Input

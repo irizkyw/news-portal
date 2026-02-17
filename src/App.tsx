@@ -4,7 +4,7 @@ import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
 import { HomePage } from "./components/pages/HomePage";
 import { ArticlePage } from "./components/pages/ArticlePage";
-import { AdminDashboard } from "./components/pages/AdminDashboard";
+import { Dashboard } from "./components/pages/Dashboard";
 import { SearchResultsPage } from "./components/pages/SearchResultsPage";
 import { CategoryPage } from "./components/pages/CategoryPage";
 import { TagPage } from "./components/pages/TagPage";
@@ -82,7 +82,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute allowedRoles={["admin", "editor"]}>
-                <AdminDashboard data-oid="6dq6av6" />
+                <Dashboard data-oid="6dq6av6" />
               </ProtectedRoute>
             }
             data-oid="u7j5ng0"
@@ -121,7 +121,7 @@ function App() {
             path="/login"
             element={
               <AuthRedirect>
-                <LoginPage onLogin={login} data-oid="8oquhlb" />
+                <LoginPage data-oid="8oquhlb" />
               </AuthRedirect>
             }
             data-oid="njhl3d4"
