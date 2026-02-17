@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import { useForm, Controller } from "react-hook-form";
@@ -20,15 +20,18 @@ import {
 import { getCategories } from "../../services/api";
 import type { Article, Category } from "../../types";
 import { useAuth } from "../auth/AuthContext";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const postFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   excerpt: z.string().min(1, "Excerpt is required"),
   content: z.string().min(10, "Content is too short"),
   categoryId: z.string().min(1, "Category is required"),
-  featuredImage: z.string().url("Must be a valid URL").optional().or(z.literal('')),
-  status: z.enum(["draft", "published"]),
+  featuredImage: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
+  status: z.enum(["draft", "published", "pending"]), // Added pending status
   tags: z.string().optional(),
+  isFeatured: z.boolean().default(false),
+  isPopular: z.boolean().default(false),
 });
 
 type PostFormData = z.infer<typeof postFormSchema>;
@@ -40,7 +43,11 @@ interface PostFormProps {
   isSaving: boolean;
 }
 
-function Editor({ value, onChange }) {
+import React, { useState, useEffect, useCallback, forwardRef } from "react"; // Import forwardRef
+// ... other imports
+
+// Modify Editor function component
+const Editor = forwardRef(({ value, onChange }: { value: string, onChange: (value: string) => void }, ref) => {
   const { quill, quillRef } = useQuill({
     modules: { toolbar: [
         [{ header: [1, 2, false] }],
@@ -66,17 +73,32 @@ function Editor({ value, onChange }) {
     }
   }, [quill, value, onChange]);
 
-  return <div ref={quillRef} style={{ minHeight: '300px' }} />;
-}
+  // Pass the forwarded ref to the underlying div
+  // Combine internal quillRef with the forwarded ref
+  const combinedRef = useCallback((node: HTMLDivElement | null) => {
+    quillRef.current = node; // For useQuill's internal ref
+    if (ref) { // For react-hook-form's ref
+      if (typeof ref === 'function') {
+        ref(node);
+      } else {
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      }
+    }
+  }, [quillRef, ref]);
+
+  return <div ref={combinedRef} style={{ minHeight: '300px' }} />;
+});
 
 export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostFormProps) {
   const { user } = useAuth();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [categories, setCategories] = useState<Category[]>([]);
   const {
     register,
     handleSubmit,
     control,
     reset,
+    getValues, // Get getValues from useForm
     formState: { errors },
   } = useForm<PostFormData>({
     resolver: zodResolver(postFormSchema),
@@ -89,9 +111,15 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
   useEffect(() => {
     if (article) {
       reset({
-        ...article,
+        title: article.title || "",
+        excerpt: article.excerpt || "",
+        content: article.content || "",
         categoryId: article.category?.id || "",
+        featuredImage: article.featuredImage || "",
+        status: article.status || "draft",
         tags: article.tags?.join(", ") || "",
+        isFeatured: article.isFeatured || false,
+        isPopular: article.isPopular || false,
       });
     } else {
       reset({
@@ -100,8 +128,10 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
         content: "",
         categoryId: "",
         featuredImage: "",
-        status: "draft",
+        status: "pending", // Default to pending for new posts
         tags: "",
+        isFeatured: false,
+        isPopular: false,
       });
     }
   }, [article, reset]);
@@ -109,11 +139,30 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
   const onSubmit = (data: PostFormData) => {
     const finalData: Partial<Article> = {
       ...data,
+      title: data.title.trim(), // Trim title
+      excerpt: data.excerpt.trim(), // Trim excerpt
       tags: data.tags?.split(",").map((tag) => tag.trim()).filter(Boolean),
-      author: user, // Add author from context
+      authorId: user?.id, // Pass author ID as string
     };
     onSave(finalData);
   };
+
+  const handlePreview = useCallback(() => {
+    const formData = getValues();
+    const previewData: Article = {
+      ...article, // Keep existing article data for context if editing
+      ...formData,
+      id: article?.id || "preview-id", // Provide a dummy ID for preview
+      slug: formData.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''), // Generate a slug for preview
+      publishedAt: new Date().toISOString(),
+      readTime: 0, // Placeholder
+      views: 0, // Placeholder
+      author: user || undefined, // Use current user as author
+      category: categories.find(cat => cat.id === formData.categoryId) || undefined,
+      tags: formData.tags?.split(",").map((tag) => tag.trim()).filter(Boolean) || [],
+    };
+    navigate("/posts/preview", { state: { article: previewData } });
+  }, [article, getValues, user, categories, navigate]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -125,6 +174,10 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
           <Button type="button" variant="outline" onClick={onCancel}>
             <X className="h-4 w-4 mr-2" />
             Cancel
+          </Button>
+          <Button type="button" variant="secondary" onClick={handlePreview}>
+            <Eye className="h-4 w-4 mr-2" />
+            Preview
           </Button>
           <Button type="submit" disabled={isSaving}>
             <Save className="h-4 w-4 mr-2" />
@@ -172,7 +225,7 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
                   control={control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                      <SelectTrigger ref={field.ref}><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
                           <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
@@ -198,10 +251,29 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
                       <SelectContent>
                         <SelectItem value="draft">Draft</SelectItem>
                         <SelectItem value="published">Published</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
                 />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isFeatured"
+                  {...register("isFeatured")}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="isFeatured">Featured Post</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isPopular"
+                  {...register("isPopular")}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="isPopular">Popular Post</Label>
               </div>
             </CardContent>
           </Card>

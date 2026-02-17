@@ -39,10 +39,10 @@ export interface Article {
   featuredImage: string;
   category?: Category;
   author?: Author;
-  publishedAt: string;
-  readTime: number;
-  views: number;
-  status: "published" | "draft";
+  publishedAt?: string | null;
+  readTime?: number | null;
+  views?: number | null;
+  status: "published" | "draft" | "pending";
   isFeatured: boolean;
   isPopular: boolean;
   tags?: string[];
@@ -74,4 +74,5 @@ export interface GetPostsParams {
   categorySlug?: string;
   tagName?: string;
   search?: string;
+  status?: "all" | "published" | "draft" | "pending";
 }

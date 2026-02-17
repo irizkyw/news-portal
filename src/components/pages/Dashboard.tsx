@@ -12,14 +12,11 @@ import { useAuth } from "../auth/AuthContext";
 import { toast, Toaster } from "sonner";
 import { useNavigate } from "react-router-dom";
 import {
-  getUsers,
   createUser,
   updateUser,
-  deleteUser,
-  getWeeklyTrafficData,
   createPost,
   updatePost,
-  getPosts,
+  getCategories, // Add getCategories
 } from "../../services/api";
 import type { User, WeeklyTraffic, Article } from "../../types";
 
@@ -30,73 +27,34 @@ export function Dashboard() {
   const navigate = useNavigate();
 
   // State for User Management
-  const [users, setUsers] = useState<User[]>([]);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [showUserForm, setShowUserForm] = useState(false);
-  const [isFetchingUsers, setIsFetchingUsers] = useState(false);
   const [isSavingUser, setIsSavingUser] = useState(false);
 
   // State for Article Management
-  const [articles, setArticles] = useState<Article[]>([]);
   const [editingArticle, setEditingArticle] = useState<Article | undefined>(undefined);
   const [showArticleForm, setShowArticleForm] = useState(false);
-  const [isFetchingArticles, setIsFetchingArticles] = useState(false);
   const [isSavingArticle, setIsSavingArticle] = useState(false);
 
-  // State for Traffic Data
-  const [trafficData, setTrafficData] = useState<WeeklyTraffic[]>([]);
-  const [isFetchingTraffic, setIsFetchingTraffic] = useState(false);
-  const [trafficError, setTrafficError] = useState<string | null>(null);
 
-  // Generic fetcher to be reused
-  const fetchArticles = useCallback(async () => {
-    setIsFetchingArticles(true);
+
+  const [categoryCount, setCategoryCount] = useState<number>(0); // New state for category count
+
+  const fetchCategoryCount = useCallback(async () => {
     try {
-      const data = await getPosts();
-      setArticles(data);
+      const categories = await getCategories();
+      setCategoryCount(categories.length);
     } catch (error) {
-      toast.error("Failed to load articles.");
-    } finally {
-      setIsFetchingArticles(false);
+      console.error("Error fetching category count:", error);
+      toast.error("Failed to load category count.");
     }
   }, []);
-
-  // Fetch Users
-  const fetchUsers = async () => {
-    setIsFetchingUsers(true);
-    try {
-      const data = await getUsers();
-      setUsers(data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("Failed to load users.");
-    } finally {
-      setIsFetchingUsers(false);
-    }
-  };
-
-  // Fetch Traffic Data
-  const fetchTrafficData = async () => {
-    setIsFetchingTraffic(true);
-    setTrafficError(null);
-    try {
-      const data = await getWeeklyTrafficData();
-      setTrafficData(data);
-    } catch (error) {
-      console.error("Error fetching traffic data:", error);
-      setTrafficError("Failed to load traffic data.");
-    } finally {
-      setIsFetchingTraffic(false);
-    }
-  };
 
   // --- User Handlers ---
   const handleSaveUser = async (formData: UserFormData) => {
     // ... existing user saving logic
   };
-  const handleDeleteUser = async (userId: string) => {
-    // ... existing user deletion logic
-  };
+
 
   // --- Article Handlers ---
   const handleSaveArticle = async (articleData: Partial<Article>) => {
@@ -111,7 +69,7 @@ export function Dashboard() {
       }
       setShowArticleForm(false);
       setEditingArticle(undefined);
-      fetchArticles(); // Refresh the list
+      // Removed fetchArticles();
     } catch (error) {
       toast.error(`Failed to ${editingArticle ? 'update' : 'create'} article.`);
     } finally {
@@ -129,11 +87,24 @@ export function Dashboard() {
     setEditingArticle(undefined);
   };
 
+  const handleDuplicateArticle = (article: Article) => {
+    const duplicatedArticle: Article = {
+      ...article,
+      id: undefined, // Clear ID to indicate a new post
+      title: article.title + " (Copy)",
+      slug: undefined, // Let backend generate a new unique slug
+      status: "pending", // Set to pending or draft for duplicated post
+      publishedAt: undefined, // Clear published date
+    };
+    setEditingArticle(duplicatedArticle);
+    setShowArticleForm(true);
+  };
+
   useEffect(() => {
-    if (activeItem === "users") fetchUsers();
-    if (activeItem === "overview") fetchTrafficData();
-    if (activeItem === "articles") fetchArticles();
-  }, [activeItem, fetchArticles]);
+    if (activeItem === "overview") {
+      fetchCategoryCount(); // Call new fetch function
+    }
+  }, [activeItem, fetchCategoryCount]);
 
   const renderContent = () => {
     // Check if the user has access to restricted sections
@@ -158,27 +129,16 @@ export function Dashboard() {
               <h1 className="text-3xl font-bold">Dashboard Overview</h1>
             </div>
             <DashboardStats />
+            {/* New Card for Category Count */}
             <Card>
-              <CardHeader><CardTitle>Weekly Traffic</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Total Categories</CardTitle></CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center bg-muted/20 rounded-lg">
-                  {isFetchingTraffic ? <p>Loading traffic data...</p> : trafficError ? <p className="text-red-500">{trafficError}</p> : 
-                    <div className="text-center">
-                      <p className="text-muted-foreground mb-2">Traffic Chart</p>
-                      <p className="text-sm text-muted-foreground">Chart library would be integrated here</p>
-                      <div className="mt-4 flex justify-center space-x-4 text-xs">
-                        {trafficData.map((data, index) => (
-                          <div key={index} className="text-center">
-                            <div className="font-semibold">{data.day}</div>
-                            <div className="text-muted-foreground">{data.views.toLocaleString()}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  }
+                <div className="h-24 flex items-center justify-center bg-muted/20 rounded-lg">
+                  <span className="text-5xl font-bold text-primary">{categoryCount}</span>
                 </div>
               </CardContent>
             </Card>
+            {/* Removed Weekly Traffic Card */}
           </div>
         );
 
@@ -194,11 +154,11 @@ export function Dashboard() {
           <ArticlesTable
             onEdit={handleEditArticle}
             onCreateNew={() => { setEditingArticle(undefined); setShowArticleForm(true); }}
+            onDuplicate={handleDuplicateArticle}
           />
         );
 
       case "users":
-        // ... users content remains the same
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -207,7 +167,7 @@ export function Dashboard() {
                 <PlusCircle className="mr-2 h-4 w-4" /> Add New User
               </Button>
             </div>
-            {isFetchingUsers ? <p>Loading users...</p> : showUserForm ? (
+            {showUserForm ? (
               <UserEditForm
                 user={editingUser}
                 onSave={handleSaveUser}
@@ -216,9 +176,7 @@ export function Dashboard() {
               />
             ) : (
               <UserManagementTable
-                users={users}
                 onEditUser={(user) => { setEditingUser(user); setShowUserForm(true); }}
-                onDeleteUser={handleDeleteUser}
               />
             )}
           </div>

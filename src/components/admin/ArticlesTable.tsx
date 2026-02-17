@@ -18,6 +18,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"; // Import Shadcn AlertDialog
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -25,30 +36,42 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getPosts, getCategories, deletePost } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 import type { Article, Category } from "../../types";
 import { toast } from "sonner";
 
 interface ArticlesTableProps {
   onCreateNew: () => void;
   onEdit: (article: Article) => void;
+  onDuplicate: (article: Article) => void; // New prop for duplication
 }
 
-export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
+export function ArticlesTable({ onCreateNew, onEdit, onDuplicate }: ArticlesTableProps) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  const [selectedStatus, setSelectedStatus] = useState<
+    "all" | "published" | "draft" | "pending"
+  >("all");
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+      const postsParams = {
+        status: selectedStatus,
+        search: searchTerm,
+        categorySlug: selectedCategory === "all" ? undefined : selectedCategory,
+      };
       const [postsData, categoriesData] = await Promise.all([
-        getPosts(),
+        getPosts(postsParams),
         getCategories(),
       ]);
       setArticles(postsData);
@@ -60,16 +83,14 @@ export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [searchTerm, selectedCategory, selectedStatus]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  // Modified handleDelete to be called from AlertDialogAction
   const handleDelete = async (articleId: string) => {
-    if (!window.confirm("Are you sure you want to delete this article?")) {
-      return;
-    }
     try {
       await deletePost(articleId);
       toast.success("Article deleted successfully.");
@@ -80,27 +101,22 @@ export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
     }
   };
 
-  const filteredArticles = articles.filter((article) => {
-    const matchesSearch = article.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || article.category?.slug === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleView = (slug: string) => {
+    navigate(`/news/${slug}`);
+  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredArticles.slice(
+  const currentItems = articles.slice(
     indexOfFirstItem,
     indexOfLastItem,
   );
 
-  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+  const totalPages = Math.ceil(articles.length / itemsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
@@ -161,6 +177,20 @@ export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
             ))}
           </SelectContent>
         </Select>
+        <Select
+          value={selectedStatus}
+          onValueChange={(value: "all" | "published" | "draft" | "pending") => setSelectedStatus(value)}
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
@@ -209,7 +239,7 @@ export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
                   </div>
                 </TableCell>
                 <TableCell className="text-sm">{formatDate(article.publishedAt)}</TableCell>
-                <TableCell className="text-sm">{article.views.toLocaleString()}</TableCell>
+                <TableCell className="text-sm">{(article.views || 0).toLocaleString()}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -219,14 +249,31 @@ export function ArticlesTable({ onCreateNew, onEdit }: ArticlesTableProps) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => onEdit(article)}>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>View</DropdownMenuItem>
-                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => handleDelete(article.id)}
-                      >
-                        Delete
-                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleView(article.slug)}>View</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onDuplicate(article)}>Duplicate</DropdownMenuItem>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()} // Prevent DropdownMenu closing on trigger click
+                            className="text-destructive"
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete your
+                              article and remove its data from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(article.id)}>Continue</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

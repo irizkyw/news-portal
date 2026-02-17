@@ -36,12 +36,12 @@ type PostResponse struct {
 	Excerpt       string            `json:"excerpt"`
 	Content       string            `json:"content"`
 	FeaturedImage string            `json:"featuredImage"`
-	ReadTime      int               `json:"readTime"`
-	Views         int               `json:"views"`
+	ReadTime      *int               `json:"readTime"`
+	Views         *int               `json:"views"`
 	Status        string            `json:"status"`
 	IsFeatured    bool              `json:"isFeatured"`
 	IsPopular     bool              `json:"isPopular"`
-	PublishedAt   time.Time         `json:"publishedAt"`
+	PublishedAt   *time.Time         `json:"publishedAt"`
 	CreatedAt     time.Time         `json:"createdAt"`
 	UpdatedAt     time.Time         `json:"updatedAt"`
 	Category      *CategoryResponse `json:"category,omitempty"`
@@ -106,6 +106,7 @@ func GetPosts(c *gin.Context) {
         p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
         a.id, a.name, a.email, a.avatar, a.bio,
         c.id, c.name, c.slug, c.color
+    `
 
 	sortBy := c.Query("sortBy")
 	switch sortBy {
@@ -238,6 +239,25 @@ func CreatePost(c *gin.Context) {
 	}
 
 	slug := strings.ToLower(strings.ReplaceAll(req.Title, " ", "-"))
+	baseSlug := slug
+	counter := 0
+	
+	// Ensure slug uniqueness
+	for {
+		var existingSlug string
+		err := database.DB.Get(&existingSlug, "SELECT slug FROM posts WHERE slug = ?", slug)
+		if err == sql.ErrNoRows {
+			break // Slug is unique
+		}
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query failed during slug check: " + err.Error()})
+			return
+		}
+		
+		// Slug exists, append counter and try again
+		counter++
+		slug = baseSlug + "-" + strconv.Itoa(counter)
+	}
 
 	// Set default values if not provided
 	if req.Status == "" {
@@ -250,8 +270,8 @@ func CreatePost(c *gin.Context) {
 
 	result, err := database.DB.Exec(`
 		INSERT INTO posts
-		(title, slug, excerpt, content, featured_image, status, is_featured, is_popular, published_at, author_id)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		(title, slug, excerpt, content, featured_image, read_time, views, status, is_featured, is_popular, published_at, author_id)
+		VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?, ?, ?, ?)`, // Explicitly set read_time and views to 0
 		req.Title, slug, req.Excerpt, req.Content, req.FeaturedImage, req.Status, req.IsFeatured, req.IsPopular, req.PublishedAt, req.AuthorID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

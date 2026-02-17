@@ -46,7 +46,7 @@ function App() {
 
   const isAdminRoute =
     location.pathname.startsWith("/dashboard") ||
-    location.pathname.startsWith("/preview");
+    location.pathname.startsWith("/posts/preview");
 
   return (
     <div className={darkMode ? "dark" : ""} data-oid="soee9rz">
@@ -138,7 +138,7 @@ function App() {
           />
 
           <Route
-            path="/preview"
+            path="/posts/preview"
             element={<PreviewPage data-oid="g8hmdnt" />}
             data-oid="1lw0gmc"
           />

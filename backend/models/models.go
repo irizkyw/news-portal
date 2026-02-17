@@ -69,12 +69,12 @@ type Post struct {
 	Excerpt       string    `db:"excerpt" json:"excerpt"`
 	Content       string    `db:"content" json:"content"`
 	FeaturedImage string    `db:"featured_image" json:"featuredImage"`
-	ReadTime      int       `db:"read_time" json:"readTime"`
-	Views         int       `db:"views" json:"views"`
+	ReadTime      *int      `db:"read_time" json:"readTime"`
+	Views         *int      `db:"views" json:"views"`
 	Status        string    `db:"status" json:"status"`
 	IsFeatured    bool      `db:"is_featured" json:"isFeatured"`
 	IsPopular     bool      `db:"is_popular" json:"isPopular"`
-	PublishedAt   time.Time `db:"published_at" json:"publishedAt"`
+	PublishedAt   *time.Time `db:"published_at" json:"publishedAt"`
 	CreatedAt     time.Time `db:"created_at" json:"createdAt"`
 	UpdatedAt     time.Time `db:"updated_at" json:"updatedAt"`
 

@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewsCard } from "@/components/news/NewsCard";
-import { getCategories, getUsers, getPosts, getPopularPosts } from "../../services/api";
+import { getPopularPosts, getPosts } from "../../services/api"; // Removed getCategories, getUsers
 import type { Article, Category, User } from "../../types";
 import { Newsletter } from "@/components/news/Newsletter";
+import { useLocation } from "react-router-dom"; // Import useLocation
 
 export function PreviewPage() {
   const [article, setArticle] = useState<Article | null>(null);
@@ -15,45 +16,39 @@ export function PreviewPage() {
   const [popularArticles, setPopularArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation(); // Initialize useLocation
 
   useEffect(() => {
-    const articleData = JSON.parse(localStorage.getItem("previewArticle") || "null");
-    if (!articleData) {
+    const previewArticle = location.state?.article as Article; // Get article from location state
+    if (!previewArticle) {
       setError("No article preview data found.");
       setLoading(false);
       return;
     }
 
-    Promise.all([
-      getCategories(),
-      getUsers(),
-      getPopularPosts(3),
-    ])
-    .then(([categories, users, popular]) => {
-      const category = categories.find((c) => c.id === articleData.categoryId);
-      const author = users.find((a) => a.id === articleData.authorId);
+    setArticle(previewArticle);
+    setLoading(false); // Set loading to false once the primary article is set
 
-      const fullArticle = {
-        ...articleData,
-        category,
-        author,
-        tags: articleData.tags || [],
-      };
-      setArticle(fullArticle);
-      setPopularArticles(popular);
+    // Fetch popular posts
+    getPopularPosts(3)
+      .then(setPopularArticles)
+      .catch((err) => console.error("Failed to load popular articles:", err));
 
-      if (category) {
-        getPosts({ categorySlug: category.slug, limit: 4 }).then((related) => {
-          setRelatedArticles(related.filter((a) => a.id !== fullArticle.id).slice(0, 3));
-        });
-      }
-    })
-    .catch(() => setError("Failed to load page data."))
-    .finally(() => setLoading(false));
-
-  }, []);
+    // Fetch related articles based on the previewed article's category
+    if (previewArticle.category?.slug) {
+      getPosts({ categorySlug: previewArticle.category.slug, limit: 4 })
+        .then((related) => {
+          // Filter out the previewed article itself from related articles
+          setRelatedArticles(related.filter((a) => a.slug !== previewArticle.slug).slice(0, 3));
+        })
+        .catch((err) => console.error("Failed to load related articles:", err));
+    } else {
+      setRelatedArticles([]);
+    }
+  }, [location.state]); // Depend on location.state
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A"; // Handle cases where dateString might be undefined or null
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
@@ -111,7 +106,7 @@ export function PreviewPage() {
                     <Avatar className="h-12 w-12" data-oid="vfqg6r9">
                       <AvatarImage src={article.author.avatar} data-oid="thcb7i1" />
                       <AvatarFallback data-oid="yojrq2q">
-                        {article.author.name.charAt(0)}
+                        {article.author.name?.charAt(0) || 'A'}
                       </AvatarFallback>
                     </Avatar>
                     <div data-oid="fr00b-k">
@@ -186,7 +181,7 @@ export function PreviewPage() {
                     <Avatar className="h-16 w-16" data-oid="acy77l6">
                       <AvatarImage src={article.author.avatar} data-oid="noyyu6e" />
                       <AvatarFallback data-oid="t-eyofa">
-                        {article.author.name.charAt(0)}
+                        {article.author.name?.charAt(0) || 'A'}
                       </AvatarFallback>
                     </Avatar>
                     <div data-oid="0ju7:b3">
