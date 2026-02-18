@@ -205,7 +205,7 @@ func GetPost(c *gin.Context) {
 		LEFT JOIN users a ON p.author_id = a.id
 		LEFT JOIN post_categories pc ON p.id = pc.post_id
 		LEFT JOIN categories c ON pc.category_id = c.id
-		WHERE p.slug = ? AND p.status = 'published'
+		WHERE p.slug = ?
 	`
 	if err := database.DB.Get(&post, query, slug); err != nil {
 		if err == sql.ErrNoRows {
@@ -234,7 +234,8 @@ type CreatePostRequest struct {
 func CreatePost(c *gin.Context) {
 	var req CreatePostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Printf("Error binding JSON in CreatePost: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
 		return
 	}
 
@@ -325,7 +326,8 @@ func UpdatePost(c *gin.Context) {
 	id := c.Param("id")
 	var req UpdatePostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Printf("Error binding JSON in UpdatePost: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
 		return
 	}
 

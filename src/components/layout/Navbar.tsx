@@ -71,50 +71,27 @@ export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
           {category.name}
         </Link>
       ))}
-      {isLoggedIn && (currentUser?.role === "admin" || currentUser?.role === "editor") && (
-        <Link
-          to="/dashboard"
-          className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Dashboard
-        </Link>
-      )}
     </>
   );
 
   return (
-    <header
-      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-    >
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
-        <div
-          className="flex h-16 items-center justify-between"
-        >
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <Link
-              to="/"
-              className="flex items-center space-x-2"
-            >
-              <div
-                className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center"
-              >
-                <span
-                  className="text-primary-foreground font-bold text-lg"
-                >
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">
                   N
                 </span>
               </div>
-              <span className="font-bold text-xl">
-                NewsFlow
-              </span>
+              <span className="font-bold text-xl">NewsFlow</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav
-            className="hidden md:flex items-center space-x-6"
-          >
+          <nav className="hidden md:flex items-center space-x-6">
             <NavLinks />
           </nav>
 
@@ -122,9 +99,7 @@ export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
           <div className="flex items-center space-x-4">
             {/* Search */}
             <div className="relative hidden sm:block">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
               <Input
                 placeholder="Search news..."
@@ -171,18 +146,20 @@ export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-56"
-                  align="end"
-                >
-                  {(currentUser?.role === "admin" || currentUser?.role === "editor") && (
+                <DropdownMenuContent className="w-56" align="end">
+                  {(currentUser?.role === "admin" ||
+                    currentUser?.role === "editor") && (
                     <DropdownMenuItem onClick={() => navigate("/dashboard")}>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Dashboard
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
-                    onClick={() => navigate("/dashboard", { state: { activeItem: "settings" } })}
+                    onClick={() =>
+                      navigate("/dashboard", {
+                        state: { activeItem: "settings" },
+                      })
+                    }
                   >
                     <User className="mr-2 h-4 w-4" />
                     Profile
@@ -214,14 +191,10 @@ export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
-                <div
-                  className="flex flex-col space-y-4 mt-6"
-                >
+                <div className="flex flex-col space-y-4 mt-6">
                   {/* Mobile Search */}
                   <div className="relative">
-                    <Search
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                    />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
                     <Input
                       placeholder="Search news..."
@@ -237,7 +210,8 @@ export function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
                     <NavLinks />
                     {isLoggedIn && (
                       <>
-                        {(currentUser?.role === "admin" || currentUser?.role === "editor") && (
+                        {(currentUser?.role === "admin" ||
+                          currentUser?.role === "editor") && (
                           <Link
                             to="/dashboard"
                             className="text-sm font-medium hover:text-foreground transition-colors"

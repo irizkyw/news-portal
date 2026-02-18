@@ -92,8 +92,8 @@ export function Dashboard() {
       }
       setShowArticleForm(false);
       setEditingArticle(undefined);
-    } catch (error) {
-      toast.error(`Failed to ${editingArticle && editingArticle.id ? 'update' : 'create'} article.`);
+    } catch (error: any) {
+      toast.error(`Failed to ${editingArticle && editingArticle.id ? 'update' : 'create'} article: ${error.message}`);
     } finally {
       setIsSavingArticle(false);
     }

@@ -75,7 +75,7 @@ func createTables() error {
 			title VARCHAR(255) NOT NULL,
 			slug VARCHAR(255) NOT NULL UNIQUE,
 			excerpt TEXT,
-			content TEXT,
+			content LONGTEXT,
 			featured_image VARCHAR(255),
 			read_time INT,
 			views INT,
@@ -147,6 +147,10 @@ func createTables() error {
 	}
 	if _, err := DB.Exec(postsTable); err != nil {
 		return err
+	}
+	// Migrate existing posts.content column to LONGTEXT if it's still TEXT
+	if _, err := DB.Exec("ALTER TABLE posts MODIFY COLUMN content LONGTEXT"); err != nil {
+		log.Printf("Warning: Failed to modify posts.content to LONGTEXT: %v", err)
 	}
 	if _, err := DB.Exec(categoriesTable); err != nil {
 		return err

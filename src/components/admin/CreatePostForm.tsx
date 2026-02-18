@@ -48,15 +48,18 @@ import React, { useState, useEffect, useCallback, forwardRef } from "react"; // 
 
 // Modify Editor function component
 const Editor = forwardRef(({ value, onChange }: { value: string, onChange: (value: string) => void }, ref) => {
-  const { quill, quillRef } = useQuill({
-    modules: { toolbar: [
+  const modules = React.useMemo(() => ({
+    toolbar: [
         [{ header: [1, 2, false] }],
         ["bold", "italic", "underline"],
         [{ list: "ordered" }, { list: "bullet" }],
         ["link", "image"],
         ["clean"],
       ],
-    },
+  }), []);
+
+  const { quill, quillRef } = useQuill({
+    modules,
     placeholder: "Start writing your content here...",
   });
 
@@ -65,11 +68,18 @@ const Editor = forwardRef(({ value, onChange }: { value: string, onChange: (valu
       if (value && quill.root.innerHTML !== value) {
         quill.root.innerHTML = value;
       }
-      quill.on("text-change", (delta, oldDelta, source) => {
+      
+      const handler = (delta: any, oldDelta: any, source: string) => {
         if (source === "user") {
           onChange(quill.root.innerHTML);
         }
-      });
+      };
+
+      quill.on("text-change", handler);
+
+      return () => {
+        quill.off("text-change", handler);
+      };
     }
   }, [quill, value, onChange]);
 
@@ -90,7 +100,7 @@ const Editor = forwardRef(({ value, onChange }: { value: string, onChange: (valu
 });
 
 export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostFormProps) {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate(); // Initialize useNavigate
   const [categories, setCategories] = useState<Category[]>([]);
   const {
@@ -139,12 +149,17 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
   }, [article, categories, reset]); // Add categories to dependency array
 
   const onSubmit = (data: PostFormData) => {
+    if (!user?.id) {
+      alert("User not authenticated. Please log in to create a post.");
+      return;
+    }
+
     const finalData: Partial<Article> = {
       ...data,
       title: data.title.trim(), // Trim title
       excerpt: data.excerpt.trim(), // Trim excerpt
       tags: data.tags?.split(",").map((tag) => tag.trim()).filter(Boolean),
-      authorId: user?.id, // Pass author ID as string
+      authorId: user.id, // Pass author ID as string
     };
     onSave(finalData);
   };
@@ -181,7 +196,7 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
             <Eye className="h-4 w-4 mr-2" />
             Preview
           </Button>
-          <Button type="submit" disabled={isSaving}>
+          <Button type="submit" disabled={isSaving || isLoading || !user}>
             <Save className="h-4 w-4 mr-2" />
             {isSaving ? "Saving..." : "Save Post"}
           </Button>
