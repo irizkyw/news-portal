@@ -141,6 +141,16 @@ func createTables() error {
 			views INT
 		);
 	`
+	bookmarksTable := `
+		CREATE TABLE IF NOT EXISTS bookmarks (
+			user_id INT,
+			post_id INT,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (user_id, post_id),
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+			FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+		);
+	`
 
 	if _, err := DB.Exec(usersTable); err != nil {
 		return err
@@ -168,6 +178,9 @@ func createTables() error {
 		return err
 	}
 	if _, err := DB.Exec(weeklyTrafficTable); err != nil {
+		return err
+	}
+	if _, err := DB.Exec(bookmarksTable); err != nil {
 		return err
 	}
 	return nil

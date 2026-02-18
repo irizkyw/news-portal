@@ -9,7 +9,8 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
-  LogOut, // Import LogOut icon
+  LogOut,
+  Bookmark, // Import Bookmark icon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ interface DashboardSidebarProps {
 const menuItems = [
   { id: "overview", label: "Overview", icon: Home },
   { id: "articles", label: "Articles", icon: FileText },
+  { id: "bookmarks", label: "Bookmarks", icon: Bookmark }, // Added Bookmarks
   { id: "users", label: "Users", icon: Users },
   { id: "settings", label: "Settings", icon: Settings },
 ];

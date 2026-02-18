@@ -321,3 +321,49 @@ export const changePassword = async (passwordData: ChangePasswordRequest): Promi
   }
   return response.json();
 };
+
+// Helper to handle API responses
+const handleResponse = async (response: Response) => {
+  if (!response.ok) {
+    let errorMessage = `Error: ${response.status} ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch (e) {
+      // If response is not JSON, use status text
+    }
+    throw new Error(errorMessage);
+  }
+  return response.json();
+};
+
+// Update getBookmarks to use helper
+export const getBookmarks = async (): Promise<Article[]> => {
+  const response = await fetch(`${API_BASE_URL}/bookmarks`, {
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+  return handleResponse(response);
+};
+
+// Update toggleBookmark to use helper
+export const toggleBookmark = async (postId: string): Promise<{ isBookmarked: boolean }> => {
+  const response = await fetch(`${API_BASE_URL}/bookmarks/${postId}`, {
+    method: "POST",
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+  return handleResponse(response);
+};
+
+// Update checkBookmarkStatus to use helper
+export const checkBookmarkStatus = async (postId: string): Promise<{ isBookmarked: boolean }> => {
+  const response = await fetch(`${API_BASE_URL}/bookmarks/status/${postId}`, {
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+  return handleResponse(response);
+};

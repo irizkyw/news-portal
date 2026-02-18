@@ -76,6 +76,15 @@ func main() {
 	router.GET("/stats/dashboard", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.GetDashboardStats)
 	router.GET("/stats/traffic", auth.AuthMiddleware(), auth.AuthzMiddleware("admin", "editor"), handlers.GetWeeklyTraffic)
 
+	// Bookmark routes
+	bookmarkRoutes := router.Group("/bookmarks")
+	bookmarkRoutes.Use(auth.AuthMiddleware())
+	{
+		bookmarkRoutes.GET("", handlers.GetBookmarks)
+		bookmarkRoutes.POST("/:id", handlers.ToggleBookmark)
+		bookmarkRoutes.GET("/status/:id", handlers.CheckBookmarkStatus)
+	}
+
 	// Jalankan server
 	log.Println("Server berjalan di http://localhost:8080")
 	router.Run(":8080")

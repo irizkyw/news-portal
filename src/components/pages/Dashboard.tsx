@@ -3,6 +3,7 @@ import { DashboardSidebar } from "../admin/DashboardSidebar";
 import { DashboardStats } from "../admin/DashboardStats";
 import { ArticlesTable } from "../admin/ArticlesTable";
 import { CreatePostForm } from "../admin/CreatePostForm";
+import { BookmarksTable } from "../admin/BookmarksTable"; // Import BookmarksTable
 import { UserManagementTable } from "../admin/UserManagementTable";
 import { UserEditForm, type UserFormData } from "../admin/UserEditForm";
 import { ProfileSettingsPage } from "../pages/ProfileSettingsPage";
@@ -219,6 +220,9 @@ export function Dashboard() {
             )}
           </div>
         );
+      
+      case "bookmarks":
+        return <BookmarksTable />;
       
       case "settings":
         // Profile settings should be accessible to all logged-in users

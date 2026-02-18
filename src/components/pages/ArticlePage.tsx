@@ -7,19 +7,60 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewsCard } from "@/components/news/NewsCard";
 import { Newsletter } from "@/components/news/Newsletter";
-import { getPost } from "@/services/api";
+import { Input } from "@/components/ui/input";
+import { getPost, toggleBookmark, checkBookmarkStatus } from "@/services/api";
 import type { Article } from "@/types";
+import { toast } from "sonner";
+import { useAuth } from "../auth/AuthContext";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Copy, Facebook, Twitter, Linkedin } from "lucide-react";
 
 export function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // TODO: Fetch related articles from API
-  const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
-  // TODO: Fetch popular articles from API
-  const [popularArticles, setPopularArticles] = useState<Article[]>([]);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarking, setIsBookmarking] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const { user } = useAuth();
+  
+  const shareUrl = window.location.href;
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl);
+    toast.success("Link copied to clipboard!");
+  };
+
+  const shareToSocial = (platform: string) => {
+    let url = "";
+    const text = encodeURIComponent(article?.title || "");
+    const encodedUrl = encodeURIComponent(shareUrl);
+
+    switch (platform) {
+      case "twitter":
+        url = `https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`;
+        break;
+      case "facebook":
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        break;
+      case "linkedin":
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        break;
+    }
+    if (url) window.open(url, "_blank");
+  };
+  // ... rest of state
+  const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
+  const [popularArticles, setPopularArticles] = useState<Article[]>([]);
 
   useEffect(() => {
     if (!slug) return;
@@ -28,6 +69,12 @@ export function ArticlePage() {
         setLoading(true);
         const fetchedArticle = await getPost(slug);
         setArticle(fetchedArticle);
+        
+        // Check bookmark status if user is logged in
+        if (user && fetchedArticle.id) {
+          const status = await checkBookmarkStatus(fetchedArticle.id);
+          setIsBookmarked(status.isBookmarked);
+        }
       } catch (err) {
         setError("Failed to fetch article.");
         console.error(err);
@@ -36,7 +83,48 @@ export function ArticlePage() {
       }
     };
     fetchArticle();
-  }, [slug]);
+  }, [slug, user]);
+
+  const handleShare = async () => {
+    if (!article) return;
+    
+    const shareData = {
+      title: article.title,
+      text: article.excerpt,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        toast.success("Shared successfully!");
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!user) {
+      toast.error("Please log in to save articles");
+      return;
+    }
+    if (!article?.id) return;
+
+    try {
+      setIsBookmarking(true);
+      const result = await toggleBookmark(article.id);
+      setIsBookmarked(result.isBookmarked);
+      toast.success(result.isBookmarked ? "Article saved!" : "Article removed from saved");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save article");
+    } finally {
+      setIsBookmarking(false);
+    }
+  };
 
 
   const formatDate = (dateString: string) => {
@@ -181,13 +269,72 @@ export function ArticlePage() {
               data-oid="6bwjf_s"
             >
               <div className="flex items-center space-x-2" data-oid="q9ah9-p">
-                <Button variant="outline" size="sm" data-oid="pf11lr.">
-                  <Share2 className="h-4 w-4 mr-2" data-oid="z-5ec74" />
-                  Share
-                </Button>
-                <Button variant="outline" size="sm" data-oid="icijag.">
-                  <Bookmark className="h-4 w-4 mr-2" data-oid=".u1guxb" />
-                  Save
+                <Sheet open={isShareOpen} onOpenChange={setIsShareOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="sm:max-w-md mx-auto rounded-t-xl h-auto pb-10">
+                    <SheetHeader className="mb-6">
+                      <SheetTitle className="text-xl">Share this article</SheetTitle>
+                      <SheetDescription>
+                        Help us spread the word by sharing this article with your friends.
+                      </SheetDescription>
+                    </SheetHeader>
+                    
+                    <div className="flex flex-col space-y-6">
+                      <div className="flex items-center justify-center space-x-6">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-12 w-12 rounded-full border-blue-500 text-blue-500 hover:bg-blue-50"
+                          onClick={() => shareToSocial('facebook')}
+                        >
+                          <Facebook className="h-6 w-6" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-12 w-12 rounded-full border-sky-400 text-sky-400 hover:bg-sky-50"
+                          onClick={() => shareToSocial('twitter')}
+                        >
+                          <Twitter className="h-6 w-6" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-12 w-12 rounded-full border-blue-700 text-blue-700 hover:bg-blue-50"
+                          onClick={() => shareToSocial('linkedin')}
+                        >
+                          <Linkedin className="h-6 w-6" />
+                        </Button>
+                      </div>
+
+                      <div className="flex items-center space-x-2 bg-muted p-2 rounded-lg">
+                        <Input 
+                          value={shareUrl} 
+                          readOnly 
+                          className="flex-1 bg-transparent border-none focus-visible:ring-0 shadow-none h-8 text-sm text-muted-foreground"
+                        />
+                        <Button size="sm" className="h-8" onClick={copyToClipboard}>
+                          <Copy className="h-3.5 w-3.5 mr-2" />
+                          Copy
+                        </Button>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+
+                <Button 
+                  variant={isBookmarked ? "default" : "outline"} 
+                  size="sm" 
+                  onClick={handleSave}
+                  disabled={isBookmarking}
+                >
+                  <Bookmark className={`h-4 w-4 mr-2 ${isBookmarked ? "fill-current" : ""}`} />
+                  {isBookmarked ? "Saved" : "Save"}
                 </Button>
               </div>
               {/* TODO: Implement tags feature */}

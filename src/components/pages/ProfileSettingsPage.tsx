@@ -36,8 +36,28 @@ const passwordSchema = z.object({
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { BookmarksTable } from "../admin/BookmarksTable"; // Import the new component
+import { Article } from "@/types";
+import { Trash2, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+
 export function ProfileSettingsPage() {
-  const { user: currentUser, refreshUser } = useAuth(); // Get current user and refreshUser function
+  const { user: currentUser, refreshUser } = useAuth();
+  // Removed local fetchBookmarks state since it's handled in BookmarksTable component
 
   // Form for Personal Information
   const {
@@ -120,109 +140,122 @@ export function ProfileSettingsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-3xl font-bold">Profile Settings</h1>
+      <h1 className="text-3xl font-bold">Account Settings</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage
-                  src={
-                    currentUser.avatar || 
-                    `https://ui-avatars.com/api/?name=${currentUser.name || "U"}&background=random`
-                  }
-                />
-                <AvatarFallback>{currentUser.name?.charAt(0) || "U"}</AvatarFallback>
-              </Avatar>
-              <div>
-                <Label htmlFor="avatar-url">Avatar URL</Label>
-                <Input id="avatar-url" type="url" {...register("avatar")} />
-                {errors.avatar && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.avatar.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" {...register("name")} />
-                {errors.name && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" {...register("email")} readOnly />
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea id="bio" rows={4} {...register("bio")} />
-              {errors.bio && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.bio.message}
-                </p>
-              )}
-            </div>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </Button>
-          </CardContent>
-        </Card>
-      </form>
+      <Tabs defaultValue="profile" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 lg:w-[400px] mb-6">
+          <TabsTrigger value="profile">Profile Information</TabsTrigger>
+          <TabsTrigger value="saved">Saved Articles</TabsTrigger>
+        </TabsList>
 
-      <form onSubmit={handlePasswordSubmit(handlePasswordChange)} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Security</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input id="current-password" type="password" {...registerPassword("currentPassword")} />
-              {passwordErrors.currentPassword && (
-                <p className="text-red-500 text-xs mt-1">
-                  {passwordErrors.currentPassword.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input id="new-password" type="password" {...registerPassword("newPassword")} />
-              {passwordErrors.newPassword && (
-                <p className="text-red-500 text-xs mt-1">
-                  {passwordErrors.newPassword.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input id="confirm-password" type="password" {...registerPassword("confirmPassword")} />
-              {passwordErrors.confirmPassword && (
-                <p className="text-red-500 text-xs mt-1">
-                  {passwordErrors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-            <Button type="submit" variant="outline" disabled={isChangingPassword}>
-              {isChangingPassword ? "Updating..." : "Update Password"}
-            </Button>
-          </CardContent>
-        </Card>
-      </form>
+        <TabsContent value="profile" className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage
+                      src={
+                        currentUser.avatar || 
+                        `https://ui-avatars.com/api/?name=${currentUser.name || "U"}&background=random`
+                      }
+                    />
+                    <AvatarFallback>{currentUser.name?.charAt(0) || "U"}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <Label htmlFor="avatar-url">Avatar URL</Label>
+                    <Input id="avatar-url" type="url" {...register("avatar")} />
+                    {errors.avatar && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.avatar.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" {...register("name")} />
+                    {errors.name && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.name.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" {...register("email")} readOnly />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea id="bio" rows={4} {...register("bio")} />
+                  {errors.bio && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.bio.message}
+                    </p>
+                  )}
+                </div>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </Button>
+              </CardContent>
+            </Card>
+          </form>
+
+          <form onSubmit={handlePasswordSubmit(handlePasswordChange)} className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Security</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="current-password">Current Password</Label>
+                  <Input id="current-password" type="password" {...registerPassword("currentPassword")} />
+                  {passwordErrors.currentPassword && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {passwordErrors.currentPassword.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">New Password</Label>
+                  <Input id="new-password" type="password" {...registerPassword("newPassword")} />
+                  {passwordErrors.newPassword && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {passwordErrors.newPassword.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm New Password</Label>
+                  <Input id="confirm-password" type="password" {...registerPassword("confirmPassword")} />
+                  {passwordErrors.confirmPassword && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {passwordErrors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+                <Button type="submit" variant="outline" disabled={isChangingPassword}>
+                  {isChangingPassword ? "Updating..." : "Update Password"}
+                </Button>
+              </CardContent>
+            </Card>
+          </form>
+        </TabsContent>
+
+        <TabsContent value="saved">
+          <BookmarksTable />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
