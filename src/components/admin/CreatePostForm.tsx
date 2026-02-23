@@ -297,10 +297,69 @@ export function CreatePostForm({ article, onSave, onCancel, isSaving }: PostForm
           </Card>
           <Card>
             <CardHeader><CardTitle>Featured Image</CardTitle></CardHeader>
-            <CardContent>
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input id="imageUrl" {...register("featuredImage")} />
-              {errors.featuredImage && <p className="text-red-500 text-xs mt-1">{errors.featuredImage.message}</p>}
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="featuredImage">Featured Image</Label>
+                
+                {/* Preview Image */}
+                {getValues("featuredImage") && (
+                  <div className="relative rounded-md overflow-hidden border mb-2">
+                    <img 
+                      src={getValues("featuredImage")} 
+                      alt="Featured Preview" 
+                      className="w-full h-40 object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 h-7 w-7 p-0 rounded-full"
+                      onClick={() => {
+                        reset({ ...getValues(), featuredImage: "" });
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input 
+                      id="featuredImage" 
+                      placeholder="Paste image URL..." 
+                      {...register("featuredImage")} 
+                    />
+                  </div>
+                  <div className="relative">
+                    <Button type="button" variant="outline" className="w-10 p-0 overflow-hidden">
+                      <Upload className="h-4 w-4" />
+                      <input
+                        type="file"
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              const base64String = reader.result as string;
+                              reset({ ...getValues(), featuredImage: base64String });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Paste a URL or upload a file. Base64 is supported.
+                </p>
+                {errors.featuredImage && (
+                  <p className="text-red-500 text-xs mt-1">{errors.featuredImage.message}</p>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>

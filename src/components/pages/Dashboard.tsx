@@ -18,6 +18,7 @@ import {
   updateUser,
   createPost,
   updatePost,
+  getPost, // Add getPost
   getCategories, // Add getCategories
 } from "../../services/api";
 import type { User, Article } from "../../types"; // Remove WeeklyTraffic from import
@@ -38,6 +39,7 @@ export function Dashboard() {
   const [editingArticle, setEditingArticle] = useState<Article | undefined>(undefined);
   const [showArticleForm, setShowArticleForm] = useState(false);
   const [isSavingArticle, setIsSavingArticle] = useState(false);
+  const [isLoadingArticle, setIsLoadingArticle] = useState(false); // New state for loading details
 
 
 
@@ -100,9 +102,21 @@ export function Dashboard() {
     }
   };
   
-  const handleEditArticle = (article: Article) => {
-    setEditingArticle(article);
-    setShowArticleForm(true);
+  const handleEditArticle = async (article: Article) => {
+    setIsLoadingArticle(true);
+    const toastId = toast.loading("Loading article content...");
+    try {
+      // Fetch full article data (including content) using slug
+      const fullArticle = await getPost(article.slug);
+      setEditingArticle(fullArticle);
+      setShowArticleForm(true);
+      toast.dismiss(toastId);
+    } catch (error) {
+      console.error("Failed to fetch full article content:", error);
+      toast.error("Failed to load full article content.", { id: toastId });
+    } finally {
+      setIsLoadingArticle(false);
+    }
   };
   
   const handleCancelArticleForm = () => {
