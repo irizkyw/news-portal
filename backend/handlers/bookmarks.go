@@ -71,7 +71,7 @@ func GetBookmarks(c *gin.Context) {
 
 	query := `
 		SELECT
-			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
+			p.id, p.title, p.slug, p.excerpt, '' AS content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
 			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
 			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color,
 			GROUP_CONCAT(t.name SEPARATOR ',') AS tags
@@ -83,10 +83,7 @@ func GetBookmarks(c *gin.Context) {
 		LEFT JOIN post_tags pt ON p.id = pt.post_id
 		LEFT JOIN tags t ON pt.tag_id = t.id
 		WHERE b.user_id = ?
-		GROUP BY
-			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
-			a.id, a.name, a.email, a.avatar, a.bio,
-			c.id, c.name, c.slug, c.color
+		GROUP BY p.id, a.id, c.id
 	`
 
 	var dbPosts []models.Post

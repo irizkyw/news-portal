@@ -43,18 +43,19 @@ func seedUsers() map[string]int {
 		Name     string
 		Password string
 		Role     string
+		Avatar   string
 	}{
-		{"admin@example.com", "Admin Utama", "adminpass", "admin"},
-		{"sarah.j@example.com", "Sarah Johnson", "password123", "editor"},
-		{"michael.c@example.com", "Michael Chen", "password123", "user"},
-		{"emily.r@example.com", "Emily Rodriguez", "password123", "user"},
-		{"david.k@example.com", "David Kim", "password123", "user"},
+		{"admin@example.com", "Admin Tempo", "adminpass", "admin", "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"},
+		{"sarah.j@example.com", "Sarah Johnson", "password123", "editor", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"},
+		{"michael.c@example.com", "Michael Chen", "password123", "user", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"},
+		{"emily.r@example.com", "Emily Rodriguez", "password123", "user", "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200"},
+		{"david.k@example.com", "David Kim", "password123", "user", "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200"},
 	}
 
 	userIDs := make(map[string]int)
 	for _, user := range users {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-		result, err := database.DB.Exec("INSERT INTO users (email, name, password, role) VALUES (?, ?, ?, ?)", user.Email, user.Name, string(hashedPassword), user.Role)
+		result, err := database.DB.Exec("INSERT INTO users (email, name, password, role, avatar) VALUES (?, ?, ?, ?, ?)", user.Email, user.Name, string(hashedPassword), user.Role, user.Avatar)
 		if err != nil {
 			log.Printf("failed to seed user %s: %v", user.Email, err)
 			continue
@@ -68,12 +69,11 @@ func seedUsers() map[string]int {
 
 func seedCategories() map[string]int {
 	categoryNames := []string{
-		"Politics", "Technology", "Sports", "Lifestyle", "Business",
-		"Health", "Science", "Travel", "Food", "Education", "Art", "Gaming",
+		"Nasional", "Bisnis", "Metro", "Dunia", "Tekno", "Otomotif", "Seleb", "Bola", "Gaya Hidup", "Travel",
 	}
 
 	categoryIDs := make(map[string]int)
-	colors := []string{"#EF4444", "#3B82F6", "#10B981", "#F59E0B", "#6366F1", "#8B5CF6", "#EC4899", "#14B8A6", "#F97316", "#06B6D4", "#84CC16", "#71717A"}
+	colors := []string{"#EF4444", "#3B82F6", "#10B981", "#F59E0B", "#6366F1", "#8B5CF6", "#EC4899", "#14B8A6", "#F97316", "#06B6D4"}
 
 	for i, name := range categoryNames {
 		slug := strings.ToLower(strings.ReplaceAll(name, " ", "-"))
@@ -92,9 +92,9 @@ func seedCategories() map[string]int {
 
 func seedTags() map[string]int {
 	tagNames := []string{
-		"Climate Change", "AI", "Technology", "Science", "Sports", "Football",
-		"Fashion", "Sustainability", "Lifestyle", "Business", "Finance",
-		"Health", "Social Media", "Youth", "World", "Renewable Energy", "Space", "Wellness",
+		"IKN", "Prabowo Gibran", "Ekonomi", "Teknologi", "Kesehatan", "Pendidikan",
+		"Lingkungan", "Olahraga", "Seni Budaya", "Kriminal", "Politik",
+		"Infrastruktur", "Startup", "Investasi", "Rupiah", "Transportasi",
 	}
 
 	tagIDs := make(map[string]int)
@@ -128,79 +128,79 @@ func seedPosts(userIDs map[string]int, categoryIDs map[string]int, tagIDs map[st
 		Views         int
 	}{
 		{
-			Title:         "Breaking: Major Climate Summit Reaches Historic Agreement",
-			Excerpt:       "World leaders have concluded a landmark climate summit, signing an agreement aimed at drastic reductions in carbon emissions over the next decade.",
-			Content:       "<h3>Global Impact</h3><p>The agreement signed in Geneva marks a turning point for global environmental policy. Major industrial nations have committed to a 50% reduction in emissions by 2035.</p>",
-			FeaturedImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=1000",
+			Title:         "Progres Pembangunan IKN Tahap 1 Capai 90 Persen",
+			Excerpt:       "Otoritas Ibu Kota Nusantara (OIKN) menyatakan pembangunan infrastruktur dasar tahap pertama hampir rampung sepenuhnya menjelang HUT RI ke-79.",
+			Content:       "<h3>Infrastruktur Dasar Rampung</h3><p>Pembangunan Gedung Kantor Presiden dan Istana Negara di Ibu Kota Nusantara (IKN) kini telah memasuki tahap akhir. Menurut Deputi Bidang Sarana dan Prasarana OIKN, progres fisik telah mencapai 90,4 persen.</p><p>\"Kami optimis semua fasilitas inti akan siap digunakan untuk upacara 17 Agustus mendatang,\" ujarnya dalam konferensi pers di Penajam Paser Utara.</p>",
+			FeaturedImage: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=1200",
 			Status:        "published",
 			IsFeatured:    true,
 			IsPopular:     true,
-			PublishedAt:   time.Now().Add(-24 * time.Hour),
+			PublishedAt:   time.Now().Add(-2 * time.Hour),
 			AuthorEmail:   "sarah.j@example.com",
-			CategoryName:  "Politics",
-			Tags:          []string{"Climate Change", "World"},
-			ReadTime:      5,
-			Views:         15420,
+			CategoryName:  "Nasional",
+			Tags:          []string{"IKN", "Infrastruktur", "Politik"},
+			ReadTime:      4,
+			Views:         25420,
 		},
 		{
-			Title:         "AI Revolution: New Language Model Surpasses Human Performance",
-			Excerpt:       "A groundbreaking artificial intelligence model has demonstrated unprecedented capabilities in natural language understanding.",
-			Content:       "<p>Researchers at the Silicon Valley AI Lab announced that their newest model, <strong>Nexus-1</strong>, has achieved a score of 98.5% on standard linguistic tests.</p>",
-			FeaturedImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000",
+			Title:         "IHSG Menguat di Tengah Sentimen Positif Ekonomi Global",
+			Excerpt:       "Indeks Harga Saham Gabungan (IHSG) ditutup menguat sore ini, didorong oleh aksi beli asing di saham-saham perbankan besar.",
+			Content:       "<p>IHSG bergerak konsisten di zona hijau sepanjang perdagangan hari ini. Analis memperkirakan penguatan ini dipicu oleh rilis data inflasi Amerika Serikat yang lebih rendah dari ekspektasi, memberikan harapan akan pemangkasan suku bunga The Fed.</p>",
+			FeaturedImage: "https://images.unsplash.com/photo-1611974714024-4607ad03d63b?auto=format&fit=crop&q=80&w=1200",
+			Status:        "published",
+			IsFeatured:    false,
+			IsPopular:     true,
+			PublishedAt:   time.Now().Add(-5 * time.Hour),
+			AuthorEmail:   "michael.c@example.com",
+			CategoryName:  "Bisnis",
+			Tags:          []string{"Ekonomi", "Investasi", "Rupiah"},
+			ReadTime:      3,
+			Views:         18150,
+		},
+		{
+			Title:         "SpaceX Berhasil Luncurkan Satelit Starlink Generasi Terbaru",
+			Excerpt:       "Perusahaan milik Elon Musk kembali mencatatkan sejarah dengan meluncurkan 22 satelit Starlink menggunakan roket Falcon 9 yang telah digunakan 15 kali.",
+			Content:       "<p>Peluncuran ini bertujuan untuk memperluas jangkauan internet satelit global, terutama di daerah-daerah terpencil yang sulit dijangkau oleh kabel serat optik.</p>",
+			FeaturedImage: "https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80&w=1200",
+			Status:        "published",
+			IsFeatured:    true,
+			IsPopular:     false,
+			PublishedAt:   time.Now().Add(-10 * time.Hour),
+			AuthorEmail:   "emily.r@example.com",
+			CategoryName:  "Tekno",
+			Tags:          []string{"Teknologi", "Startup"},
+			ReadTime:      5,
+			Views:         12000,
+		},
+		{
+			Title:         "Pemprov DKI Jakarta Uji Coba Bus Listrik Rute Baru",
+			Excerpt:       "Transjakarta menambah armada bus listrik untuk rute-rute padat guna menekan polusi udara di ibu kota yang kian mengkhawatirkan.",
+			Content:       "<p>Uji coba rute baru ini akan berlangsung selama tiga bulan ke depan. Masyarakat dapat menikmati layanan bus listrik ini secara gratis dengan menggunakan kartu uang elektronik.</p>",
+			FeaturedImage: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1200",
+			Status:        "published",
+			IsFeatured:    false,
+			IsPopular:     false,
+			PublishedAt:   time.Now().Add(-24 * time.Hour),
+			AuthorEmail:   "michael.c@example.com",
+			CategoryName:  "Metro",
+			Tags:          []string{"Transportasi", "Lingkungan", "Kesehatan"},
+			ReadTime:      4,
+			Views:         9340,
+		},
+		{
+			Title:         "Konflik di Timur Tengah Memanas, Harga Minyak Dunia Melonjak",
+			Excerpt:       "Ketegangan geopolitik di Timur Tengah memicu kekhawatiran gangguan pasokan energi global, mendorong harga Brent menembus US$ 90 per barel.",
+			Content:       "<p>Para pemimpin dunia menyerukan pengendalian diri guna mencegah konflik skala penuh yang dapat merusak stabilitas ekonomi global yang baru saja pulih dari pandemi.</p>",
+			FeaturedImage: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1200",
 			Status:        "published",
 			IsFeatured:    false,
 			IsPopular:     true,
 			PublishedAt:   time.Now().Add(-48 * time.Hour),
 			AuthorEmail:   "sarah.j@example.com",
-			CategoryName:  "Technology",
-			Tags:          []string{"AI", "Technology", "Science"},
-			ReadTime:      7,
-			Views:         23150,
-		},
-		{
-			Title:         "The Future of Space Travel: Mars and Beyond",
-			Excerpt:       "Private space agencies are preparing for the first manned mission to Mars, scheduled for late 2029.",
-			Content:       "<p>The mission will utilize the latest Ion-Propulsion engines, reducing travel time by nearly 40% compared to traditional rocket engines.</p>",
-			FeaturedImage: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=1000",
-			Status:        "published",
-			IsFeatured:    true,
-			IsPopular:     false,
-			PublishedAt:   time.Now().Add(-144 * time.Hour),
-			AuthorEmail:   "emily.r@example.com",
-			CategoryName:  "Science",
-			Tags:          []string{"Space", "Science", "Technology"},
-			ReadTime:      7,
-			Views:         14000,
-		},
-		{
-			Title:         "Minimalist Design: The Secret to Productivity",
-			Excerpt:       "How simplifying your workspace can lead to clearer thinking and faster execution in your daily tasks.",
-			Content:       "<p>Minimalism is not just about aesthetics; it's about removing the cognitive load of unnecessary choices from your environment.</p>",
-			FeaturedImage: "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&q=80&w=1000",
-			Status:        "published",
-			IsFeatured:    false,
-			IsPopular:     false,
-			PublishedAt:   time.Now().Add(-96 * time.Hour),
-			AuthorEmail:   "michael.c@example.com",
-			CategoryName:  "Lifestyle",
-			Tags:          []string{"Lifestyle", "Wellness"},
+			CategoryName:  "Dunia",
+			Tags:          []string{"Politik", "Ekonomi"},
 			ReadTime:      6,
-			Views:         12340,
-		},
-		{
-			Title:         "Renewable Energy Trends to Watch in 2024",
-			Excerpt:       "From transparent solar panels to tidal energy, here are the technologies that will dominate the market this year.",
-			Content:       "<p>This draft covers the emerging trends in the green energy sector, specifically focusing on residential implementation.</p>",
-			FeaturedImage: "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&q=80&w=1000",
-			Status:        "draft",
-			IsFeatured:    false,
-			IsPopular:     false,
-			PublishedAt:   time.Time{},
-			AuthorEmail:   "admin@example.com",
-			CategoryName:  "Technology",
-			Tags:          []string{"Renewable Energy", "Technology"},
-			ReadTime:      8,
-			Views:         500,
+			Views:         32000,
 		},
 	}
 

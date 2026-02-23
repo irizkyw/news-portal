@@ -51,9 +51,10 @@ type PostResponse struct {
 
 func GetPosts(c *gin.Context) {
 	// Base query including joins for author, category, and tags
+	// Use '' AS content to avoid fetching large BLOB/TEXT data in list view
 	baseQuery := `
 		SELECT
-			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
+			p.id, p.title, p.slug, p.excerpt, '' AS content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
 			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
 			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color,
 			GROUP_CONCAT(t.name SEPARATOR ',') AS tags
@@ -102,11 +103,8 @@ func GetPosts(c *gin.Context) {
 		query += " WHERE " + strings.Join(whereClauses, " AND ")
 	}
 
-	query += ` GROUP BY
-        p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
-        a.id, a.name, a.email, a.avatar, a.bio,
-        c.id, c.name, c.slug, c.color
-    `
+	// Grouping by p.id is sufficient in modern MySQL/PostgreSQL
+	query += ` GROUP BY p.id, a.id, c.id `
 
 	sortBy := c.Query("sortBy")
 	switch sortBy {
@@ -139,7 +137,7 @@ func GetPosts(c *gin.Context) {
 			Title:         p.Title,
 			Slug:          p.Slug,
 			Excerpt:       p.Excerpt,
-			Content:       p.Content,
+			Content:       "", // Content is intentionally empty in list view
 			FeaturedImage: p.FeaturedImage,
 			ReadTime:      p.ReadTime,
 			Views:         p.Views,

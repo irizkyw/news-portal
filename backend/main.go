@@ -49,7 +49,7 @@ func main() {
 		userRoutes.GET("/:id", handlers.GetUser)
 		userRoutes.PUT("/:id", auth.AuthzMiddleware("admin"), handlers.UpdateUser)
 		userRoutes.DELETE("/:id", auth.AuthzMiddleware("admin"), handlers.DeleteUser)
-		userRoutes.PUT("/me/password", handlers.ChangePassword) // New route for password change
+		userRoutes.PUT("/me/password", handlers.ChangePassword)
 	}
 
 	// Post routes
