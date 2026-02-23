@@ -193,19 +193,23 @@ func GetPosts(c *gin.Context) {
 
 func GetPost(c *gin.Context) {
 	slug := c.Param("slug")
-	var post models.Post
+	var p models.Post
 	query := `
 		SELECT
 			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
-			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio, a.created_at AS author_created_at, a.updated_at AS author_updated_at,
-			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color
+			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
+			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color,
+			GROUP_CONCAT(t.name SEPARATOR ',') AS tags
 		FROM posts p
 		LEFT JOIN users a ON p.author_id = a.id
 		LEFT JOIN post_categories pc ON p.id = pc.post_id
 		LEFT JOIN categories c ON pc.category_id = c.id
+		LEFT JOIN post_tags pt ON p.id = pt.post_id
+		LEFT JOIN tags t ON pt.tag_id = t.id
 		WHERE p.slug = ?
+		GROUP BY p.id, a.id, c.id
 	`
-	if err := database.DB.Get(&post, query, slug); err != nil {
+	if err := database.DB.Get(&p, query, slug); err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})
 			return
@@ -213,7 +217,61 @@ func GetPost(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, post)
+
+	// Transform to nested structure
+	response := PostResponse{
+		ID:            p.ID,
+		Title:         p.Title,
+		Slug:          p.Slug,
+		Excerpt:       p.Excerpt,
+		Content:       p.Content,
+		FeaturedImage: p.FeaturedImage,
+		ReadTime:      p.ReadTime,
+		Views:         p.Views,
+		Status:        p.Status,
+		IsFeatured:    p.IsFeatured,
+		IsPopular:     p.IsPopular,
+		PublishedAt:   p.PublishedAt,
+		CreatedAt:     p.CreatedAt,
+		UpdatedAt:     p.UpdatedAt,
+	}
+
+	if p.AuthorID != nil {
+		author := &AuthorResponse{ID: *p.AuthorID}
+		if p.AuthorName != nil {
+			author.Name = *p.AuthorName
+		}
+		if p.AuthorEmail != nil {
+			author.Email = *p.AuthorEmail
+		}
+		if p.AuthorAvatar != nil {
+			author.Avatar = *p.AuthorAvatar
+		}
+		if p.AuthorBio != nil {
+			author.Bio = *p.AuthorBio
+		}
+		response.Author = author
+	}
+
+	if p.CategoryID != nil {
+		category := &CategoryResponse{ID: *p.CategoryID}
+		if p.CategoryName != nil {
+			category.Name = *p.CategoryName
+		}
+		if p.CategorySlug != nil {
+			category.Slug = *p.CategorySlug
+		}
+		if p.CategoryColor != nil {
+			category.Color = *p.CategoryColor
+		}
+		response.Category = category
+	}
+
+	if len(p.Tags) > 0 {
+		response.Tags = p.Tags
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 type CreatePostRequest struct {
@@ -227,6 +285,7 @@ type CreatePostRequest struct {
 	PublishedAt   *time.Time `json:"publishedAt"` // Allow null for draft posts
 	AuthorID      string     `json:"authorId" binding:"required"`
 	CategoryID    string     `json:"categoryId"`
+	Tags          []string   `json:"tags"`
 }
 
 func CreatePost(c *gin.Context) {
@@ -290,22 +349,96 @@ func CreatePost(c *gin.Context) {
 		}
 	}
 
-	var post models.Post
-	if err := database.DB.Get(&post, `
+	// Handle Tags
+	for _, tagName := range req.Tags {
+		var tagID int64
+		err := database.DB.Get(&tagID, "SELECT id FROM tags WHERE name = ?", tagName)
+		if err == sql.ErrNoRows {
+			// Create tag if it doesn't exist
+			res, err := database.DB.Exec("INSERT INTO tags (name) VALUES (?)", tagName)
+			if err == nil {
+				tagID, _ = res.LastInsertId()
+			}
+		}
+		
+		if tagID > 0 {
+			database.DB.Exec("INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)", postID, tagID)
+		}
+	}
+
+	var p models.Post
+	if err := database.DB.Get(&p, `
 		SELECT
 			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
-			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio, a.created_at AS author_created_at, a.updated_at AS author_updated_at,
-			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color
+			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
+			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color,
+			GROUP_CONCAT(t.name SEPARATOR ',') AS tags
 		FROM posts p
 		LEFT JOIN users a ON p.author_id = a.id
 		LEFT JOIN post_categories pc ON p.id = pc.post_id
 		LEFT JOIN categories c ON pc.category_id = c.id
-		WHERE p.id = ?`, postID); err != nil {
+		LEFT JOIN post_tags pt ON p.id = pt.post_id
+		LEFT JOIN tags t ON pt.tag_id = t.id
+		WHERE p.id = ?
+		GROUP BY p.id, a.id, c.id`, postID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, post)
+	// Transform to nested structure
+	response := PostResponse{
+		ID:            p.ID,
+		Title:         p.Title,
+		Slug:          p.Slug,
+		Excerpt:       p.Excerpt,
+		Content:       p.Content,
+		FeaturedImage: p.FeaturedImage,
+		ReadTime:      p.ReadTime,
+		Views:         p.Views,
+		Status:        p.Status,
+		IsFeatured:    p.IsFeatured,
+		IsPopular:     p.IsPopular,
+		PublishedAt:   p.PublishedAt,
+		CreatedAt:     p.CreatedAt,
+		UpdatedAt:     p.UpdatedAt,
+	}
+
+	if p.AuthorID != nil {
+		author := &AuthorResponse{ID: *p.AuthorID}
+		if p.AuthorName != nil {
+			author.Name = *p.AuthorName
+		}
+		if p.AuthorEmail != nil {
+			author.Email = *p.AuthorEmail
+		}
+		if p.AuthorAvatar != nil {
+			author.Avatar = *p.AuthorAvatar
+		}
+		if p.AuthorBio != nil {
+			author.Bio = *p.AuthorBio
+		}
+		response.Author = author
+	}
+
+	if p.CategoryID != nil {
+		category := &CategoryResponse{ID: *p.CategoryID}
+		if p.CategoryName != nil {
+			category.Name = *p.CategoryName
+		}
+		if p.CategorySlug != nil {
+			category.Slug = *p.CategorySlug
+		}
+		if p.CategoryColor != nil {
+			category.Color = *p.CategoryColor
+		}
+		response.Category = category
+	}
+
+	if len(p.Tags) > 0 {
+		response.Tags = p.Tags
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 type UpdatePostRequest struct {
@@ -318,6 +451,7 @@ type UpdatePostRequest struct {
 	IsPopular     *bool      `json:"isPopular"`
 	PublishedAt   *time.Time `json:"publishedAt"`
 	CategoryID    *string    `json:"categoryId"`
+	Tags          []string   `json:"tags"`
 }
 
 func UpdatePost(c *gin.Context) {
@@ -393,22 +527,104 @@ func UpdatePost(c *gin.Context) {
 		}
 	}
 
-	var post models.Post
-	if err := database.DB.Get(&post, `
+	// Update tags if provided
+	if req.Tags != nil {
+		// First, delete existing tag links for this post
+		if _, err := database.DB.Exec("DELETE FROM post_tags WHERE post_id = ?", id); err != nil {
+			log.Printf("failed to delete old post tags: %v", err)
+		}
+		
+		// Then, handle new tags
+		for _, tagName := range req.Tags {
+			var tagID int64
+			err := database.DB.Get(&tagID, "SELECT id FROM tags WHERE name = ?", tagName)
+			if err == sql.ErrNoRows {
+				// Create tag if it doesn't exist
+				res, err := database.DB.Exec("INSERT INTO tags (name) VALUES (?)", tagName)
+				if err == nil {
+					tagID, _ = res.LastInsertId()
+				}
+			}
+			
+			if tagID > 0 {
+				database.DB.Exec("INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)", id, tagID)
+			}
+		}
+	}
+
+	var p models.Post
+	if err := database.DB.Get(&p, `
 		SELECT
 			p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.read_time, p.views, p.status, p.is_featured, p.is_popular, p.published_at, p.created_at, p.updated_at,
-			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio, a.created_at AS author_created_at, a.updated_at AS author_updated_at,
-			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color
+			a.id AS author_id, a.name AS author_name, a.email AS author_email, a.avatar AS author_avatar, a.bio AS author_bio,
+			c.id AS category_id, c.name AS category_name, c.slug AS category_slug, c.color AS category_color,
+			GROUP_CONCAT(t.name SEPARATOR ',') AS tags
 		FROM posts p
 		LEFT JOIN users a ON p.author_id = a.id
 		LEFT JOIN post_categories pc ON p.id = pc.post_id
 		LEFT JOIN categories c ON pc.category_id = c.id
-		WHERE p.id = ?`, id); err != nil {
+		LEFT JOIN post_tags pt ON p.id = pt.post_id
+		LEFT JOIN tags t ON pt.tag_id = t.id
+		WHERE p.id = ?
+		GROUP BY p.id, a.id, c.id`, id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, post)
+	// Transform to nested structure
+	response := PostResponse{
+		ID:            p.ID,
+		Title:         p.Title,
+		Slug:          p.Slug,
+		Excerpt:       p.Excerpt,
+		Content:       p.Content,
+		FeaturedImage: p.FeaturedImage,
+		ReadTime:      p.ReadTime,
+		Views:         p.Views,
+		Status:        p.Status,
+		IsFeatured:    p.IsFeatured,
+		IsPopular:     p.IsPopular,
+		PublishedAt:   p.PublishedAt,
+		CreatedAt:     p.CreatedAt,
+		UpdatedAt:     p.UpdatedAt,
+	}
+
+	if p.AuthorID != nil {
+		author := &AuthorResponse{ID: *p.AuthorID}
+		if p.AuthorName != nil {
+			author.Name = *p.AuthorName
+		}
+		if p.AuthorEmail != nil {
+			author.Email = *p.AuthorEmail
+		}
+		if p.AuthorAvatar != nil {
+			author.Avatar = *p.AuthorAvatar
+		}
+		if p.AuthorBio != nil {
+			author.Bio = *p.AuthorBio
+		}
+		response.Author = author
+	}
+
+	if p.CategoryID != nil {
+		category := &CategoryResponse{ID: *p.CategoryID}
+		if p.CategoryName != nil {
+			category.Name = *p.CategoryName
+		}
+		if p.CategorySlug != nil {
+			category.Slug = *p.CategorySlug
+		}
+		if p.CategoryColor != nil {
+			category.Color = *p.CategoryColor
+		}
+		response.Category = category
+	}
+
+	if len(p.Tags) > 0 {
+		response.Tags = p.Tags
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func DeletePost(c *gin.Context) {
